@@ -3,7 +3,12 @@ import WidgetKit
 import GitStreakKit
 
 struct MediumWidgetView: View {
+    @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
+    
+    private var widgetBgColor: Color {
+        colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
+    }
     
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
@@ -94,9 +99,9 @@ struct MediumWidgetView: View {
             }
         }
         .padding(14)
-        .background(Color(red: 30/255, green: 30/255, blue: 31/255))
+        .background(widgetBgColor)
         .containerBackground(for: .widget) {
-            Color(red: 30/255, green: 30/255, blue: 31/255) // #1E1E1F
+            widgetBgColor
         }
     }
 }

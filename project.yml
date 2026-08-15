@@ -36,6 +36,7 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: "1.0.0"
         INFOPLIST_KEY_CFBundleDisplayName: "GitStreak"
+        INFOPLIST_KEY_NSHumanReadableCopyright: "© 2026 Wenuja Liyanamana"
         INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.developer-tools"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 

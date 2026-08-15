@@ -235,16 +235,31 @@ struct DashboardView: View {
                                 
                                 Spacer(minLength: 0)
                             }
-                            .padding(.vertical, 14)
-                            .padding(.horizontal, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(innerContainerBgColor)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(borderColor, lineWidth: 1)
-                            )
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 4)
+                            
+                            // Less / More Color Legend
+                            HStack {
+                                Spacer()
+                                
+                                HStack(spacing: 5) {
+                                    Text("Less")
+                                        .font(GSTypography.monoBadge)
+                                        .foregroundColor(.secondary)
+                                    
+                                    let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
+                                    ForEach(currentTheme.allColors.indices, id: \.self) { idx in
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(currentTheme.allColors[idx])
+                                            .frame(width: 10, height: 10)
+                                    }
+                                    
+                                    Text("More")
+                                        .font(GSTypography.monoBadge)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.horizontal, 4)
+                            }
                         }
                         .padding(16)
                         .background(

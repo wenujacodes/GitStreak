@@ -1,8 +1,8 @@
 # GitStreak 🔥
 
-> **Make your coding habit visible on your desktop with a sleek, minimalist dev aesthetic.**
+> **Make your coding habit visible.**
 
-GitStreak is a native macOS application and WidgetKit widget designed to motivate developers by displaying real-time GitHub contribution streaks and activity timelines directly on your desktop.
+GitStreak is a native macOS application and WidgetKit widget designed to motivate developers to keep coding by making their GitHub contribution activity visible directly on their desktop as a widget.
 
 ---
 
@@ -34,7 +34,7 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ## Tech Stack
 
-- **Platform**: macOS 14.0+ (Sonoma, Sequoia)
+- **Platform**: macOS 14.0+ (Sonoma)
 - **Language**: Swift 6.0 (Strict Concurrency)
 - **Frameworks**: SwiftUI, WidgetKit, Security (Keychain)
 - **API**: GitHub GraphQL API v4

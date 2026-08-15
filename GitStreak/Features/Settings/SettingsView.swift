@@ -87,6 +87,10 @@ struct SettingsView: View {
                 .foregroundColor(.secondary)
                 .padding(.horizontal, 20)
             
+            Text("© 2026 Wenuja Liyanamana")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
             Spacer()
             
             Button("Reset & Clear All Data", role: .destructive) {

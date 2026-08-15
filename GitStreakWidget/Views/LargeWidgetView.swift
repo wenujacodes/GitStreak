@@ -3,62 +3,76 @@ import WidgetKit
 import GitStreakKit
 
 struct LargeWidgetView: View {
+    @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
     
+    private var widgetBgColor: Color {
+        colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header: Avatar, Display Name, and Username (bio/about removed)
-                    HStack(spacing: 10) {
+                    // Header: User identity (avatar + name)
+                    HStack(spacing: 8) {
                         AvatarView(
                             avatarURL: data.user.avatarURL,
-                            size: 34
+                            size: 32
                         )
                         
-                        VStack(alignment: .leading, spacing: 1) {
+                        VStack(alignment: .leading, spacing: 0) {
                             Text(data.user.displayName ?? username)
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
                             Text("@\(username)")
-                                .font(.system(size: 11))
+                                .font(.system(size: 10))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
                         
                         Spacer()
+                        
+                        StreakBadgeView(
+                            streakCount: data.currentStreak,
+                            label: "days",
+                            style: .compact
+                        )
                     }
                     
-                    Spacer()
+                    Spacer(minLength: 2)
                     
-                    // Grid with Day labels
+                    // Contribution Grid with weekday indicators (M, W, F)
                     HStack(alignment: .top, spacing: 4) {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(" ").font(.system(size: 8)) // Sun
-                            Text("M").font(.system(size: 8, weight: .medium)).foregroundColor(.secondary)
-                            Text(" ").font(.system(size: 8)) // Tue
-                            Text("W").font(.system(size: 8, weight: .medium)).foregroundColor(.secondary)
-                            Text(" ").font(.system(size: 8)) // Thu
-                            Text("F").font(.system(size: 8, weight: .medium)).foregroundColor(.secondary)
-                            Text(" ").font(.system(size: 8)) // Sat
+                            Text(" ").font(.system(size: 7))
+                            Text("M").font(.system(size: 7, weight: .medium)).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 7))
+                            Text("W").font(.system(size: 7, weight: .medium)).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 7))
+                            Text("F").font(.system(size: 7, weight: .medium)).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 7))
                         }
+                        
+                        Spacer(minLength: 0)
                         
                         ContributionGridView(
                             weeks: data.weeks,
                             theme: entry.theme,
-                            maxWeeks: 14,
-                            cellSize: 10.5,
+                            maxWeeks: 13,
+                            cellSize: 11,
                             cellSpacing: 2.5
                         )
+                        
+                        Spacer(minLength: 0)
                     }
-                    .frame(maxWidth: .infinity, alignment: .center)
                     
-                    Spacer()
+                    Spacer(minLength: 2)
                     
                     // Stats Row
-                    HStack(spacing: 12) {
+                    HStack(spacing: 0) {
                         WidgetStatView(
                             title: "Current",
                             value: "\(data.currentStreak)d",
@@ -80,11 +94,10 @@ struct LargeWidgetView: View {
                         WidgetStatView(
                             title: "Total",
                             value: "\(data.totalContributions)",
-                            icon: "plus.circle.fill",
+                            icon: "square.grid.3x3.fill",
                             iconColor: .green
                         )
                     }
-                    .padding(.top, 4)
                 }
             case .noUser:
                 VStack(spacing: 8) {
@@ -102,7 +115,7 @@ struct LargeWidgetView: View {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 32))
                         .foregroundColor(.secondary)
-                    Text("Open GitStreak to get started")
+                    Text("Open GitStreak to sync contributions")
                         .font(.callout)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -122,9 +135,9 @@ struct LargeWidgetView: View {
             }
         }
         .padding(14)
-        .background(Color(red: 30/255, green: 30/255, blue: 31/255))
+        .background(widgetBgColor)
         .containerBackground(for: .widget) {
-            Color(red: 30/255, green: 30/255, blue: 31/255) // #1E1E1F
+            widgetBgColor
         }
     }
 }
