@@ -1,0 +1,121 @@
+name: GitStreak
+options:
+  bundleIdPrefix: com.gitstreak
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_TEAM: "9UZ4MS7F73"
+    CODE_SIGN_STYLE: "Automatic"
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  GitStreak:
+    type: application
+    platform: macOS
+    sources:
+      - path: GitStreak
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: GitStreakKit
+        link: true
+      - target: GitStreakWidgetExtension
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak
+        CODE_SIGN_ENTITLEMENTS: GitStreak/GitStreak.entitlements
+        GENERATE_INFOPLIST_FILE: "YES"
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.0.0"
+        INFOPLIST_KEY_CFBundleDisplayName: "GitStreak"
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.developer-tools"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  GitStreakWidgetExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: GitStreakWidget
+        excludes:
+          - "**/.DS_Store"
+          - "Info.plist"
+    dependencies:
+      - target: GitStreakKit
+        link: true
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    info:
+      path: GitStreakWidget/Info.plist
+      properties:
+        CFBundleDisplayName: "GitStreak"
+        NSExtension:
+          NSExtensionPointIdentifier: "com.apple.widgetkit-extension"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak.Widget
+        CODE_SIGN_ENTITLEMENTS: GitStreakWidget/GitStreakWidget.entitlements
+        GENERATE_INFOPLIST_FILE: "YES"
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.0.0"
+        PRODUCT_NAME: GitStreakWidgetExtension
+
+  GitStreakKit:
+    type: framework
+    platform: macOS
+    sources:
+      - path: GitStreakKit
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreakKit
+        GENERATE_INFOPLIST_FILE: "YES"
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.0.0"
+        DEFINES_MODULE: "YES"
+        PRODUCT_MODULE_NAME: GitStreakKit
+
+  GitStreakTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: GitStreakTests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: GitStreakKit
+        link: true
+      - target: GitStreak
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreakTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/GitStreak.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GitStreak"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+schemes:
+  GitStreak:
+    build:
+      targets:
+        GitStreak: all
+        GitStreakWidgetExtension: all
+        GitStreakKit: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - GitStreakTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
