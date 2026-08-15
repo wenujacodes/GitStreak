@@ -6,30 +6,34 @@ struct SmallWidgetView: View {
     var entry: GitStreakEntry
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
+                    // Header: Username
+                    Text("@\(username)")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                    
+                    Spacer(minLength: 4)
+                    
+                    // Centered Contribution Grid
                     HStack {
-                        Text("@\(username)")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                        Spacer()
+                        Spacer(minLength: 0)
+                        ContributionGridView(
+                            weeks: data.weeks,
+                            theme: entry.theme,
+                            maxWeeks: 9,
+                            cellSize: 10.5,
+                            cellSpacing: 2.5
+                        )
+                        Spacer(minLength: 0)
                     }
                     
-                    Spacer()
+                    Spacer(minLength: 4)
                     
-                    ContributionGridView(
-                        weeks: data.weeks,
-                        theme: entry.theme,
-                        maxWeeks: 6,
-                        cellSize: GSSpacing.smallGridCellSize,
-                        cellSpacing: 2
-                    )
-                    
-                    Spacer()
-                    
+                    // Footer: Flame streak badge aligned with header
                     StreakBadgeView(
                         streakCount: data.currentStreak,
                         label: "days",
@@ -37,7 +41,7 @@ struct SmallWidgetView: View {
                     )
                 }
             case .noUser:
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Image(systemName: "person.crop.circle.badge.plus")
                         .font(.system(size: 20))
                         .foregroundColor(.secondary)
@@ -48,7 +52,7 @@ struct SmallWidgetView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .noData:
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 20))
                         .foregroundColor(.secondary)
@@ -59,7 +63,7 @@ struct SmallWidgetView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .error(let msg):
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 20))
                         .foregroundColor(.orange)
@@ -72,7 +76,8 @@ struct SmallWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(12)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
         .containerBackground(for: .widget) {
             Color(NSColor.windowBackgroundColor)
         }

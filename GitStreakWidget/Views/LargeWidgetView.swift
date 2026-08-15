@@ -10,11 +10,11 @@ struct LargeWidgetView: View {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header
+                    // Header: Avatar, Display Name, and Username (bio/about removed)
                     HStack(spacing: 10) {
                         AvatarView(
                             avatarURL: data.user.avatarURL,
-                            size: 32
+                            size: 34
                         )
                         
                         VStack(alignment: .leading, spacing: 1) {
@@ -29,13 +29,6 @@ struct LargeWidgetView: View {
                         }
                         
                         Spacer()
-                    }
-                    
-                    if let bio = data.user.bio, !bio.isEmpty {
-                        Text(bio)
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
                     }
                     
                     Spacer()
@@ -55,9 +48,9 @@ struct LargeWidgetView: View {
                         ContributionGridView(
                             weeks: data.weeks,
                             theme: entry.theme,
-                            maxWeeks: 13,
-                            cellSize: 10,
-                            cellSpacing: 2
+                            maxWeeks: 14,
+                            cellSize: 10.5,
+                            cellSpacing: 2.5
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -78,7 +71,7 @@ struct LargeWidgetView: View {
                         WidgetStatView(
                             title: "Longest",
                             value: "\(data.longestStreak)d",
-                            icon: "star.fill",
+                            icon: "trophy.fill",
                             iconColor: .yellow
                         )
                         
@@ -144,7 +137,7 @@ struct WidgetStatView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 9))
+                .font(.system(size: 9, weight: .medium))
                 .foregroundColor(.secondary)
             HStack(spacing: 3) {
                 Image(systemName: icon)

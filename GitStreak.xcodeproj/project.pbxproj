@@ -522,22 +522,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					5C356C31BE424C2484903BE9 = {
-						DevelopmentTeam = 9UZ4MS7F73;
-						ProvisioningStyle = Automatic;
-					};
-					9019E30A1877BED11DD4773F = {
-						DevelopmentTeam = 9UZ4MS7F73;
-						ProvisioningStyle = Automatic;
-					};
-					F043147747D1F8588AD9FD4F = {
-						DevelopmentTeam = 9UZ4MS7F73;
-						ProvisioningStyle = Automatic;
-					};
-					FB79EFABB4F6454B1DF4C679 = {
-						DevelopmentTeam = 9UZ4MS7F73;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = CBFDA1541DDF4C798A571B7F /* Build configuration list for PBXProject "GitStreak" */;
@@ -738,10 +722,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9UZ4MS7F73;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -916,10 +901,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9UZ4MS7F73;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

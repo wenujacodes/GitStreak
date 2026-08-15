@@ -8,14 +8,12 @@ final class ThemeRegistryTests: XCTestCase {
         let theme = ThemeRegistry.defaultTheme
         XCTAssertEqual(theme.id, "github")
         XCTAssertEqual(theme.name, "GitHub")
-        XCTAssertFalse(theme.isPro)
     }
     
     func testLookupExistingTheme() {
         let ocean = ThemeRegistry.theme(for: "ocean")
         XCTAssertEqual(ocean.id, "ocean")
         XCTAssertEqual(ocean.name, "Ocean")
-        XCTAssertFalse(ocean.isPro)
     }
     
     func testLookupUnknownThemeFallsBackToDefault() {
@@ -23,19 +21,12 @@ final class ThemeRegistryTests: XCTestCase {
         XCTAssertEqual(fallback.id, ThemeRegistry.defaultTheme.id)
     }
     
-    func testProThemesIdentifiedCorrectly() {
-        let nord = ThemeRegistry.theme(for: "nord")
-        XCTAssertTrue(nord.isPro)
-        
-        let forest = ThemeRegistry.theme(for: "forest")
-        XCTAssertTrue(forest.isPro)
-    }
-    
-    func testFreeThemesExcludesPro() {
-        let free = ThemeRegistry.freeThemes
-        XCTAssertFalse(free.contains { $0.isPro })
-        XCTAssertTrue(free.contains { $0.id == "github" })
-        XCTAssertTrue(free.contains { $0.id == "monochrome" })
+    func testAllThemesAvailableFreely() {
+        let all = ThemeRegistry.allThemes
+        XCTAssertEqual(all.count, 6)
+        XCTAssertEqual(ThemeRegistry.freeThemes.count, 6)
+        XCTAssertTrue(all.contains { $0.id == "nord" })
+        XCTAssertTrue(all.contains { $0.id == "forest" })
     }
     
     func testThemeColorsAllLevels() {

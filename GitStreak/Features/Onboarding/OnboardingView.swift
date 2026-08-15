@@ -185,10 +185,8 @@ struct OnboardingView: View {
                         ForEach(ThemeRegistry.allThemes, id: \.id) { theme in
                             ThemeSwatchGridItem(theme: theme, isSelected: selectedThemeID == theme.id)
                                 .onTapGesture {
-                                    if !theme.isPro {
-                                        selectedThemeID = theme.id
-                                        UserPreferences.shared.selectedThemeID = theme.id
-                                    }
+                                    selectedThemeID = theme.id
+                                    UserPreferences.shared.selectedThemeID = theme.id
                                 }
                         }
                     }
@@ -258,6 +256,7 @@ struct OnboardingView: View {
                 
                 try KeychainService.save(token: cleanToken, forKey: "github_pat")
                 UserPreferences.shared.username = cleanUsername
+                SharedDataStore.shared.notifyWidgetToRefresh()
                 
                 await MainActor.run {
                     self.fetchedData = data

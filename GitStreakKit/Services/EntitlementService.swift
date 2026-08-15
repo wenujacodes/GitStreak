@@ -31,7 +31,7 @@ public struct ProEntitlements: EntitlementProviding, Sendable {
 public final class EntitlementManager: @unchecked Sendable {
     public static let shared = EntitlementManager()
     
-    public private(set) var current: any EntitlementProviding = FreeEntitlements()
+    public private(set) var current: any EntitlementProviding = ProEntitlements()
     
     private init() {}
     

@@ -11,14 +11,16 @@ all: generate build
 generate:
 	xcodegen generate
 
-# Build the app, framework, and widget extension with Apple Development signing
+# Build the app, framework, and widget extension
 build:
 	xcodebuild build \
 		-project $(PROJECT_NAME).xcodeproj \
 		-scheme $(SCHEME) \
 		-configuration $(CONFIG) \
 		-derivedDataPath $(BUILD_DIR) \
-		-allowProvisioningUpdates
+		CODE_SIGN_IDENTITY="-" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=YES
 
 # Run unit tests
 test:
@@ -28,7 +30,9 @@ test:
 		-configuration $(CONFIG) \
 		-derivedDataPath $(BUILD_DIR) \
 		-destination 'platform=macOS' \
-		-allowProvisioningUpdates
+		CODE_SIGN_IDENTITY="-" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=YES
 
 # Register widget extension with macOS LaunchServices & PluginKit
 register-widget:

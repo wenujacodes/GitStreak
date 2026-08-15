@@ -22,10 +22,8 @@ public struct ThemePickerView: View {
                     isSelected: selectedThemeID == theme.id
                 )
                 .onTapGesture {
-                    if !theme.isPro {
-                        selectedThemeID = theme.id
-                        onThemeChanged(theme.id)
-                    }
+                    selectedThemeID = theme.id
+                    onThemeChanged(theme.id)
                 }
             }
         }
@@ -61,22 +59,10 @@ struct ThemeSwatchGridItem: View {
                 }
             }
             
-            HStack(spacing: 4) {
-                Text(theme.name)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                
-                if theme.isPro {
-                    Text("PRO")
-                        .font(.system(size: 9, weight: .bold))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
-                        .background(Color.yellow.opacity(0.3))
-                        .foregroundColor(.orange)
-                        .cornerRadius(3)
-                }
-            }
+            Text(theme.name)
+                .font(.caption)
+                .fontWeight(.medium)
         }
-        .opacity(theme.isPro ? 0.6 : 1.0)
+        .contentShape(Rectangle())
     }
 }

@@ -10,11 +10,11 @@ struct MediumWidgetView: View {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 8) {
                             AvatarView(
                                 avatarURL: data.user.avatarURL,
-                                size: 24
+                                size: 28
                             )
                             
                             VStack(alignment: .leading, spacing: 0) {
@@ -33,29 +33,29 @@ struct MediumWidgetView: View {
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Total")
-                                .font(.system(size: 10))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.secondary)
                             Text("\(data.totalContributions)")
-                                .font(.system(size: 15, weight: .bold))
+                                .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.primary)
                         }
                         
                         StreakBadgeView(
                             streakCount: data.currentStreak,
                             label: "day streak",
-                            style: .standard
+                            style: .compact
                         )
                     }
                     .frame(maxWidth: 110, alignment: .leading)
                     
-                    Spacer()
+                    Spacer(minLength: 0)
                     
                     ContributionGridView(
                         weeks: data.weeks,
                         theme: entry.theme,
-                        maxWeeks: 10,
-                        cellSize: GSSpacing.smallGridCellSize,
-                        cellSpacing: 2
+                        maxWeeks: 11,
+                        cellSize: 10.5,
+                        cellSpacing: 2.5
                     )
                 }
             case .noUser:

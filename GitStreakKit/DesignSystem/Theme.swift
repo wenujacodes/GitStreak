@@ -61,16 +61,16 @@ public enum ThemeRegistry {
         noneHex: "#fff0e6", lowHex: "#ffc9a3", mediumHex: "#ff9a5c", highHex: "#e06b2d", veryHighHex: "#a63d0a"
     )
     public static let forest = ThemeColors(
-        id: "forest", name: "Forest", description: "Deep greens.", isPro: true,
+        id: "forest", name: "Forest", description: "Deep greens.", isPro: false,
         noneHex: "#ecf5e8", lowHex: "#b5d9a3", mediumHex: "#7abf5e", highHex: "#4a9434", veryHighHex: "#2d6420"
     )
     public static let nord = ThemeColors(
-        id: "nord", name: "Nord", description: "Arctic, north-bluish color palette.", isPro: true,
+        id: "nord", name: "Nord", description: "Arctic, north-bluish color palette.", isPro: false,
         noneHex: "#eceff4", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
     )
     
     public static let allThemes: [ThemeColors] = [github, monochrome, ocean, sunset, forest, nord]
-    public static let freeThemes: [ThemeColors] = allThemes.filter { !$0.isPro }
+    public static let freeThemes: [ThemeColors] = allThemes
     
     public static func theme(for id: String) -> ThemeColors {
         allThemes.first { $0.id == id } ?? defaultTheme

@@ -164,7 +164,6 @@ struct DashboardView: View {
                         
                         ThemePickerView(selectedThemeID: $selectedThemeID) { newThemeID in
                             UserPreferences.shared.selectedThemeID = newThemeID
-                            SharedDataStore.shared.notifyWidgetToRefresh()
                         }
                     }
                 }
