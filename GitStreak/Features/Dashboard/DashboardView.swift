@@ -20,10 +20,6 @@ struct DashboardView: View {
         colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
     }
     
-    private var innerContainerBgColor: Color {
-        colorScheme == .dark ? Color.black.opacity(0.35) : Color.black.opacity(0.04)
-    }
-    
     @Environment(\.openSettings) private var openSettings
     
     var body: some View {
@@ -82,41 +78,28 @@ struct DashboardView: View {
                             .foregroundColor(.primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
+                            .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(borderColor, lineWidth: 1)
-                    )
+                    .buttonStyle(DevHeaderButtonStyle())
                     
                     // REFRESH Button
                     Button(action: { Task { await refreshData() } }) {
-                        if isLoading {
-                            ProgressView()
-                                .controlSize(.small)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                        } else {
-                            Text("REFRESH")
-                                .font(GSTypography.monoBadge)
-                                .foregroundColor(.primary)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                        Group {
+                            if isLoading {
+                                ProgressView()
+                                    .controlSize(.small)
+                                    .frame(width: 50)
+                            } else {
+                                Text("REFRESH")
+                                    .font(GSTypography.monoBadge)
+                                    .foregroundColor(.primary)
+                            }
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(borderColor, lineWidth: 1)
-                    )
+                    .buttonStyle(DevHeaderButtonStyle())
                     .disabled(isLoading)
                 }
             }
@@ -384,5 +367,24 @@ struct DashboardView: View {
                 self.isLoading = false
             }
         }
+    }
+}
+
+struct DevHeaderButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(colorScheme == .dark
+                          ? Color.white.opacity(configuration.isPressed ? 0.12 : 0.06)
+                          : Color.black.opacity(configuration.isPressed ? 0.12 : 0.05))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
+            )
+            .contentShape(Rectangle())
     }
 }
