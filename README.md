@@ -1,29 +1,34 @@
 # GitStreak 🔥
 
-> **Make your coding habit visible without turning your desktop into a GitHub dashboard.**
+> **Make your coding habit visible on your desktop with a sleek, minimalist dev aesthetic.**
 
-GitStreak is a native macOS application and WidgetKit widget designed to motivate developers to keep coding by making their GitHub contribution activity visible directly on their desktop.
+GitStreak is a native macOS application and WidgetKit widget designed to motivate developers by displaying real-time GitHub contribution streaks and activity timelines directly on your desktop.
 
 ---
 
 ## Features
 
 - **Desktop Widgets (WidgetKit)**:
-  - **Small (`systemSmall`)**: Compact 6-week mini grid with flame streak counter.
-  - **Medium (`systemMedium`)**: Identity view with GitHub avatar, username, total contributions, 10-week graph, and streak badge.
-  - **Large (`systemLarge`)**: Full 13-week (~90 days) contribution matrix with weekday indicators (`M`, `W`, `F`) and complete 3-metric statistics row.
+  - **Small (`systemSmall`)**: Monospaced terminal header (`~/username`), bold streak counter (`11 day streak`), and 11-week activity heatmap.
+  - **Medium (`systemMedium`)**: Identity banner with avatar, live streak metric, and contribution grid.
+  - **Large (`systemLarge`)**: Full activity matrix with weekday indicators (`M`, `W`, `F`) and complete 3-metric developer card row.
+- **Raycast-Inspired Dark Dev Aesthetic**:
+  - Unified `#121313` dark mode and seamless light mode support.
+  - Full 53-week interactive contribution matrix with live hover tooltips.
+- **GitHub Token Requirements**:
+  - Uses **Personal Access Token (Classic)** (`ghp_...`).
+  - **Public Contributions Only**: Zero scopes required.
+  - **Private & Public Contributions**: Select the **`repo`** (Full control of private repositories) and **`read:user`** scopes.
 - **Privacy & Security First**:
-  - Requires only **public permissions** (zero scopes needed on your GitHub Personal Access Token).
-  - Your PAT is stored securely in the **Apple Keychain**.
-  - All contribution data is cached locally on your Mac.
-- **6 Color Palettes**:
+  - Your PAT is stored securely in the local **Apple Keychain**.
+  - All contribution data is cached locally on your Mac. No intermediate backend servers.
+- **Color Themes**:
   - Classic GitHub Green
   - Monochrome (Minimal Grayscale)
   - Ocean (Cool Blues)
   - Sunset (Warm Amber/Oranges)
   - Forest (Deep Greens)
   - Nord (Arctic North Palette)
-- **Deterministic Streak Engine**: Accurately computes current streaks, longest streaks, and gap tolerance in UTC.
 
 ---
 
@@ -59,22 +64,14 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
    make build
    ```
 
-3. **Run all 26 Unit Tests**:
+3. **Run the App & Register the Desktop Widget**:
    ```bash
-   make test
+   make register-widget
+   make run
    ```
-
-4. **Launch the App**:
-   ```bash
-   open GitStreak.xcodeproj
-   ```
-   Press `Cmd + R` in Xcode to run the app and register the desktop widget.
 
 ---
 
-## Adding the Widget to Desktop
+## License
 
-1. Right-click on your desktop wallpaper.
-2. Select **Edit Widgets...**
-3. Search for **GitStreak** and select your preferred size.
-4. Drag it directly onto your desktop.
+MIT License © 2026 Wenuja Liyanamana

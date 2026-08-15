@@ -4,7 +4,6 @@ import GitStreakKit
 struct SettingsView: View {
     @State private var username: String = UserPreferences.shared.username ?? ""
     @State private var token: String = ""
-    @State private var appearanceMode: AppearanceMode = UserPreferences.shared.preferredAppearance
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
     
@@ -12,7 +11,7 @@ struct SettingsView: View {
         TabView {
             generalTab
                 .tabItem {
-                    Label("General", systemImage: "gear")
+                    Label("General", systemImage: "gearshape")
                 }
             
             aboutTab
@@ -20,7 +19,7 @@ struct SettingsView: View {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        .frame(width: 460, height: 320)
+        .frame(width: 480, height: 280)
         .padding()
         .onAppear {
             loadToken()
@@ -29,48 +28,44 @@ struct SettingsView: View {
     
     private var generalTab: some View {
         Form {
-            Section("GitHub Account") {
-                TextField("GitHub Username", text: $username)
+            Section {
+                TextField("GitHub Username:", text: $username)
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: username) { _, newValue in
                         UserPreferences.shared.username = newValue.trimmingCharacters(in: .whitespaces)
                         SharedDataStore.shared.notifyWidgetToRefresh()
                     }
                 
+                SecureField("Personal Access Token:", text: $token)
+                    .textFieldStyle(.roundedBorder)
+                
                 HStack {
-                    SecureField("Personal Access Token", text: $token)
-                        .textFieldStyle(.roundedBorder)
+                    if let msg = saveStatusMessage {
+                        Text(msg)
+                            .font(.caption)
+                            .foregroundColor(msg.contains("Failed") ? .red : .green)
+                    }
                     
-                    Button("Update Token") {
+                    Spacer()
+                    
+                    Button("Save Token") {
                         saveToken()
                     }
                     .disabled(token.isEmpty || token == "••••••••••••••••")
                 }
-                
-                if let msg = saveStatusMessage {
-                    Text(msg)
-                        .font(.caption)
-                        .foregroundColor(.green)
-                }
-            }
-            
-            Section("Appearance") {
-                Picker("Theme Mode", selection: $appearanceMode) {
-                    Text("System").tag(AppearanceMode.system)
-                    Text("Light").tag(AppearanceMode.light)
-                    Text("Dark").tag(AppearanceMode.dark)
-                }
-                .pickerStyle(.segmented)
-                .onChange(of: appearanceMode) { _, newMode in
-                    UserPreferences.shared.preferredAppearance = newMode
-                }
+            } footer: {
+                Text("Requires a GitHub Personal Access Token (Classic) with 'repo' scope to include private contributions.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
             }
         }
+        .formStyle(.grouped)
         .padding()
     }
     
     private var aboutTab: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             Image(systemName: "flame.fill")
                 .resizable()
                 .scaledToFit()
@@ -105,7 +100,7 @@ struct SettingsView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This will remove your cached contribution history, your stored GitHub credentials, and reset the app to the onboarding state.")
+                Text("This will remove your cached contribution history, stored GitHub credentials, and reset the app.")
             }
         }
         .padding()
@@ -122,7 +117,7 @@ struct SettingsView: View {
         do {
             try KeychainService.save(token: cleanToken, forKey: "github_pat")
             SharedDataStore.shared.notifyWidgetToRefresh()
-            saveStatusMessage = "Token updated successfully."
+            saveStatusMessage = "Token saved successfully."
             token = "••••••••••••••••"
         } catch {
             saveStatusMessage = "Failed to update token: \(error.localizedDescription)"

@@ -14,14 +14,19 @@ public final class SharedDataStore: @unchecked Sendable {
         self.preferences = UserPreferences.shared
     }
     
-    public func refreshData() async throws -> ContributionData {
+    public func refreshData(force: Bool = true) async throws -> ContributionData {
         guard let username = preferences.username, !username.isEmpty else {
             throw NSError(domain: "SharedDataStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Username is not set"])
         }
         
         let token = KeychainService.load(forKey: "github_pat") ?? ""
         
-        let data = try await contributionService.refreshIfNeeded(username: username, token: token)
+        let data: ContributionData
+        if force {
+            data = try await contributionService.fetchContributions(username: username, token: token)
+        } else {
+            data = try await contributionService.refreshIfNeeded(username: username, token: token)
+        }
         preferences.lastRefreshDate = Date()
         
         notifyWidgetToRefresh()

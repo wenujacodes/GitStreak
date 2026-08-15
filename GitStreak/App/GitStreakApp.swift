@@ -22,6 +22,7 @@ struct GitStreakApp: App {
         Settings {
             SettingsView()
         }
+        .windowResizability(.contentSize)
     }
 }
 

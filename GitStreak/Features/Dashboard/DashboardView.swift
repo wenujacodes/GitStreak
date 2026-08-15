@@ -7,7 +7,6 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
-    @State private var selectedRangeWeeks = 13
     
     private var appBgColor: Color {
         colorScheme == .dark ? Color(red: 18/255, green: 19/255, blue: 19/255) : Color(nsColor: .windowBackgroundColor)
@@ -24,6 +23,8 @@ struct DashboardView: View {
     private var innerContainerBgColor: Color {
         colorScheme == .dark ? Color.black.opacity(0.35) : Color.black.opacity(0.04)
     }
+    
+    @Environment(\.openSettings) private var openSettings
     
     var body: some View {
         VStack(spacing: 0) {
@@ -43,13 +44,11 @@ struct DashboardView: View {
                                 .foregroundColor(.secondary)
                         }
                         
-                        HStack(spacing: 0) {
-                            Text("Updated ")
-                            Text(data.fetchedAt, style: .relative)
-                            Text(" ago")
+                        TimelineView(.periodic(from: .now, by: 1)) { _ in
+                            Text("Updated \(relativeTimeString(from: data.fetchedAt))")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
                         }
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
                     }
                 } else {
                     Circle()
@@ -69,37 +68,61 @@ struct DashboardView: View {
                 
                 Spacer()
                 
-                // Plain Uppercase Refresh Button
-                Button(action: { Task { await refreshData() } }) {
-                    if isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                    } else {
-                        Text("REFRESH")
+                HStack(spacing: 8) {
+                    // CONFIG / Settings Button
+                    Button(action: {
+                        if #available(macOS 14.0, *) {
+                            openSettings()
+                        } else {
+                            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                        }
+                    }) {
+                        Text("CONFIG")
                             .font(GSTypography.monoBadge)
                             .foregroundColor(.primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                     }
+                    .buttonStyle(.plain)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(borderColor, lineWidth: 1)
+                    )
+                    
+                    // REFRESH Button
+                    Button(action: { Task { await refreshData() } }) {
+                        if isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                        } else {
+                            Text("REFRESH")
+                                .font(GSTypography.monoBadge)
+                                .foregroundColor(.primary)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(borderColor, lineWidth: 1)
+                    )
+                    .disabled(isLoading)
                 }
-                .buttonStyle(.plain)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(borderColor, lineWidth: 1)
-                )
-                .disabled(isLoading)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
             .background(appBgColor)
-            
-            // Profile banner stroke removed
             
             ScrollView {
                 VStack(spacing: 20) {
@@ -177,28 +200,18 @@ struct DashboardView: View {
                                 .stroke(Color.orange.opacity(0.25), lineWidth: 1)
                         )
                         
-                        // Heatmap Viewport Section
+                        // Heatmap Viewport Section (Full 53 Weeks Default)
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
-                                Text("ACTIVITY TIMELINE")
+                                Text("ACTIVITY TIMELINE (PAST YEAR)")
                                     .font(GSTypography.monoCaption)
                                     .foregroundColor(.secondary)
                                     .tracking(0.8)
                                 
                                 Spacer()
-                                
-                                // Range Picker Pills
-                                HStack(spacing: 2) {
-                                    rangeButton(title: "13W", weeks: 13)
-                                    rangeButton(title: "26W", weeks: 26)
-                                    rangeButton(title: "52W", weeks: 52)
-                                }
-                                .padding(2)
-                                .background(innerContainerBgColor)
-                                .cornerRadius(6)
                             }
                             
-                            HStack(alignment: .top, spacing: 6) {
+                            HStack(alignment: .top, spacing: 8) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(" ").font(.system(size: 8))
                                     Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
@@ -214,9 +227,9 @@ struct DashboardView: View {
                                 ContributionGridView(
                                     weeks: data.weeks,
                                     theme: ThemeRegistry.theme(for: selectedThemeID),
-                                    maxWeeks: selectedRangeWeeks,
-                                    cellSize: selectedRangeWeeks > 26 ? 10 : 13,
-                                    cellSpacing: selectedRangeWeeks > 26 ? 2.5 : 3.5,
+                                    maxWeeks: 53,
+                                    cellSize: 11.5,
+                                    cellSpacing: 2.8,
                                     showTooltips: true
                                 )
                                 
@@ -313,28 +326,21 @@ struct DashboardView: View {
         }
     }
     
-    @ViewBuilder
-    private func rangeButton(title: String, weeks: Int) -> some View {
-        Button(action: {
-            withAnimation(.easeInOut(duration: 0.15)) {
-                selectedRangeWeeks = weeks
-            }
-        }) {
-            Text(title)
-                .font(GSTypography.monoBadge)
-                .foregroundColor(selectedRangeWeeks == weeks ? (colorScheme == .dark ? .white : .black) : .secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(selectedRangeWeeks == weeks ? (colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.1)) : Color.clear)
-                .cornerRadius(4)
+    private func relativeTimeString(from date: Date) -> String {
+        let elapsed = max(0, Int(Date().timeIntervalSince(date)))
+        if elapsed < 60 {
+            return "\(elapsed)s ago"
         }
-        .buttonStyle(.plain)
-    }
-    
-    private func formattedTime(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
+        let minutes = elapsed / 60
+        if minutes < 60 {
+            return "\(minutes)m ago"
+        }
+        let hours = minutes / 60
+        if hours < 24 {
+            return "\(hours)h ago"
+        }
+        let days = hours / 24
+        return "\(days)d ago"
     }
     
     private func loadInitialData() {
@@ -352,7 +358,7 @@ struct DashboardView: View {
         errorMessage = nil
         
         do {
-            let data = try await SharedDataStore.shared.refreshData()
+            let data = try await SharedDataStore.shared.refreshData(force: true)
             await MainActor.run {
                 self.contributionData = data
                 self.isLoading = false
