@@ -6,7 +6,7 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ---
 
-## ✨ Features
+## Features
 
 - **Desktop Widgets (WidgetKit)**:
   - **Small (`systemSmall`)**: Compact 6-week mini grid with flame streak counter.
@@ -27,7 +27,7 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Platform**: macOS 14.0+ (Sonoma, Sequoia)
 - **Language**: Swift 6.0 (Strict Concurrency)
@@ -37,7 +37,7 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -72,15 +72,9 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ---
 
-## 🧩 Adding the Widget to Desktop
+## Adding the Widget to Desktop
 
 1. Right-click on your desktop wallpaper.
 2. Select **Edit Widgets...**
 3. Search for **GitStreak** and select your preferred size.
 4. Drag it directly onto your desktop.
-
----
-
-## 📄 License
-
-MIT License. See `LICENSE` for details.
