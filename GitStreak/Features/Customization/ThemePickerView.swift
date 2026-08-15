@@ -11,11 +11,11 @@ public struct ThemePickerView: View {
     }
     
     private let columns = [
-        GridItem(.adaptive(minimum: 140), spacing: 16)
+        GridItem(.adaptive(minimum: 150), spacing: 12)
     ]
     
     public var body: some View {
-        LazyVGrid(columns: columns, spacing: 16) {
+        LazyVGrid(columns: columns, spacing: 12) {
             ForEach(ThemeRegistry.allThemes, id: \.id) { theme in
                 ThemeSwatchGridItem(
                     theme: theme,
@@ -33,6 +33,7 @@ public struct ThemePickerView: View {
 struct ThemeSwatchGridItem: View {
     let theme: ThemeColors
     let isSelected: Bool
+    @State private var isHovered = false
     
     var body: some View {
         VStack(spacing: 8) {
@@ -43,25 +44,40 @@ struct ThemeSwatchGridItem: View {
                         .frame(width: 16, height: 16)
                 }
             }
-            .padding(10)
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-            )
-            .overlay(alignment: .topTrailing) {
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(Color.black.opacity(0.3))
+            .cornerRadius(6)
+            
+            HStack {
+                Text(theme.name)
+                    .font(GSTypography.monoCaption)
+                    .fontWeight(.medium)
+                    .foregroundColor(isSelected ? .primary : .secondary)
+                
+                Spacer()
+                
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.accentColor)
-                        .background(Circle().fill(Color.white))
-                        .offset(x: 6, y: -6)
+                        .foregroundColor(.green)
+                        .font(.system(size: 11))
                 }
             }
-            
-            Text(theme.name)
-                .font(.caption)
-                .fontWeight(.medium)
+            .padding(.horizontal, 4)
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(nsColor: .windowBackgroundColor).opacity(isHovered ? 0.9 : 0.5))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isSelected ? Color.green.opacity(0.8) : Color.white.opacity(isHovered ? 0.15 : 0.06), lineWidth: isSelected ? 1.5 : 1)
+        )
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
         }
         .contentShape(Rectangle())
     }

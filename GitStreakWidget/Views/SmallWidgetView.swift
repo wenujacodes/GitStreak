@@ -10,65 +10,77 @@ struct SmallWidgetView: View {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header: Username
-                    Text("@\(username)")
-                        .font(.system(size: 11, weight: .semibold))
+                    // Header: ~/username in compact monospaced text
+                    Text("~/\(username)")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                     
+                    Spacer(minLength: 2)
+                    
+                    // Compact Streak Metric
+                    HStack(alignment: .firstTextBaseline, spacing: 5) {
+                        Text("\(data.currentStreak)")
+                            .font(.system(size: 22, weight: .bold, design: .monospaced))
+                            .foregroundColor(.primary)
+                        
+                        Text("day streak")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+                    
                     Spacer(minLength: 4)
                     
-                    // Centered Contribution Grid
+                    // Heatmap Grid: 11 weeks, smaller cells, balanced side & bottom margins
                     HStack {
                         Spacer(minLength: 0)
                         ContributionGridView(
                             weeks: data.weeks,
                             theme: entry.theme,
-                            maxWeeks: 9,
-                            cellSize: 10.5,
-                            cellSpacing: 2.5
+                            maxWeeks: 11,
+                            cellSize: 9.5,
+                            cellSpacing: 2.2
                         )
                         Spacer(minLength: 0)
                     }
-                    
-                    Spacer(minLength: 4)
-                    
-                    // Footer: Flame streak badge aligned with header
-                    StreakBadgeView(
-                        streakCount: data.currentStreak,
-                        label: "days",
-                        style: .compact
-                    )
                 }
             case .noUser:
                 VStack(spacing: 6) {
+                    Text("~/gitstreak")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
+                    Spacer()
                     Image(systemName: "person.crop.circle.badge.plus")
-                        .font(.system(size: 20))
+                        .font(.system(size: 18))
                         .foregroundColor(.secondary)
-                    Text("Add GitHub\nAccount")
-                        .font(.caption)
+                    Text("Add GitHub Account")
+                        .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .noData:
                 VStack(spacing: 6) {
+                    Text("~/gitstreak")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
+                    Spacer()
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 20))
+                        .font(.system(size: 18))
                         .foregroundColor(.secondary)
-                    Text("Open GitStreak\nto sync")
-                        .font(.caption)
+                    Text("Open app to sync")
+                        .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .error(let msg):
                 VStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 20))
+                        .font(.system(size: 18))
                         .foregroundColor(.orange)
                     Text(msg)
-                        .font(.system(size: 10))
+                        .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -76,8 +88,9 @@ struct SmallWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 14)
+        .padding(.top, 13)
+        .padding(.bottom, 14)
         .containerBackground(for: .widget) {
             Color(NSColor.windowBackgroundColor)
         }

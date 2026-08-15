@@ -45,7 +45,7 @@ struct OnboardingView: View {
             }
             .padding()
         }
-        .frame(minWidth: 540, minHeight: 440)
+        .frame(minWidth: 900, maxWidth: 900, minHeight: 560)
         .padding()
     }
     

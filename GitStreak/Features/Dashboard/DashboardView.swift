@@ -2,178 +2,339 @@ import SwiftUI
 import GitStreakKit
 
 struct DashboardView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var contributionData: ContributionData?
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
+    @State private var selectedRangeWeeks = 13
+    
+    private var appBgColor: Color {
+        colorScheme == .dark ? Color(red: 18/255, green: 19/255, blue: 19/255) : Color(nsColor: .windowBackgroundColor)
+    }
+    
+    private var cardBgColor: Color {
+        colorScheme == .dark ? Color(red: 24/255, green: 25/255, blue: 25/255) : Color(nsColor: .controlBackgroundColor)
+    }
+    
+    private var borderColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
+    }
+    
+    private var innerContainerBgColor: Color {
+        colorScheme == .dark ? Color.black.opacity(0.35) : Color.black.opacity(0.04)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header Bar
+            // Command Header
             HStack(alignment: .center, spacing: 14) {
                 if let data = contributionData {
-                    AvatarView(avatarURL: data.user.avatarURL, size: 40)
+                    AvatarView(avatarURL: data.user.avatarURL, size: 36)
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 8) {
                             Text(data.user.displayName ?? data.user.username)
-                                .font(.headline)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.primary)
+                            
                             Text("@\(data.user.username)")
-                                .font(.subheadline)
+                                .font(GSTypography.monoCaption)
                                 .foregroundColor(.secondary)
                         }
                         
-                        Text("Updated \(data.fetchedAt, style: .relative) ago")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 0) {
+                            Text("Updated ")
+                            Text(data.fetchedAt, style: .relative)
+                            Text(" ago")
+                        }
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
                     }
                 } else {
                     Circle()
-                        .fill(Color.secondary.opacity(0.15))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .foregroundColor(.secondary)
-                        )
+                        .fill(Color.primary.opacity(0.08))
+                        .frame(width: 36, height: 36)
+                        .overlay(Image(systemName: "person.fill").foregroundColor(.secondary))
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(UserPreferences.shared.username ?? "GitStreak")
-                            .font(.headline)
-                        Text("Loading...")
-                            .font(.caption2)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.primary)
+                        Text("Connecting...")
+                            .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
                 }
                 
                 Spacer()
                 
+                // Plain Uppercase Refresh Button
                 Button(action: { Task { await refreshData() } }) {
-                    HStack(spacing: 4) {
-                        if isLoading {
-                            ProgressView()
-                                .controlSize(.small)
-                        } else {
-                            Image(systemName: "arrow.clockwise")
-                            Text("Refresh")
-                        }
+                    if isLoading {
+                        ProgressView()
+                            .controlSize(.small)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                    } else {
+                        Text("REFRESH")
+                            .font(GSTypography.monoBadge)
+                            .foregroundColor(.primary)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
                     }
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.regular)
+                .buttonStyle(.plain)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(borderColor, lineWidth: 1)
+                )
                 .disabled(isLoading)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(appBgColor)
             
-            Divider()
+            // Profile banner stroke removed
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     if let error = errorMessage {
-                        HStack {
+                        HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
                             Text(error)
-                                .font(.callout)
-                                .foregroundColor(.secondary)
+                                .font(GSTypography.monoCaption)
+                                .foregroundColor(.primary)
                             Spacer()
-                            Button("Dismiss") {
-                                errorMessage = nil
-                            }
-                            .buttonStyle(.link)
+                            Button("Dismiss") { errorMessage = nil }
+                                .buttonStyle(.plain)
+                                .font(GSTypography.monoCaption)
+                                .foregroundColor(.secondary)
                         }
-                        .padding()
-                        .background(Color.orange.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(12)
+                        .background(Color.orange.opacity(0.12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                        )
+                        .cornerRadius(6)
                     }
                     
                     if let data = contributionData {
-                        // Activity Grid Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Activity History")
-                                    .font(.headline)
-                                Spacer()
-                                Text("Last 13 weeks")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                        // Hero Streak Banner
+                        HStack(alignment: .center, spacing: 20) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "flame.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.orange)
+                                    Text("CURRENT STREAK")
+                                        .font(GSTypography.monoCaption)
+                                        .foregroundColor(.secondary)
+                                        .tracking(1)
+                                }
+                                
+                                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                    Text("\(data.currentStreak)")
+                                        .font(GSTypography.monoLarge)
+                                        .foregroundColor(.primary)
+                                    Text("DAYS")
+                                        .font(GSTypography.monoCaption)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                             
+                            Spacer()
+                            
+                            VStack(alignment: .trailing, spacing: 4) {
+                                Text("PERSONAL BEST")
+                                    .font(GSTypography.monoBadge)
+                                    .foregroundColor(.secondary)
+                                    .tracking(0.5)
+                                Text("\(data.longestStreak) DAYS")
+                                    .font(GSTypography.monoTitle)
+                                    .foregroundColor(.primary)
+                            }
+                        }
+                        .padding(18)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Color.orange.opacity(0.08), colorScheme == .dark ? Color.white.opacity(0.02) : Color.orange.opacity(0.02)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.orange.opacity(0.25), lineWidth: 1)
+                        )
+                        
+                        // Heatmap Viewport Section
+                        VStack(alignment: .leading, spacing: 12) {
                             HStack {
+                                Text("ACTIVITY TIMELINE")
+                                    .font(GSTypography.monoCaption)
+                                    .foregroundColor(.secondary)
+                                    .tracking(0.8)
+                                
                                 Spacer()
+                                
+                                // Range Picker Pills
+                                HStack(spacing: 2) {
+                                    rangeButton(title: "13W", weeks: 13)
+                                    rangeButton(title: "26W", weeks: 26)
+                                    rangeButton(title: "52W", weeks: 52)
+                                }
+                                .padding(2)
+                                .background(innerContainerBgColor)
+                                .cornerRadius(6)
+                            }
+                            
+                            HStack(alignment: .top, spacing: 6) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(" ").font(.system(size: 8))
+                                    Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                    Text(" ").font(.system(size: 8))
+                                    Text("W").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                    Text(" ").font(.system(size: 8))
+                                    Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                    Text(" ").font(.system(size: 8))
+                                }
+                                
+                                Spacer(minLength: 0)
+                                
                                 ContributionGridView(
                                     weeks: data.weeks,
                                     theme: ThemeRegistry.theme(for: selectedThemeID),
-                                    maxWeeks: 13,
-                                    cellSize: 14,
-                                    cellSpacing: 4
+                                    maxWeeks: selectedRangeWeeks,
+                                    cellSize: selectedRangeWeeks > 26 ? 10 : 13,
+                                    cellSpacing: selectedRangeWeeks > 26 ? 2.5 : 3.5,
+                                    showTooltips: true
                                 )
-                                Spacer()
+                                
+                                Spacer(minLength: 0)
                             }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 12)
-                            .background(Color(NSColor.controlBackgroundColor))
-                            .cornerRadius(10)
+                            .padding(.vertical, 14)
+                            .padding(.horizontal, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(innerContainerBgColor)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(borderColor, lineWidth: 1)
+                            )
                         }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(cardBgColor)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(borderColor, lineWidth: 1)
+                        )
                         
-                        // Stats Row
-                        HStack(spacing: 16) {
+                        // Dev Metric Cards
+                        HStack(spacing: 12) {
                             StatCardView(
                                 title: "Current Streak",
-                                value: "\(data.currentStreak) days",
+                                value: "\(data.currentStreak)d",
                                 icon: "flame.fill",
-                                iconColor: .orange
+                                iconColor: .orange,
+                                subtitle: data.currentStreak > 0 ? "Active today" : "No commits yet"
                             )
                             
                             StatCardView(
                                 title: "Longest Streak",
-                                value: "\(data.longestStreak) days",
+                                value: "\(data.longestStreak)d",
                                 icon: "trophy.fill",
-                                iconColor: .yellow
+                                iconColor: .yellow,
+                                subtitle: "All-time streak"
                             )
                             
                             StatCardView(
-                                title: "Total Contributions",
+                                title: "Contributions",
                                 value: "\(data.totalContributions)",
                                 icon: "square.grid.3x3.fill",
-                                iconColor: .green
+                                iconColor: .green,
+                                subtitle: "Total past year"
                             )
                         }
                     } else if isLoading {
                         VStack(spacing: 12) {
                             ProgressView()
-                            Text("Loading your contribution data...")
-                                .font(.callout)
+                            Text("Fetching commit timeline...")
+                                .font(GSTypography.monoCaption)
                                 .foregroundColor(.secondary)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 200)
+                        .frame(maxWidth: .infinity, minHeight: 220)
                     }
                     
-                    Divider()
-                    
                     // Theme Selector Section
-                    VStack(alignment: .leading, spacing: 14) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Widget Theme")
-                                .font(.headline)
-                            Text("Choose a color palette for your desktop widget.")
-                                .font(.caption)
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("WIDGET THEME")
+                                .font(GSTypography.monoCaption)
                                 .foregroundColor(.secondary)
+                                .tracking(0.8)
+                            Spacer()
                         }
                         
                         ThemePickerView(selectedThemeID: $selectedThemeID) { newThemeID in
                             UserPreferences.shared.selectedThemeID = newThemeID
                         }
                     }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(cardBgColor)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(borderColor, lineWidth: 1)
+                    )
                 }
-                .padding(24)
+                .padding(20)
             }
         }
-        .frame(minWidth: 680, minHeight: 520)
+        .frame(minWidth: 900, maxWidth: 900, minHeight: 560)
+        .background(appBgColor)
         .onAppear {
             loadInitialData()
         }
+    }
+    
+    @ViewBuilder
+    private func rangeButton(title: String, weeks: Int) -> some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.15)) {
+                selectedRangeWeeks = weeks
+            }
+        }) {
+            Text(title)
+                .font(GSTypography.monoBadge)
+                .foregroundColor(selectedRangeWeeks == weeks ? (colorScheme == .dark ? .white : .black) : .secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(selectedRangeWeeks == weeks ? (colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.1)) : Color.clear)
+                .cornerRadius(4)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private func formattedTime(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return formatter.localizedString(for: date, relativeTo: Date())
     }
     
     private func loadInitialData() {
