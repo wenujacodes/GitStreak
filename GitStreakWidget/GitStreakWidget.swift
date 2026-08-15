@@ -13,6 +13,7 @@ struct GitStreakWidget: Widget {
         .description("Your GitHub contribution streak at a glance.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
+        .containerBackgroundRemovable(false)
     }
 }
 

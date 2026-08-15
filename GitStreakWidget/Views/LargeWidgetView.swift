@@ -122,8 +122,9 @@ struct LargeWidgetView: View {
             }
         }
         .padding(14)
+        .background(Color(red: 30/255, green: 30/255, blue: 31/255))
         .containerBackground(for: .widget) {
-            Color(NSColor.windowBackgroundColor)
+            Color(red: 30/255, green: 30/255, blue: 31/255) // #1E1E1F
         }
     }
 }
