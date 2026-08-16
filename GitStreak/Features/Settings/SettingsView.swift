@@ -3,9 +3,12 @@ import GitStreakKit
 
 struct SettingsView: View {
     @State private var username: String = UserPreferences.shared.username ?? ""
-    @State private var token: String = ""
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
+    
+    // OAuth Device Flow state
+    @State private var isAuthenticatingOAuth = false
+    @State private var deviceCodeResponse: DeviceCodeResponse? = nil
     
     var body: some View {
         TabView {
@@ -19,42 +22,87 @@ struct SettingsView: View {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        .frame(width: 480, height: 280)
+        .frame(width: 480, height: 260)
         .padding()
-        .onAppear {
-            loadToken()
-        }
     }
     
     private var generalTab: some View {
         Form {
             Section {
-                TextField("GitHub Username:", text: $username)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: username) { _, newValue in
-                        UserPreferences.shared.username = newValue.trimmingCharacters(in: .whitespaces)
-                        SharedDataStore.shared.notifyWidgetToRefresh()
+                if let devCode = deviceCodeResponse, isAuthenticatingOAuth {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("ENTER THIS CODE ON GITHUB:")
+                                .font(GSTypography.monoBadge)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text(devCode.userCode)
+                                .font(.system(size: 16, weight: .bold, design: .monospaced))
+                                .foregroundColor(.primary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.primary.opacity(0.08))
+                                .cornerRadius(4)
+                        }
+                        
+                        HStack(spacing: 8) {
+                            Button("Open GitHub") {
+                                OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
+                            }
+                            .controlSize(.small)
+                            
+                            Button("Cancel") {
+                                cancelOAuth()
+                            }
+                            .controlSize(.small)
+                            
+                            Spacer()
+                            
+                            ProgressView()
+                                .controlSize(.small)
+                        }
                     }
-                
-                SecureField("Personal Access Token:", text: $token)
-                    .textFieldStyle(.roundedBorder)
-                
-                HStack {
-                    if let msg = saveStatusMessage {
-                        Text(msg)
-                            .font(.caption)
-                            .foregroundColor(msg.contains("Failed") ? .red : .green)
+                    .padding(.vertical, 4)
+                } else {
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Connected Account")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            if !username.isEmpty {
+                                Text("@\(username)")
+                                    .font(GSTypography.monoCaption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("No account connected")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: startOAuthFlow) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "person.badge.key.fill")
+                                Text(username.isEmpty ? "Sign in with GitHub" : "Switch Account")
+                            }
+                        }
+                        .controlSize(.regular)
                     }
-                    
-                    Spacer()
-                    
-                    Button("Save Token") {
-                        saveToken()
-                    }
-                    .disabled(token.isEmpty || token == "••••••••••••••••")
+                    .padding(.vertical, 4)
                 }
+                
+                if let msg = saveStatusMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundColor(msg.contains("failed") ? .red : .green)
+                }
+            } header: {
+                Text("GitHub Authentication")
             } footer: {
-                Text("Requires a GitHub Personal Access Token (Classic) with 'repo' scope to include private contributions.")
+                Text("GitStreak authenticates securely with GitHub via 1-click Device Flow and stores your token in the local Keychain.")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
@@ -110,22 +158,44 @@ struct SettingsView: View {
         .padding()
     }
     
-    private func loadToken() {
-        if KeychainService.load(forKey: "github_pat") != nil {
-            token = "••••••••••••••••"
+    private func startOAuthFlow() {
+        saveStatusMessage = nil
+        Task {
+            do {
+                let codeResponse = try await OAuthService.shared.requestDeviceCode()
+                
+                await MainActor.run {
+                    self.deviceCodeResponse = codeResponse
+                    self.isAuthenticatingOAuth = true
+                }
+                
+                OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
+                
+                let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
+                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
+                
+                try KeychainService.save(token: accessToken, forKey: "github_pat")
+                UserPreferences.shared.username = userInfo.username
+                _ = try await SharedDataStore.shared.refreshData(force: true)
+                SharedDataStore.shared.notifyWidgetToRefresh()
+                
+                await MainActor.run {
+                    self.username = userInfo.username
+                    self.isAuthenticatingOAuth = false
+                    self.saveStatusMessage = "Successfully connected as @\(userInfo.username)!"
+                }
+            } catch {
+                await MainActor.run {
+                    self.isAuthenticatingOAuth = false
+                    self.saveStatusMessage = "OAuth failed: \(error.localizedDescription)"
+                }
+            }
         }
     }
     
-    private func saveToken() {
-        let cleanToken = token.trimmingCharacters(in: .whitespaces)
-        do {
-            try KeychainService.save(token: cleanToken, forKey: "github_pat")
-            SharedDataStore.shared.notifyWidgetToRefresh()
-            saveStatusMessage = "Token saved successfully."
-            token = "••••••••••••••••"
-        } catch {
-            saveStatusMessage = "Failed to update token: \(error.localizedDescription)"
-        }
+    private func cancelOAuth() {
+        isAuthenticatingOAuth = false
+        deviceCodeResponse = nil
     }
     
     private func clearData() {

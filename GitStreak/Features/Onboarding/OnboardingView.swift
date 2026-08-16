@@ -5,12 +5,15 @@ struct OnboardingView: View {
     let onComplete: () -> Void
     
     @State private var currentStep = 0
-    @State private var username = ""
-    @State private var token = ""
     @State private var isLoading = false
     @State private var errorMessage: String? = nil
     @State private var fetchedData: ContributionData? = nil
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
+    
+    // OAuth Device Flow state
+    @State private var isAuthenticatingOAuth = false
+    @State private var deviceCodeResponse: DeviceCodeResponse? = nil
+    @State private var isPollingOAuth = false
     
     var body: some View {
         VStack {
@@ -35,7 +38,7 @@ struct OnboardingView: View {
             Spacer()
             
             HStack {
-                if currentStep > 0 && currentStep < 3 {
+                if currentStep > 0 && currentStep < 3 && !isAuthenticatingOAuth {
                     Button("Back") {
                         currentStep -= 1
                     }
@@ -89,51 +92,95 @@ struct OnboardingView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                Text("Enter your GitHub username and a Personal Access Token.")
+                Text("Sign in with 1-click via GitHub to track your contribution activity.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             
-            VStack(alignment: .leading, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Username")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    TextField("e.g. torvalds", text: $username)
-                        .textFieldStyle(.roundedBorder)
+            if isAuthenticatingOAuth, let devCode = deviceCodeResponse {
+                // Device Flow Pending View
+                VStack(spacing: 16) {
+                    VStack(spacing: 8) {
+                        Text("ENTER THIS CODE ON GITHUB:")
+                            .font(GSTypography.monoBadge)
+                            .foregroundColor(.secondary)
+                            .tracking(1)
+                        
+                        Text(devCode.userCode)
+                            .font(.system(size: 28, weight: .bold, design: .monospaced))
+                            .foregroundColor(.primary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.primary.opacity(0.08))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.primary.opacity(0.15), lineWidth: 1)
+                            )
+                        
+                        Text("✓ Code copied to clipboard")
+                            .font(.caption2)
+                            .foregroundColor(.green)
+                    }
+                    
+                    HStack(spacing: 12) {
+                        Button("Open GitHub in Browser") {
+                            OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.regular)
+                        
+                        Button("Cancel") {
+                            cancelOAuth()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.regular)
+                    }
+                    
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Waiting for authorization on GitHub...")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.top, 4)
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Personal Access Token (PAT)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    SecureField("ghp_...", text: $token)
-                        .textFieldStyle(.roundedBorder)
+                .padding(24)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(nsColor: .controlBackgroundColor))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                )
+                .frame(maxWidth: 420)
+            } else {
+                // 1-Click OAuth Button
+                VStack(spacing: 16) {
+                    Button(action: startOAuthFlow) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "person.badge.key.fill")
+                                .font(.system(size: 14))
+                            Text("Sign in with GitHub")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(isLoading)
+                    
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-                
-                Text("Create a classic token with **no scopes** needed at [github.com/settings/tokens](https://github.com/settings/tokens)")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                
-                if let errorMessage = errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                }
+                .frame(maxWidth: 320)
             }
-            .frame(maxWidth: 340)
-            
-            Button(action: connectAccount) {
-                if isLoading {
-                    ProgressView()
-                        .controlSize(.small)
-                } else {
-                    Text("Connect Account")
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(username.trimmingCharacters(in: .whitespaces).isEmpty || token.trimmingCharacters(in: .whitespaces).isEmpty || isLoading)
         }
     }
     
@@ -164,15 +211,16 @@ struct OnboardingView: View {
                     ContributionGridView(
                         weeks: data.weeks,
                         theme: ThemeRegistry.theme(for: selectedThemeID),
-                        maxWeeks: 13,
+                        maxWeeks: 26,
                         cellSize: 12,
                         cellSpacing: 3
                     )
-                    .padding()
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
                     .background(Color(NSColor.controlBackgroundColor))
                     .cornerRadius(8)
                 }
-                .frame(maxWidth: 440)
+                .frame(maxWidth: 520)
             }
             
             VStack(alignment: .leading, spacing: 8) {
@@ -193,7 +241,7 @@ struct OnboardingView: View {
                     .padding(.vertical, 4)
                 }
             }
-            .frame(maxWidth: 440)
+            .frame(maxWidth: 520)
             
             Button("Continue") {
                 currentStep += 1
@@ -242,33 +290,54 @@ struct OnboardingView: View {
         }
     }
     
-    private func connectAccount() {
-        let cleanUsername = username.trimmingCharacters(in: .whitespaces)
-        let cleanToken = token.trimmingCharacters(in: .whitespaces)
-        
+    // MARK: - OAuth Flow
+    private func startOAuthFlow() {
         isLoading = true
         errorMessage = nil
         
         Task {
             do {
-                let service = ContributionService()
-                let data = try await service.fetchContributions(username: cleanUsername, token: cleanToken)
+                let codeResponse = try await OAuthService.shared.requestDeviceCode()
                 
-                try KeychainService.save(token: cleanToken, forKey: "github_pat")
-                UserPreferences.shared.username = cleanUsername
+                await MainActor.run {
+                    self.deviceCodeResponse = codeResponse
+                    self.isAuthenticatingOAuth = true
+                    self.isLoading = false
+                    self.isPollingOAuth = true
+                }
+                
+                OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
+                
+                let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
+                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
+                
+                let service = ContributionService()
+                let data = try await service.fetchContributions(username: userInfo.username, token: accessToken)
+                
+                try KeychainService.save(token: accessToken, forKey: "github_pat")
+                UserPreferences.shared.username = userInfo.username
                 SharedDataStore.shared.notifyWidgetToRefresh()
                 
                 await MainActor.run {
                     self.fetchedData = data
-                    self.isLoading = false
+                    self.isAuthenticatingOAuth = false
+                    self.isPollingOAuth = false
                     self.currentStep += 1
                 }
             } catch {
                 await MainActor.run {
                     self.isLoading = false
+                    self.isAuthenticatingOAuth = false
+                    self.isPollingOAuth = false
                     self.errorMessage = error.localizedDescription
                 }
             }
         }
+    }
+    
+    private func cancelOAuth() {
+        isAuthenticatingOAuth = false
+        isPollingOAuth = false
+        deviceCodeResponse = nil
     }
 }

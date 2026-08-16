@@ -15,13 +15,12 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 - **Raycast-Inspired Dark Dev Aesthetic**:
   - Unified `#121313` dark mode and seamless light mode support.
   - Full 53-week interactive contribution matrix with live hover tooltips.
-- **GitHub Token Requirements**:
-  - Uses **Personal Access Token (Classic)** (`ghp_...`).
-  - **Public Contributions Only**: Zero scopes required.
-  - **Private & Public Contributions**: Select the **`repo`** (Full control of private repositories) and **`read:user`** scopes.
+- **1-Click GitHub OAuth Sign-In**:
+  - Frictionless sign-in via native **GitHub Device Authorization Flow** — zero manual configuration or keys required.
+  - Automatically fetches both public and private repository contribution activity.
 - **Privacy & Security First**:
-  - Your PAT is stored securely in the local **Apple Keychain**.
-  - All contribution data is cached locally on your Mac. No intermediate backend servers.
+  - Credentials stored securely in the local **Apple Keychain**.
+  - 100% serverless — all data is cached locally on your Mac. No intermediate backend servers.
 - **Color Themes**:
   - Classic GitHub Green
   - Monochrome (Minimal Grayscale)
