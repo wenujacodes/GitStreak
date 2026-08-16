@@ -1,0 +1,107 @@
+name: Release and Update Appcast
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to release (e.g. v1.0.1)'
+        required: true
+        default: 'v1.0.1'
+
+jobs:
+  build-and-release:
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Release Tag
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.version }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install Tools
+        run: |
+          brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: |
+          xcodegen generate
+
+      - name: Build GitStreak Release
+        run: |
+          xcodebuild -project GitStreak.xcodeproj \
+            -scheme GitStreak \
+            -configuration Release \
+            -derivedDataPath ./build \
+            MARKETING_VERSION=${{ steps.vars.outputs.version }} \
+            build
+
+      - name: Package Release ZIP
+        run: |
+          mkdir -p release_artifacts
+          cd build/Build/Products/Release
+          zip -r -y ../../../../release_artifacts/GitStreak.zip GitStreak.app
+          cd ../../../..
+
+      - name: Update appcast.xml
+        run: |
+          BUILD_DATE=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
+          ZIP_SIZE=$(stat -f%z release_artifacts/GitStreak.zip)
+          DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/GitStreak.zip"
+
+          cat <<EOF > appcast.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+              <channel>
+                  <title>GitStreak Changelog</title>
+                  <link>https://raw.githubusercontent.com/${{ github.repository }}/main/appcast.xml</link>
+                  <description>Most recent updates to GitStreak</description>
+                  <language>en</language>
+                  <item>
+                      <title>Version ${{ steps.vars.outputs.version }}</title>
+                      <sparkle:releaseNotesLink>https://github.com/${{ github.repository }}/releases/tag/${{ steps.vars.outputs.tag }}</sparkle:releaseNotesLink>
+                      <pubDate>${BUILD_DATE}</pubDate>
+                      <enclosure url="${DOWNLOAD_URL}"
+                                 sparkle:shortVersionString="${{ steps.vars.outputs.version }}"
+                                 length="${ZIP_SIZE}"
+                                 type="application/octet-stream" />
+                  </item>
+              </channel>
+          </rss>
+          EOF
+
+      - name: Commit and Push appcast.xml to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B main
+          git add appcast.xml
+          git commit -m "chore: update appcast.xml for ${{ steps.vars.outputs.tag }} [skip ci]" || echo "No changes to commit"
+          git push origin main
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: GitStreak ${{ steps.vars.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            release_artifacts/GitStreak.zip

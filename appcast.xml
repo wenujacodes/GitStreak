@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>GitStreak Changelog</title>
+        <link>https://raw.githubusercontent.com/wenujacodes/GitStreak/main/appcast.xml</link>
+        <description>Most recent updates to GitStreak</description>
+        <language>en</language>
+        <item>
+            <title>Version 1.0.0</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.0.0</sparkle:releaseNotesLink>
+            <pubDate>Sun, 16 Aug 2026 00:00:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.0.0/GitStreak.zip"
+                       sparkle:version="1"
+                       sparkle:shortVersionString="1.0.0"
+                       type="application/octet-stream" />
+        </item>
+    </channel>
+</rss>

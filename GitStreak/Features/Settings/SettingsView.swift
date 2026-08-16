@@ -141,11 +141,20 @@ struct SettingsView: View {
             
             Spacer()
             
-            Button("Reset & Clear All Data", role: .destructive) {
-                showingClearConfirmation = true
+            HStack(spacing: 12) {
+                Button("Check for Updates...") {
+                    SparkleUpdaterViewModel.shared.checkForUpdates()
+                }
+                .controlSize(.regular)
+                
+                Spacer()
+                
+                Button("Reset & Clear All Data", role: .destructive) {
+                    showingClearConfirmation = true
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
             }
-            .buttonStyle(.bordered)
-            .tint(.red)
             .confirmationDialog("Are you sure you want to clear all data?", isPresented: $showingClearConfirmation) {
                 Button("Clear Everything", role: .destructive) {
                     clearData()

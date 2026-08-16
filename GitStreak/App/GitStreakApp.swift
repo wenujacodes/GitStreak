@@ -23,6 +23,13 @@ struct GitStreakApp: App {
             SettingsView()
         }
         .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    SparkleUpdaterViewModel.shared.checkForUpdates()
+                }
+            }
+        }
     }
 }
 
