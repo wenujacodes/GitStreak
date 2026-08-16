@@ -31,16 +31,18 @@ public struct ThemePickerView: View {
 }
 
 struct ThemeSwatchGridItem: View {
+    @Environment(\.colorScheme) private var colorScheme
     let theme: ThemeColors
     let isSelected: Bool
     @State private var isHovered = false
     
     var body: some View {
         VStack(spacing: 8) {
+            let colors = theme.allColors(for: colorScheme)
             HStack(spacing: 4) {
-                ForEach(theme.allColors.indices, id: \.self) { idx in
+                ForEach(colors.indices, id: \.self) { idx in
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(theme.allColors[idx])
+                        .fill(colors[idx])
                         .frame(width: 16, height: 16)
                 }
             }

@@ -27,46 +27,58 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         self.veryHighHex = veryHighHex
     }
     
-    public func color(for level: ContributionLevel) -> Color {
+    public func color(for level: ContributionLevel, colorScheme: ColorScheme = .dark) -> Color {
+        if level.intensity == 0 {
+            return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
+        }
+        
         switch level.intensity {
-        case 0: return Color(hex: noneHex)
         case 1: return Color(hex: lowHex)
         case 2: return Color(hex: mediumHex)
         case 3: return Color(hex: highHex)
         case 4: return Color(hex: veryHighHex)
-        default: return Color(hex: noneHex)
+        default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
         }
     }
     
+    public func color(for level: ContributionLevel) -> Color {
+        color(for: level, colorScheme: .dark)
+    }
+    
     public var allColors: [Color] {
-        [Color(hex: noneHex), Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
+        allColors(for: .dark)
+    }
+    
+    public func allColors(for colorScheme: ColorScheme) -> [Color] {
+        let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
+        return [empty, Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
     }
 }
 
 public enum ThemeRegistry {
     public static let github = ThemeColors(
         id: "github", name: "GitHub", description: "The classic GitHub green.", isPro: false,
-        noneHex: "#ebedf0", lowHex: "#9be9a8", mediumHex: "#40c463", highHex: "#30a14e", veryHighHex: "#216e39"
+        noneHex: "#22272e", lowHex: "#9be9a8", mediumHex: "#40c463", highHex: "#30a14e", veryHighHex: "#216e39"
     )
     public static let monochrome = ThemeColors(
         id: "monochrome", name: "Monochrome", description: "Clean black and white.", isPro: false,
-        noneHex: "#eeeeee", lowHex: "#c6c6c6", mediumHex: "#919191", highHex: "#5a5a5a", veryHighHex: "#333333"
+        noneHex: "#22272e", lowHex: "#b0b0b0", mediumHex: "#787878", highHex: "#444444", veryHighHex: "#111111"
     )
     public static let ocean = ThemeColors(
         id: "ocean", name: "Ocean", description: "Cool blues.", isPro: false,
-        noneHex: "#e0f0ff", lowHex: "#a3d5ff", mediumHex: "#5aacf5", highHex: "#2b7fd4", veryHighHex: "#1a4f8a"
+        noneHex: "#22272e", lowHex: "#79b8ff", mediumHex: "#2188ff", highHex: "#0366d6", veryHighHex: "#044289"
     )
     public static let sunset = ThemeColors(
         id: "sunset", name: "Sunset", description: "Warm oranges.", isPro: false,
-        noneHex: "#fff0e6", lowHex: "#ffc9a3", mediumHex: "#ff9a5c", highHex: "#e06b2d", veryHighHex: "#a63d0a"
+        noneHex: "#22272e", lowHex: "#ffb088", mediumHex: "#ff7b42", highHex: "#d9480f", veryHighHex: "#9c2706"
     )
     public static let forest = ThemeColors(
         id: "forest", name: "Forest", description: "Deep greens.", isPro: false,
-        noneHex: "#ecf5e8", lowHex: "#b5d9a3", mediumHex: "#7abf5e", highHex: "#4a9434", veryHighHex: "#2d6420"
+        noneHex: "#22272e", lowHex: "#99d18b", mediumHex: "#5bb543", highHex: "#358422", veryHighHex: "#1d5212"
     )
     public static let nord = ThemeColors(
         id: "nord", name: "Nord", description: "Arctic, north-bluish color palette.", isPro: false,
-        noneHex: "#eceff4", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
+        noneHex: "#22272e", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
     )
     
     public static let allThemes: [ThemeColors] = [github, monochrome, ocean, sunset, forest, nord]

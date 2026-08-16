@@ -1,6 +1,7 @@
 import SwiftUI
 
 public struct ContributionGridView: View {
+    @Environment(\.colorScheme) private var colorScheme
     public let weeks: [ContributionWeek]
     public let theme: ThemeColors
     public let maxWeeks: Int
@@ -46,8 +47,9 @@ public struct ContributionGridView: View {
     
     @ViewBuilder
     private func cellView(for day: ContributionDay) -> some View {
+        let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
         let rect = RoundedRectangle(cornerRadius: max(2, cellSize * 0.2))
-            .fill(theme.color(for: day.level))
+            .fill(cellColor)
             .frame(width: cellSize, height: cellSize)
         
         if showTooltips {

@@ -231,9 +231,10 @@ struct DashboardView: View {
                                         .foregroundColor(.secondary)
                                     
                                     let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
-                                    ForEach(currentTheme.allColors.indices, id: \.self) { idx in
+                                    let colors = currentTheme.allColors(for: colorScheme)
+                                    ForEach(colors.indices, id: \.self) { idx in
                                         RoundedRectangle(cornerRadius: 2)
-                                            .fill(currentTheme.allColors[idx])
+                                            .fill(colors[idx])
                                             .frame(width: 10, height: 10)
                                     }
                                     
