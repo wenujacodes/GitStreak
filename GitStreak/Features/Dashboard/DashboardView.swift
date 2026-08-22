@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import GitStreakKit
 
 struct DashboardView: View {
@@ -7,6 +8,7 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
+    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
     
     private var appBgColor: Color {
         colorScheme == .dark ? Color(red: 18/255, green: 19/255, blue: 19/255) : Color(nsColor: .windowBackgroundColor)
@@ -323,6 +325,12 @@ struct DashboardView: View {
         .onAppear {
             loadInitialData()
         }
+        .onReceive(autoRefreshTimer) { _ in
+            checkAndAutoRefresh()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            checkAndAutoRefresh()
+        }
     }
     
     private func relativeTimeString(from date: Date) -> String {
@@ -345,15 +353,34 @@ struct DashboardView: View {
     private func loadInitialData() {
         if let cached = SharedDataStore.shared.getCachedData() {
             self.contributionData = cached
+            // If cache is older than 15 minutes, refresh in background silently
+            if Date().timeIntervalSince(cached.fetchedAt) >= 15 * 60 {
+                Task {
+                    await refreshData(silent: true)
+                }
+            }
         } else {
             Task {
-                await refreshData()
+                await refreshData(silent: false)
             }
         }
     }
     
-    private func refreshData() async {
-        isLoading = true
+    private func checkAndAutoRefresh() {
+        guard let data = contributionData else {
+            Task { await refreshData(silent: false) }
+            return
+        }
+        // Auto-refresh if data is older than 15 minutes
+        if Date().timeIntervalSince(data.fetchedAt) >= 15 * 60 {
+            Task { await refreshData(silent: true) }
+        }
+    }
+    
+    private func refreshData(silent: Bool = false) async {
+        if !silent {
+            isLoading = true
+        }
         errorMessage = nil
         
         do {
@@ -364,7 +391,9 @@ struct DashboardView: View {
             }
         } catch {
             await MainActor.run {
-                self.errorMessage = error.localizedDescription
+                if !silent {
+                    self.errorMessage = error.localizedDescription
+                }
                 self.isLoading = false
             }
         }
