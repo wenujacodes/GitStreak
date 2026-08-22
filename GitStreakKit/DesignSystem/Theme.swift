@@ -116,7 +116,6 @@ public extension Color {
 }
 
 public struct ModernPrimaryButtonStyle: ButtonStyle {
-    @Environment(\.colorScheme) private var colorScheme
     public var isProminent: Bool
     
     public init(isProminent: Bool = true) {
@@ -124,51 +123,84 @@ public struct ModernPrimaryButtonStyle: ButtonStyle {
     }
     
     public func makeBody(configuration: Configuration) -> some View {
+        ModernPrimaryButtonView(configuration: configuration, isProminent: isProminent)
+    }
+}
+
+private struct ModernPrimaryButtonView: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let configuration: ButtonStyle.Configuration
+    let isProminent: Bool
+    @State private var isHovered = false
+    
+    var body: some View {
         configuration.label
             .font(.system(size: 13, weight: .semibold))
             .foregroundColor(isProminent ? .white : .primary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 9)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(
                         isProminent
-                        ? (colorScheme == .dark ? Color(hex: "#222428") : Color(hex: "#1E1E1E"))
-                        : (colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.05))
+                        ? (colorScheme == .dark
+                           ? (isHovered ? Color(hex: "#2C2E34") : Color(hex: "#222428"))
+                           : (isHovered ? Color(hex: "#2D2D2D") : Color(hex: "#1E1E1E")))
+                        : (colorScheme == .dark
+                           ? Color.white.opacity(isHovered ? 0.1 : 0.06)
+                           : Color.black.opacity(isHovered ? 0.08 : 0.05))
                     )
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(
-                        colorScheme == .dark ? Color.white.opacity(configuration.isPressed ? 0.2 : 0.12) : Color.black.opacity(0.12),
+                        colorScheme == .dark
+                        ? Color.white.opacity(isHovered ? 0.25 : 0.12)
+                        : Color.black.opacity(isHovered ? 0.2 : 0.12),
                         lineWidth: 1
                     )
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .onHover { hovering in
+                isHovered = hovering
+            }
     }
 }
 
 public struct ModernSecondaryButtonStyle: ButtonStyle {
-    @Environment(\.colorScheme) private var colorScheme
-    
     public init() {}
     
     public func makeBody(configuration: Configuration) -> some View {
+        ModernSecondaryButtonView(configuration: configuration)
+    }
+}
+
+private struct ModernSecondaryButtonView: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let configuration: ButtonStyle.Configuration
+    @State private var isHovered = false
+    
+    var body: some View {
         configuration.label
             .font(.system(size: 13, weight: .medium))
             .foregroundColor(.secondary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 9)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(colorScheme == .dark ? Color.white.opacity(configuration.isPressed ? 0.08 : 0.04) : Color.black.opacity(0.04))
+                    .fill(colorScheme == .dark ? Color.white.opacity(isHovered ? 0.09 : 0.04) : Color.black.opacity(isHovered ? 0.08 : 0.04))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(isHovered ? 0.16 : 0.08) : Color.black.opacity(isHovered ? 0.16 : 0.08), lineWidth: 1)
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .onHover { hovering in
+                isHovered = hovering
+            }
     }
 }

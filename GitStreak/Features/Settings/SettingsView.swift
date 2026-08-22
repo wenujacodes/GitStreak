@@ -2,6 +2,7 @@ import SwiftUI
 import GitStreakKit
 
 struct SettingsView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @State private var username: String = UserPreferences.shared.username ?? ""
     @State private var showingClearConfirmation = false
@@ -9,6 +10,10 @@ struct SettingsView: View {
 
     @State private var isAuthenticatingOAuth = false
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
+
+    private var appBgColor: Color {
+        colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(NSColor.windowBackgroundColor)
+    }
 
     var body: some View {
         Group {
@@ -45,6 +50,7 @@ struct SettingsView: View {
                 .padding()
             }
         }
+        .background(appBgColor)
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
         }
@@ -67,12 +73,12 @@ struct SettingsView: View {
                             Button("Open GitHub") {
                                 OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
                             }
-                            .controlSize(.small)
+                            .buttonStyle(ModernPrimaryButtonStyle())
 
                             Button("Cancel") {
                                 cancelOAuth()
                             }
-                            .controlSize(.small)
+                            .buttonStyle(ModernSecondaryButtonStyle())
 
                             Spacer()
 
@@ -102,13 +108,13 @@ struct SettingsView: View {
                         Spacer()
 
                         if !username.isEmpty {
-                            Button(role: .destructive, action: signOut) {
+                            Button(action: signOut) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "rectangle.portrait.and.arrow.right")
                                     Text("Sign Out")
                                 }
                             }
-                            .controlSize(.regular)
+                            .buttonStyle(ModernSecondaryButtonStyle())
                         }
 
                         Button(action: startOAuthFlow) {
@@ -117,7 +123,7 @@ struct SettingsView: View {
                                 Text(username.isEmpty ? "Sign in with GitHub" : "Switch Account")
                             }
                         }
-                        .controlSize(.regular)
+                        .buttonStyle(ModernPrimaryButtonStyle())
                     }
                     .padding(.vertical, 4)
                 }
@@ -173,15 +179,14 @@ struct SettingsView: View {
                 Button("Check for Updates...") {
                     SparkleUpdaterViewModel.shared.checkForUpdates()
                 }
-                .controlSize(.regular)
+                .buttonStyle(ModernSecondaryButtonStyle())
 
                 Spacer()
 
                 Button("Reset & Clear All Data", role: .destructive) {
                     showingClearConfirmation = true
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
+                .buttonStyle(ModernSecondaryButtonStyle())
             }
             .confirmationDialog("Are you sure you want to clear all data?", isPresented: $showingClearConfirmation) {
                 Button("Clear Everything", role: .destructive) {

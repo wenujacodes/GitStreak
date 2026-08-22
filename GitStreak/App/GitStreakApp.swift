@@ -41,18 +41,25 @@ struct ContentView: View {
     @State private var hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
 
     var body: some View {
-        Group {
+        ZStack {
             if hasCompletedOnboarding {
                 DashboardView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else {
                 OnboardingView(onComplete: {
-                    UserPreferences.shared.hasCompletedOnboarding = true
-                    hasCompletedOnboarding = true
+                    withAnimation(.easeInOut(duration: 0.45)) {
+                        UserPreferences.shared.hasCompletedOnboarding = true
+                        hasCompletedOnboarding = true
+                    }
                 })
+                .transition(.opacity.combined(with: .scale(scale: 1.02)))
             }
         }
+        .animation(.easeInOut(duration: 0.45), value: hasCompletedOnboarding)
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
-            self.hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
+            withAnimation(.easeInOut(duration: 0.45)) {
+                self.hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
+            }
         }
     }
 }

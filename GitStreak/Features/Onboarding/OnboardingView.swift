@@ -24,10 +24,6 @@ struct OnboardingView: View {
         colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(NSColor.windowBackgroundColor)
     }
 
-    private var glassCardBg: Color {
-        colorScheme == .dark ? Color(hex: "#141518") : Color(NSColor.controlBackgroundColor)
-    }
-
     private func advanceStep() {
         navigationDirection = .forward
         withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -121,16 +117,16 @@ struct OnboardingView: View {
     }
 
     private var welcomeStep: some View {
-        VStack(spacing: 22) {
+        VStack(spacing: 24) {
             Image(systemName: "flame.fill")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 64, height: 64)
                 .foregroundColor(.orange)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Text("GitStreak")
-                    .font(.system(size: 34, weight: .bold))
+                    .font(.system(size: 36, weight: .bold))
                     .foregroundColor(.primary)
 
                 Text("Make your coding habit visible")
@@ -141,16 +137,16 @@ struct OnboardingView: View {
             Text("Track your GitHub contributions right on your desktop with a calm, beautiful widget.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
-                .frame(maxWidth: 400)
+                .font(.body)
+                .frame(maxWidth: 420)
         }
     }
 
     private var connectStep: some View {
-        VStack(spacing: 22) {
-            VStack(spacing: 6) {
+        VStack(spacing: 28) {
+            VStack(spacing: 8) {
                 Text("Connect to GitHub")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
 
                 Text("Sign in via GitHub Device Flow to display your activity widget.")
@@ -159,21 +155,21 @@ struct OnboardingView: View {
             }
 
             if isAuthenticatingOAuth, let devCode = deviceCodeResponse {
-                VStack(spacing: 18) {
-                    VStack(spacing: 8) {
+                VStack(spacing: 22) {
+                    VStack(spacing: 12) {
                         Text("ENTER THIS CODE ON GITHUB:")
                             .font(GSTypography.monoBadge)
                             .foregroundColor(.secondary)
-                            .tracking(1)
+                            .tracking(1.5)
 
-                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 28, paddingVertical: 8, paddingHorizontal: 16, cornerRadius: 8)
+                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 32, paddingVertical: 10, paddingHorizontal: 20, cornerRadius: 8)
 
                         Text("✓ Code copied to clipboard")
-                            .font(.caption2)
+                            .font(.caption)
                             .foregroundColor(.green)
                     }
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: 16) {
                         Button("Open GitHub in Browser") {
                             OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
                         }
@@ -189,28 +185,19 @@ struct OnboardingView: View {
                         ProgressView()
                             .controlSize(.small)
                         Text("Waiting for authorization on GitHub...")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundColor(.secondary)
                     }
                     .padding(.top, 4)
                 }
-                .padding(24)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(glassCardBg)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1), lineWidth: 1)
-                )
-                .frame(maxWidth: 440)
+                .frame(maxWidth: 520)
                 .transition(.scale.combined(with: .opacity))
             } else {
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     Button(action: startOAuthFlow) {
                         HStack(spacing: 10) {
                             Image(systemName: "person.badge.key.fill")
-                                .font(.system(size: 14))
+                                .font(.system(size: 15))
                             Text("Sign in with GitHub")
                         }
                         .frame(maxWidth: .infinity)
@@ -221,32 +208,31 @@ struct OnboardingView: View {
                     if let errorMessage = errorMessage {
                         Text(errorMessage)
                             .foregroundColor(.red)
-                            .font(.caption)
+                            .font(.callout)
                             .multilineTextAlignment(.center)
                     }
                 }
-                .frame(maxWidth: 320)
+                .frame(maxWidth: 360)
                 .transition(.scale.combined(with: .opacity))
             }
         }
     }
 
     private var previewStep: some View {
-        VStack(spacing: 20) {
-            VStack(spacing: 4) {
+        VStack(spacing: 22) {
+            VStack(spacing: 6) {
                 Text("Your Activity & Theme")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
 
                 Text("Preview your contribution matrix and pick a color theme.")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundColor(.secondary)
             }
 
             if let data = fetchedData {
-                VStack(spacing: 12) {
-                    HStack(spacing: 16) {
+                VStack(spacing: 14) {
+                    HStack(spacing: 18) {
                         StatCardView(
                             title: "Current Streak",
                             value: "\(data.currentStreak)d",
@@ -268,25 +254,19 @@ struct OnboardingView: View {
                         cellSize: 12,
                         cellSpacing: 3
                     )
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 12)
-                    .background(glassCardBg)
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
-                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
                 }
-                .frame(maxWidth: 520)
+                .frame(maxWidth: 540)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("Theme Palette:")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 14) {
                         ForEach(ThemeRegistry.allThemes, id: \.id) { theme in
                             ThemeSwatchGridItem(theme: theme, isSelected: selectedThemeID == theme.id)
                                 .onTapGesture {
@@ -300,20 +280,19 @@ struct OnboardingView: View {
                     .padding(.vertical, 4)
                 }
             }
-            .frame(maxWidth: 520)
+            .frame(maxWidth: 540)
         }
     }
 
     private var doneStep: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 56))
+                .font(.system(size: 60))
                 .foregroundColor(.orange)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Text("Widget Ready")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
 
                 Text("Add GitStreak to your desktop wallpaper in 4 easy steps:")
@@ -321,49 +300,45 @@ struct OnboardingView: View {
                     .foregroundColor(.secondary)
             }
 
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 14) {
                     Image(systemName: "desktopcomputer")
-                        .font(.system(size: 16))
+                        .font(.system(size: 18))
                         .foregroundColor(.orange)
-                        .frame(width: 24)
+                        .frame(width: 28)
                     Text("Right-click your desktop wallpaper")
+                        .font(.body)
                         .foregroundColor(.primary)
                 }
-                HStack(spacing: 12) {
+                HStack(spacing: 14) {
                     Image(systemName: "plus.square.on.square")
-                        .font(.system(size: 16))
+                        .font(.system(size: 18))
                         .foregroundColor(.orange)
-                        .frame(width: 24)
+                        .frame(width: 28)
                     Text("Select 'Edit Widgets...'")
+                        .font(.body)
                         .foregroundColor(.primary)
                 }
-                HStack(spacing: 12) {
+                HStack(spacing: 14) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16))
+                        .font(.system(size: 18))
                         .foregroundColor(.orange)
-                        .frame(width: 24)
+                        .frame(width: 28)
                     Text("Search for 'GitStreak' and pick a widget size")
+                        .font(.body)
                         .foregroundColor(.primary)
                 }
-                HStack(spacing: 12) {
+                HStack(spacing: 14) {
                     Image(systemName: "hand.tap.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: 18))
                         .foregroundColor(.orange)
-                        .frame(width: 24)
-                    Text("Drag it anywhere onto your desktop")
+                        .frame(width: 28)
+                    Text("Drag it anywhere onto your desktop wallpaper")
+                        .font(.body)
                         .foregroundColor(.primary)
                 }
             }
-            .font(.callout)
-            .padding(20)
-            .background(glassCardBg)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1), lineWidth: 1)
-            )
-            .frame(maxWidth: 460)
+            .frame(maxWidth: 500)
         }
     }
 
