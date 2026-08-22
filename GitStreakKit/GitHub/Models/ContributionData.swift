@@ -7,7 +7,7 @@ public struct ContributionData: Codable, Sendable, Equatable {
     public let currentStreak: Int
     public let longestStreak: Int
     public let fetchedAt: Date
-    
+
     public init(user: GitHubUser, weeks: [ContributionWeek], totalContributions: Int, currentStreak: Int, longestStreak: Int, fetchedAt: Date = Date()) {
         self.user = user
         self.weeks = weeks
@@ -16,11 +16,11 @@ public struct ContributionData: Codable, Sendable, Equatable {
         self.longestStreak = longestStreak
         self.fetchedAt = fetchedAt
     }
-    
+
     public var allDays: [ContributionDay] {
         return weeks.flatMap { $0.contributionDays }
     }
-    
+
     public func recentDays(count: Int) -> [ContributionDay] {
         let days = allDays
         guard count < days.count else { return days }

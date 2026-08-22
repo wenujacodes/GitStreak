@@ -8,7 +8,7 @@ public struct ContributionGridView: View {
     public let cellSize: CGFloat
     public let cellSpacing: CGFloat
     public let showTooltips: Bool
-    
+
     public init(
         weeks: [ContributionWeek],
         theme: ThemeColors = ThemeRegistry.defaultTheme,
@@ -24,10 +24,10 @@ public struct ContributionGridView: View {
         self.cellSpacing = cellSpacing
         self.showTooltips = showTooltips
     }
-    
+
     public var body: some View {
         let displayWeeks = Array(weeks.suffix(maxWeeks))
-        
+
         HStack(spacing: cellSpacing) {
             ForEach(Array(displayWeeks.enumerated()), id: \.offset) { _, week in
                 VStack(spacing: cellSpacing) {
@@ -44,14 +44,14 @@ public struct ContributionGridView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func cellView(for day: ContributionDay) -> some View {
         let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
         let rect = RoundedRectangle(cornerRadius: max(2, cellSize * 0.2))
             .fill(cellColor)
             .frame(width: cellSize, height: cellSize)
-        
+
         if showTooltips {
             rect.help("\(day.contributionCount) contributions on \(day.date)")
         } else {

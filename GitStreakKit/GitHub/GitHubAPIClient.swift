@@ -8,7 +8,7 @@ public enum GitHubAPIError: LocalizedError, Sendable {
     case decodingError(Error)
     case serverError(String)
     case unknown
-    
+
     public var errorDescription: String? {
         switch self {
         case .unauthorized:
@@ -28,7 +28,6 @@ public enum GitHubAPIError: LocalizedError, Sendable {
         }
     }
 
-    // Sendable conformance: Error is not Sendable, so we need to handle this
     public static func == (lhs: GitHubAPIError, rhs: GitHubAPIError) -> Bool {
         switch (lhs, rhs) {
         case (.unauthorized, .unauthorized): return true
@@ -43,18 +42,18 @@ public enum GitHubAPIError: LocalizedError, Sendable {
 
 public actor GitHubAPIClient {
     private let endpoint = URL(string: "https://api.github.com/graphql")!
-    
+
     public init() {}
-    
+
     public func fetchContributions(username: String, token: String) async throws -> (GitHubUser, [ContributionWeek], Int) {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("GitStreak", forHTTPHeaderField: "User-Agent")
-        
+
         request.httpBody = GitHubGraphQL.makeRequestBody(username: username)
-        
+
         let data: Data
         let response: URLResponse
         do {
@@ -62,11 +61,11 @@ public actor GitHubAPIClient {
         } catch {
             throw GitHubAPIError.networkError(error)
         }
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw GitHubAPIError.unknown
         }
-        
+
         switch httpResponse.statusCode {
         case 200:
             break
@@ -79,7 +78,7 @@ public actor GitHubAPIClient {
         default:
             throw GitHubAPIError.serverError("HTTP Status \(httpResponse.statusCode)")
         }
-        
+
         let decoder = JSONDecoder()
         let graphQLResponse: GraphQLResponse
         do {
@@ -87,7 +86,7 @@ public actor GitHubAPIClient {
         } catch {
             throw GitHubAPIError.decodingError(error)
         }
-        
+
         return try graphQLResponse.toDomainModel()
     }
 }

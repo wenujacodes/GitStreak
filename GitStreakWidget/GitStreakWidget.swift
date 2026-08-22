@@ -4,7 +4,7 @@ import GitStreakKit
 
 struct GitStreakWidget: Widget {
     let kind: String = "GitStreakWidget"
-    
+
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: GitStreakTimelineProvider()) { entry in
             GitStreakWidgetEntryView(entry: entry)
@@ -20,7 +20,7 @@ struct GitStreakWidget: Widget {
 struct GitStreakWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     var entry: GitStreakEntry
-    
+
     var body: some View {
         switch family {
         case .systemSmall:

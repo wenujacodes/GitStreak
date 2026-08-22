@@ -6,7 +6,7 @@ public struct StatCardView: View {
     public let icon: String?
     public let iconColor: Color
     public let subtitle: String?
-    
+
     public init(
         title: String,
         value: String,
@@ -20,7 +20,7 @@ public struct StatCardView: View {
         self.iconColor = iconColor
         self.subtitle = subtitle
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
@@ -33,14 +33,14 @@ public struct StatCardView: View {
                     .font(GSTypography.monoCaption)
                     .foregroundColor(.secondary)
                     .tracking(0.5)
-                
+
                 Spacer()
             }
-            
+
             Text(value)
                 .font(GSTypography.monoTitle)
                 .foregroundColor(.primary)
-            
+
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.system(size: 11))

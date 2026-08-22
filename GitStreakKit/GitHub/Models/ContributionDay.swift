@@ -6,7 +6,7 @@ public enum ContributionLevel: String, Codable, Sendable, Equatable {
     case secondQuartile = "SECOND_QUARTILE"
     case thirdQuartile = "THIRD_QUARTILE"
     case fourthQuartile = "FOURTH_QUARTILE"
-    
+
     public var intensity: Int {
         switch self {
         case .none: return 0
@@ -23,16 +23,16 @@ public struct ContributionDay: Codable, Sendable, Equatable, Identifiable {
     public let contributionCount: Int
     public let level: ContributionLevel
     public let weekday: Int
-    
+
     public var id: String { date }
-    
+
     enum CodingKeys: String, CodingKey {
         case date
         case contributionCount
         case level = "contributionLevel"
         case weekday
     }
-    
+
     public init(date: String, contributionCount: Int, level: ContributionLevel, weekday: Int) {
         self.date = date
         self.contributionCount = contributionCount

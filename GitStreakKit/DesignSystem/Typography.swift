@@ -7,15 +7,13 @@ public enum GSTypography {
     public static let body: Font = .system(size: 13, weight: .regular)
     public static let caption: Font = .system(size: 11, weight: .medium)
     public static let captionSmall: Font = .system(size: 10, weight: .regular)
-    
-    // Developer & Monospaced Typography (Raycast-style)
+
     public static let monoLarge: Font = .system(size: 32, weight: .bold, design: .monospaced)
     public static let monoTitle: Font = .system(size: 22, weight: .bold, design: .monospaced)
     public static let monoBody: Font = .system(size: 13, weight: .medium, design: .monospaced)
     public static let monoCaption: Font = .system(size: 11, weight: .medium, design: .monospaced)
     public static let monoBadge: Font = .system(size: 10, weight: .bold, design: .monospaced)
-    
-    // Widget-specific
+
     public static let widgetTitle: Font = .system(size: 14, weight: .semibold, design: .rounded)
     public static let widgetHeadline: Font = .system(size: 22, weight: .bold, design: .rounded)
     public static let widgetCaption: Font = .system(size: 10, weight: .medium)

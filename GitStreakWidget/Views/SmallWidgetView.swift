@@ -5,38 +5,36 @@ import GitStreakKit
 struct SmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
-    
+
     private var widgetBgColor: Color {
         colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header: @username using standard font matching Medium/Large widgets
+
                     Text("@\(username)")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
-                    
+
                     Spacer(minLength: 2)
-                    
-                    // Compact Streak Metric using standard system fonts
+
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text("\(data.currentStreak)")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.primary)
-                        
+
                         Text("day streak")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer(minLength: 4)
-                    
-                    // Heatmap Grid: 11 weeks
+
                     HStack {
                         Spacer(minLength: 0)
                         ContributionGridView(

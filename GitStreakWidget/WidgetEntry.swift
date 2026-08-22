@@ -15,7 +15,7 @@ public struct GitStreakEntry: TimelineEntry, Sendable {
     public let theme: ThemeColors
     public let state: WidgetState
     public let username: String?
-    
+
     public init(date: Date, contributionData: ContributionData?, theme: ThemeColors, state: WidgetState, username: String?) {
         self.date = date
         self.contributionData = contributionData
@@ -23,7 +23,7 @@ public struct GitStreakEntry: TimelineEntry, Sendable {
         self.state = state
         self.username = username
     }
-    
+
     public static var placeholder: GitStreakEntry {
         GitStreakEntry(
             date: Date(),

@@ -11,17 +11,17 @@ public struct PreferencesModel: Codable, Sendable {
     public var hasCompletedOnboarding: Bool = false
     public var preferredAppearance: AppearanceMode = .system
     public var lastRefreshDate: Date?
-    
+
     public init() {}
 }
 
 public final class UserPreferences: @unchecked Sendable {
     public static let shared = UserPreferences()
-    
+
     private static let fileName = "user_preferences.json"
     private var model = PreferencesModel()
     private let lock = NSLock()
-    
+
     private static let sharedFileURL: URL = {
         let home: String
         if let pw = getpwuid(getuid()) {
@@ -33,15 +33,15 @@ public final class UserPreferences: @unchecked Sendable {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent(fileName)
     }()
-    
+
     private init() {
         loadModel()
     }
-    
+
     private func loadModel() {
         lock.lock()
         defer { lock.unlock() }
-        
+
         let url = Self.sharedFileURL
         if let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode(PreferencesModel.self, from: data) {
@@ -49,7 +49,7 @@ public final class UserPreferences: @unchecked Sendable {
             UserDefaults.standard.set(decoded.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         }
     }
-    
+
     private func saveModel() {
         lock.lock()
         let url = Self.sharedFileURL
@@ -58,11 +58,11 @@ public final class UserPreferences: @unchecked Sendable {
         }
         UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         lock.unlock()
-        
+
         NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "GitStreakWidget")
     }
-    
+
     public var username: String? {
         get {
             lock.lock()
@@ -76,7 +76,7 @@ public final class UserPreferences: @unchecked Sendable {
             saveModel()
         }
     }
-    
+
     public var selectedThemeID: String {
         get {
             loadModel()
@@ -89,7 +89,7 @@ public final class UserPreferences: @unchecked Sendable {
             saveModel()
         }
     }
-    
+
     public var hasCompletedOnboarding: Bool {
         get {
             lock.lock()
@@ -103,7 +103,7 @@ public final class UserPreferences: @unchecked Sendable {
             saveModel()
         }
     }
-    
+
     public var preferredAppearance: AppearanceMode {
         get {
             lock.lock()
@@ -117,7 +117,7 @@ public final class UserPreferences: @unchecked Sendable {
             saveModel()
         }
     }
-    
+
     public var lastRefreshDate: Date? {
         get {
             lock.lock()

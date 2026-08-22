@@ -20,7 +20,7 @@ public struct GraphQLUser: Codable, Sendable, Equatable {
     public let avatarUrl: URL?
     public let bio: String?
     public let contributionsCollection: ContributionsCollection
-    
+
     public func toDomainModel() -> GitHubUser {
         return GitHubUser(
             username: login,
@@ -45,19 +45,19 @@ extension GraphQLResponse {
         if let errors = errors, let firstError = errors.first {
             throw GitHubAPIError.serverError(firstError.message)
         }
-        
+
         if let message = message {
             throw GitHubAPIError.serverError(message)
         }
-        
+
         guard let data = data, let user = data.user else {
             throw GitHubAPIError.userNotFound
         }
-        
+
         let gitHubUser = user.toDomainModel()
         let weeks = user.contributionsCollection.contributionCalendar.weeks
         let totalContributions = user.contributionsCollection.contributionCalendar.totalContributions
-        
+
         return (gitHubUser, weeks, totalContributions)
     }
 }

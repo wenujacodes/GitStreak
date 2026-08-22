@@ -7,9 +7,9 @@ public struct CopyableUserCodeView: View {
     public var paddingVertical: CGFloat
     public var paddingHorizontal: CGFloat
     public var cornerRadius: CGFloat
-    
+
     @State private var isCopied = false
-    
+
     public init(
         userCode: String,
         fontSize: CGFloat = 28,
@@ -23,13 +23,13 @@ public struct CopyableUserCodeView: View {
         self.paddingHorizontal = paddingHorizontal
         self.cornerRadius = cornerRadius
     }
-    
+
     public var body: some View {
         HStack(spacing: 10) {
             Text(userCode)
                 .font(.system(size: fontSize, weight: .bold, design: .monospaced))
                 .foregroundColor(.primary)
-            
+
             Button(action: copyToClipboard) {
                 Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc")
                     .font(.system(size: max(12, fontSize * 0.55), weight: .medium))
@@ -51,7 +51,7 @@ public struct CopyableUserCodeView: View {
             copyToClipboard()
         }
     }
-    
+
     private func copyToClipboard() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(userCode, forType: .string)

@@ -12,14 +12,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct GitStreakApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
-        
+
         Settings {
             SettingsView()
         }
@@ -39,7 +39,7 @@ struct GitStreakApp: App {
 
 struct ContentView: View {
     @State private var hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
-    
+
     var body: some View {
         Group {
             if hasCompletedOnboarding {

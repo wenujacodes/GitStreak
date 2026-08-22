@@ -9,39 +9,39 @@ struct DashboardView: View {
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
     private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
-    
+
     private var appBgColor: Color {
         colorScheme == .dark ? Color(red: 18/255, green: 19/255, blue: 19/255) : Color(nsColor: .windowBackgroundColor)
     }
-    
+
     private var cardBgColor: Color {
         colorScheme == .dark ? Color(red: 24/255, green: 25/255, blue: 25/255) : Color(nsColor: .controlBackgroundColor)
     }
-    
+
     private var borderColor: Color {
         colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
     }
-    
+
     @Environment(\.openSettings) private var openSettings
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Command Header
+
             HStack(alignment: .center, spacing: 14) {
                 if let data = contributionData {
                     AvatarView(avatarURL: data.user.avatarURL, size: 36)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 8) {
                             Text(data.user.displayName ?? data.user.username)
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.primary)
-                            
+
                             Text("@\(data.user.username)")
                                 .font(GSTypography.monoCaption)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
                             Text("Updated \(relativeTimeString(from: data.fetchedAt))")
                                 .font(.system(size: 11))
@@ -53,7 +53,7 @@ struct DashboardView: View {
                         .fill(Color.primary.opacity(0.08))
                         .frame(width: 36, height: 36)
                         .overlay(Image(systemName: "person.fill").foregroundColor(.secondary))
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text(UserPreferences.shared.username ?? "GitStreak")
                             .font(.system(size: 14, weight: .bold))
@@ -63,11 +63,11 @@ struct DashboardView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 8) {
-                    // CONFIG / Settings Button
+
                     Button(action: {
                         if #available(macOS 14.0, *) {
                             openSettings()
@@ -83,8 +83,7 @@ struct DashboardView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(DevHeaderButtonStyle())
-                    
-                    // REFRESH Button
+
                     Button(action: { Task { await refreshData() } }) {
                         Group {
                             if isLoading {
@@ -108,7 +107,7 @@ struct DashboardView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
             .background(appBgColor)
-            
+
             ScrollView {
                 VStack(spacing: 20) {
                     if let error = errorMessage {
@@ -132,9 +131,9 @@ struct DashboardView: View {
                         )
                         .cornerRadius(6)
                     }
-                    
+
                     if let data = contributionData {
-                        // Hero Streak Banner
+
                         HStack(alignment: .center, spacing: 20) {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 6) {
@@ -146,7 +145,7 @@ struct DashboardView: View {
                                         .foregroundColor(.secondary)
                                         .tracking(1)
                                 }
-                                
+
                                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                                     Text("\(data.currentStreak)")
                                         .font(GSTypography.monoLarge)
@@ -156,9 +155,9 @@ struct DashboardView: View {
                                         .foregroundColor(.secondary)
                                 }
                             }
-                            
+
                             Spacer()
-                            
+
                             VStack(alignment: .trailing, spacing: 4) {
                                 Text("PERSONAL BEST")
                                     .font(GSTypography.monoBadge)
@@ -184,18 +183,17 @@ struct DashboardView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.orange.opacity(0.25), lineWidth: 1)
                         )
-                        
-                        // Heatmap Viewport Section (Full 53 Weeks Default)
+
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Text("ACTIVITY TIMELINE (PAST YEAR)")
                                     .font(GSTypography.monoCaption)
                                     .foregroundColor(.secondary)
                                     .tracking(0.8)
-                                
+
                                 Spacer()
                             }
-                            
+
                             HStack(alignment: .top, spacing: 8) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(" ").font(.system(size: 8))
@@ -206,9 +204,9 @@ struct DashboardView: View {
                                     Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
                                     Text(" ").font(.system(size: 8))
                                 }
-                                
+
                                 Spacer(minLength: 0)
-                                
+
                                 ContributionGridView(
                                     weeks: data.weeks,
                                     theme: ThemeRegistry.theme(for: selectedThemeID),
@@ -217,21 +215,20 @@ struct DashboardView: View {
                                     cellSpacing: 2.8,
                                     showTooltips: true
                                 )
-                                
+
                                 Spacer(minLength: 0)
                             }
                             .padding(.vertical, 8)
                             .padding(.horizontal, 4)
-                            
-                            // Less / More Color Legend
+
                             HStack {
                                 Spacer()
-                                
+
                                 HStack(spacing: 5) {
                                     Text("Less")
                                         .font(GSTypography.monoBadge)
                                         .foregroundColor(.secondary)
-                                    
+
                                     let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
                                     let colors = currentTheme.allColors(for: colorScheme)
                                     ForEach(colors.indices, id: \.self) { idx in
@@ -239,7 +236,7 @@ struct DashboardView: View {
                                             .fill(colors[idx])
                                             .frame(width: 10, height: 10)
                                     }
-                                    
+
                                     Text("More")
                                         .font(GSTypography.monoBadge)
                                         .foregroundColor(.secondary)
@@ -256,8 +253,7 @@ struct DashboardView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(borderColor, lineWidth: 1)
                         )
-                        
-                        // Dev Metric Cards
+
                         HStack(spacing: 12) {
                             StatCardView(
                                 title: "Current Streak",
@@ -266,7 +262,7 @@ struct DashboardView: View {
                                 iconColor: .orange,
                                 subtitle: data.currentStreak > 0 ? "Active today" : "No commits yet"
                             )
-                            
+
                             StatCardView(
                                 title: "Longest Streak",
                                 value: "\(data.longestStreak)d",
@@ -274,7 +270,7 @@ struct DashboardView: View {
                                 iconColor: .yellow,
                                 subtitle: "All-time streak"
                             )
-                            
+
                             StatCardView(
                                 title: "Contributions",
                                 value: "\(data.totalContributions)",
@@ -292,8 +288,7 @@ struct DashboardView: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 220)
                     }
-                    
-                    // Theme Selector Section
+
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Text("WIDGET THEME")
@@ -302,7 +297,7 @@ struct DashboardView: View {
                                 .tracking(0.8)
                             Spacer()
                         }
-                        
+
                         ThemePickerView(selectedThemeID: $selectedThemeID) { newThemeID in
                             UserPreferences.shared.selectedThemeID = newThemeID
                         }
@@ -332,7 +327,7 @@ struct DashboardView: View {
             checkAndAutoRefresh()
         }
     }
-    
+
     private func relativeTimeString(from date: Date) -> String {
         let elapsed = max(0, Int(Date().timeIntervalSince(date)))
         if elapsed < 60 {
@@ -349,11 +344,11 @@ struct DashboardView: View {
         let days = hours / 24
         return "\(days)d ago"
     }
-    
+
     private func loadInitialData() {
         if let cached = SharedDataStore.shared.getCachedData() {
             self.contributionData = cached
-            // If cache is older than 15 minutes, refresh in background silently
+
             if Date().timeIntervalSince(cached.fetchedAt) >= 15 * 60 {
                 Task {
                     await refreshData(silent: true)
@@ -365,24 +360,24 @@ struct DashboardView: View {
             }
         }
     }
-    
+
     private func checkAndAutoRefresh() {
         guard let data = contributionData else {
             Task { await refreshData(silent: false) }
             return
         }
-        // Auto-refresh if data is older than 15 minutes
+
         if Date().timeIntervalSince(data.fetchedAt) >= 15 * 60 {
             Task { await refreshData(silent: true) }
         }
     }
-    
+
     private func refreshData(silent: Bool = false) async {
         if !silent {
             isLoading = true
         }
         errorMessage = nil
-        
+
         do {
             let data = try await SharedDataStore.shared.refreshData(force: true)
             await MainActor.run {
@@ -402,7 +397,7 @@ struct DashboardView: View {
 
 struct DevHeaderButtonStyle: ButtonStyle {
     @Environment(\.colorScheme) private var colorScheme
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(

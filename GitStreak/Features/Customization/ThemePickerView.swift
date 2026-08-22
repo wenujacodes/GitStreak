@@ -4,16 +4,16 @@ import GitStreakKit
 public struct ThemePickerView: View {
     @Binding var selectedThemeID: String
     let onThemeChanged: (String) -> Void
-    
+
     public init(selectedThemeID: Binding<String>, onThemeChanged: @escaping (String) -> Void) {
         self._selectedThemeID = selectedThemeID
         self.onThemeChanged = onThemeChanged
     }
-    
+
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 12)
     ]
-    
+
     public var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
             ForEach(ThemeRegistry.allThemes, id: \.id) { theme in
@@ -35,7 +35,7 @@ struct ThemeSwatchGridItem: View {
     let theme: ThemeColors
     let isSelected: Bool
     @State private var isHovered = false
-    
+
     var body: some View {
         VStack(spacing: 8) {
             let colors = theme.allColors(for: colorScheme)
@@ -50,15 +50,15 @@ struct ThemeSwatchGridItem: View {
             .padding(.vertical, 8)
             .background(Color.black.opacity(0.3))
             .cornerRadius(6)
-            
+
             HStack {
                 Text(theme.name)
                     .font(GSTypography.monoCaption)
                     .fontWeight(.medium)
                     .foregroundColor(isSelected ? .primary : .secondary)
-                
+
                 Spacer()
-                
+
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)

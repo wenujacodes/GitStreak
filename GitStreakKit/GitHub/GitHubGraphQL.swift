@@ -24,7 +24,7 @@ public struct GitHubGraphQL {
       }
     }
     """
-    
+
     public static func makeRequestBody(username: String) -> Data {
         let payload: [String: Any] = [
             "query": query,

@@ -5,11 +5,11 @@ import GitStreakKit
 struct MediumWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
-    
+
     private var widgetBgColor: Color {
         colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
     }
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
             switch entry.state {
@@ -21,7 +21,7 @@ struct MediumWidgetView: View {
                                 avatarURL: data.user.avatarURL,
                                 size: 28
                             )
-                            
+
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(data.user.displayName ?? username)
                                     .font(.system(size: 12, weight: .bold))
@@ -33,9 +33,9 @@ struct MediumWidgetView: View {
                                     .lineLimit(1)
                             }
                         }
-                        
+
                         Spacer()
-                        
+
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Total")
                                 .font(.system(size: 10, weight: .medium))
@@ -44,7 +44,7 @@ struct MediumWidgetView: View {
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.primary)
                         }
-                        
+
                         StreakBadgeView(
                             streakCount: data.currentStreak,
                             label: "day streak",
@@ -52,9 +52,9 @@ struct MediumWidgetView: View {
                         )
                     }
                     .frame(maxWidth: 110, alignment: .leading)
-                    
+
                     Spacer(minLength: 0)
-                    
+
                     ContributionGridView(
                         weeks: data.weeks,
                         theme: entry.theme,

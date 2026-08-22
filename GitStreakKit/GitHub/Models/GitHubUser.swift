@@ -5,7 +5,7 @@ public struct GitHubUser: Codable, Sendable, Equatable {
     public let displayName: String?
     public let avatarURL: URL?
     public let bio: String?
-    
+
     public init(username: String, displayName: String?, avatarURL: URL?, bio: String?) {
         self.username = username
         self.displayName = displayName

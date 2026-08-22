@@ -1,20 +1,17 @@
 import SwiftUI
 
-// ContributionLevel is defined in ContributionDay.swift
-
 public struct ThemeColors: Codable, Sendable, Equatable {
     public let id: String
     public let name: String
     public let description: String
     public let isPro: Bool
-    
-    // Colors stored as hex strings for Codable
+
     public let noneHex: String
     public let lowHex: String
     public let mediumHex: String
     public let highHex: String
     public let veryHighHex: String
-    
+
     public init(id: String, name: String, description: String, isPro: Bool, noneHex: String, lowHex: String, mediumHex: String, highHex: String, veryHighHex: String) {
         self.id = id
         self.name = name
@@ -26,12 +23,12 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         self.highHex = highHex
         self.veryHighHex = veryHighHex
     }
-    
+
     public func color(for level: ContributionLevel, colorScheme: ColorScheme = .dark) -> Color {
         if level.intensity == 0 {
             return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
         }
-        
+
         switch level.intensity {
         case 1: return Color(hex: lowHex)
         case 2: return Color(hex: mediumHex)
@@ -40,15 +37,15 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
         }
     }
-    
+
     public func color(for level: ContributionLevel) -> Color {
         color(for: level, colorScheme: .dark)
     }
-    
+
     public var allColors: [Color] {
         allColors(for: .dark)
     }
-    
+
     public func allColors(for colorScheme: ColorScheme) -> [Color] {
         let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
         return [empty, Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
@@ -80,14 +77,14 @@ public enum ThemeRegistry {
         id: "nord", name: "Nord", description: "Arctic, north-bluish color palette.", isPro: false,
         noneHex: "#22272e", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
     )
-    
+
     public static let allThemes: [ThemeColors] = [github, monochrome, ocean, sunset, forest, nord]
     public static let freeThemes: [ThemeColors] = allThemes
-    
+
     public static func theme(for id: String) -> ThemeColors {
         allThemes.first { $0.id == id } ?? defaultTheme
     }
-    
+
     public static let defaultTheme: ThemeColors = github
 }
 
@@ -98,11 +95,11 @@ public extension Color {
         Scanner(string: hex).scanHexInt64(&int)
         let a, r, g, b: UInt64
         switch hex.count {
-        case 3: // RGB (12-bit)
+        case 3:
             (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
+        case 6:
             (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
+        case 8:
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
             (a, r, g, b) = (255, 0, 0, 0)

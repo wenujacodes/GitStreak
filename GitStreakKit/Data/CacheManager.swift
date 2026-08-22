@@ -2,8 +2,8 @@ import Foundation
 
 public final class CacheManager: Sendable {
     private static let fileName = "contribution_cache.json"
-    private static let staleDuration: TimeInterval = 30 * 60 // 30 minutes
-    
+    private static let staleDuration: TimeInterval = 30 * 60
+
     private static let sharedFileURL: URL = {
         let home: String
         if let pw = getpwuid(getuid()) {
@@ -15,20 +15,20 @@ public final class CacheManager: Sendable {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent(fileName)
     }()
-    
+
     public init() {}
-    
+
     public func save(_ data: ContributionData) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         let encodedData = try encoder.encode(data)
         try encodedData.write(to: Self.sharedFileURL)
     }
-    
+
     public func load() -> ContributionData? {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        
+
         let url = Self.sharedFileURL
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url),
@@ -37,7 +37,7 @@ public final class CacheManager: Sendable {
         }
         return decoded
     }
-    
+
     public func isFresh() -> Bool {
         let url = Self.sharedFileURL
         guard FileManager.default.fileExists(atPath: url.path),
@@ -47,7 +47,7 @@ public final class CacheManager: Sendable {
         }
         return Date().timeIntervalSince(modificationDate) < Self.staleDuration
     }
-    
+
     public func clear() throws {
         let url = Self.sharedFileURL
         if FileManager.default.fileExists(atPath: url.path) {

@@ -5,23 +5,23 @@ import GitStreakKit
 struct LargeWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
-    
+
     private var widgetBgColor: Color {
         colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header: User identity (avatar + name)
+
                     HStack(spacing: 8) {
                         AvatarView(
                             avatarURL: data.user.avatarURL,
                             size: 32
                         )
-                        
+
                         VStack(alignment: .leading, spacing: 0) {
                             Text(data.user.displayName ?? username)
                                 .font(.system(size: 13, weight: .bold))
@@ -32,19 +32,18 @@ struct LargeWidgetView: View {
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
-                        
+
                         Spacer()
-                        
+
                         StreakBadgeView(
                             streakCount: data.currentStreak,
                             label: "days",
                             style: .compact
                         )
                     }
-                    
+
                     Spacer(minLength: 2)
-                    
-                    // Contribution Grid with weekday indicators (M, W, F)
+
                     HStack(alignment: .top, spacing: 4) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(" ").font(.system(size: 7))
@@ -55,9 +54,9 @@ struct LargeWidgetView: View {
                             Text("F").font(.system(size: 7, weight: .medium)).foregroundColor(.secondary)
                             Text(" ").font(.system(size: 7))
                         }
-                        
+
                         Spacer(minLength: 0)
-                        
+
                         ContributionGridView(
                             weeks: data.weeks,
                             theme: entry.theme,
@@ -65,13 +64,12 @@ struct LargeWidgetView: View {
                             cellSize: 11,
                             cellSpacing: 2.5
                         )
-                        
+
                         Spacer(minLength: 0)
                     }
-                    
+
                     Spacer(minLength: 2)
-                    
-                    // Stats Row
+
                     HStack(spacing: 0) {
                         WidgetStatView(
                             title: "Current",
@@ -79,18 +77,18 @@ struct LargeWidgetView: View {
                             icon: "flame.fill",
                             iconColor: .orange
                         )
-                        
+
                         Spacer()
-                        
+
                         WidgetStatView(
                             title: "Longest",
                             value: "\(data.longestStreak)d",
                             icon: "trophy.fill",
                             iconColor: .yellow
                         )
-                        
+
                         Spacer()
-                        
+
                         WidgetStatView(
                             title: "Total",
                             value: "\(data.totalContributions)",
@@ -147,7 +145,7 @@ struct WidgetStatView: View {
     let value: String
     let icon: String
     let iconColor: Color
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)

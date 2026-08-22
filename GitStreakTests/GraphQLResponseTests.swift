@@ -2,7 +2,7 @@ import XCTest
 @testable import GitStreakKit
 
 final class GraphQLResponseTests: XCTestCase {
-    
+
     func testDecodeSuccessfulGraphQLPayload() throws {
         let json = """
         {
@@ -33,11 +33,11 @@ final class GraphQLResponseTests: XCTestCase {
           }
         }
         """.data(using: .utf8)!
-        
+
         let decoder = JSONDecoder()
         let response = try decoder.decode(GraphQLResponse.self, from: json)
         let (user, weeks, total) = try response.toDomainModel()
-        
+
         XCTAssertEqual(user.username, "octocat")
         XCTAssertEqual(user.displayName, "The Octocat")
         XCTAssertEqual(user.avatarURL?.absoluteString, "https://avatars.githubusercontent.com/u/583231")
@@ -48,7 +48,7 @@ final class GraphQLResponseTests: XCTestCase {
         XCTAssertEqual(weeks[0].contributionDays[0].contributionCount, 5)
         XCTAssertEqual(weeks[0].contributionDays[0].level, .secondQuartile)
     }
-    
+
     func testDecodeGraphQLErrorPayload() throws {
         let json = """
         {
@@ -60,10 +60,10 @@ final class GraphQLResponseTests: XCTestCase {
           ]
         }
         """.data(using: .utf8)!
-        
+
         let decoder = JSONDecoder()
         let response = try decoder.decode(GraphQLResponse.self, from: json)
-        
+
         XCTAssertThrowsError(try response.toDomainModel()) { error in
             guard case GitHubAPIError.serverError(let message) = error else {
                 XCTFail("Expected GitHubAPIError.serverError, got \(error)")

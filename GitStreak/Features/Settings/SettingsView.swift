@@ -6,11 +6,10 @@ struct SettingsView: View {
     @State private var username: String = UserPreferences.shared.username ?? ""
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
-    
-    // OAuth Device Flow state
+
     @State private var isAuthenticatingOAuth = false
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
-    
+
     var body: some View {
         Group {
             if hasCompletedOnboarding {
@@ -19,7 +18,7 @@ struct SettingsView: View {
                         .tabItem {
                             Label("General", systemImage: "gearshape")
                         }
-                    
+
                     aboutTab
                         .tabItem {
                             Label("About", systemImage: "info.circle")
@@ -32,11 +31,11 @@ struct SettingsView: View {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 32))
                         .foregroundColor(.secondary)
-                    
+
                     Text("Setup Required")
                         .font(.headline)
                         .fontWeight(.bold)
-                    
+
                     Text("Please complete the onboarding setup before accessing Settings.")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -50,7 +49,7 @@ struct SettingsView: View {
             self.username = UserPreferences.shared.username ?? ""
         }
     }
-    
+
     private var generalTab: some View {
         Form {
             Section {
@@ -63,20 +62,20 @@ struct SettingsView: View {
                             Spacer()
                             CopyableUserCodeView(userCode: devCode.userCode, fontSize: 16, paddingVertical: 4, paddingHorizontal: 8, cornerRadius: 4)
                         }
-                        
+
                         HStack(spacing: 8) {
                             Button("Open GitHub") {
                                 OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
                             }
                             .controlSize(.small)
-                            
+
                             Button("Cancel") {
                                 cancelOAuth()
                             }
                             .controlSize(.small)
-                            
+
                             Spacer()
-                            
+
                             ProgressView()
                                 .controlSize(.small)
                         }
@@ -88,7 +87,7 @@ struct SettingsView: View {
                             Text("Connected Account")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                            
+
                             if !username.isEmpty {
                                 Text("@\(username)")
                                     .font(GSTypography.monoCaption)
@@ -99,9 +98,9 @@ struct SettingsView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-                        
+
                         Spacer()
-                        
+
                         if !username.isEmpty {
                             Button(role: .destructive, action: signOut) {
                                 HStack(spacing: 4) {
@@ -111,7 +110,7 @@ struct SettingsView: View {
                             }
                             .controlSize(.regular)
                         }
-                        
+
                         Button(action: startOAuthFlow) {
                             HStack(spacing: 6) {
                                 Image(systemName: "person.badge.key.fill")
@@ -122,7 +121,7 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 4)
                 }
-                
+
                 if let msg = saveStatusMessage {
                     Text(msg)
                         .font(.caption)
@@ -140,7 +139,7 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .padding()
     }
-    
+
     private var aboutTab: some View {
         VStack(spacing: 12) {
             Image(systemName: "flame.fill")
@@ -148,7 +147,7 @@ struct SettingsView: View {
                 .scaledToFit()
                 .frame(width: 48, height: 48)
                 .foregroundColor(.orange)
-            
+
             VStack(spacing: 2) {
                 Text("GitStreak")
                     .font(.title2)
@@ -157,27 +156,27 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             Text("GitStreak keeps all your data strictly on your Mac. We never send your tokens or contributions to any third-party server.")
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal, 20)
-            
+
             Text("© 2026 Wenuja Liyanamana")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             Spacer()
-            
+
             HStack(spacing: 12) {
                 Button("Check for Updates...") {
                     SparkleUpdaterViewModel.shared.checkForUpdates()
                 }
                 .controlSize(.regular)
-                
+
                 Spacer()
-                
+
                 Button("Reset & Clear All Data", role: .destructive) {
                     showingClearConfirmation = true
                 }
@@ -195,28 +194,28 @@ struct SettingsView: View {
         }
         .padding()
     }
-    
+
     private func startOAuthFlow() {
         saveStatusMessage = nil
         Task {
             do {
                 let codeResponse = try await OAuthService.shared.requestDeviceCode()
-                
+
                 await MainActor.run {
                     self.deviceCodeResponse = codeResponse
                     self.isAuthenticatingOAuth = true
                 }
-                
+
                 OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
-                
+
                 let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
                 let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
-                
+
                 try KeychainService.save(token: accessToken, forKey: "github_pat")
                 UserPreferences.shared.username = userInfo.username
                 _ = try await SharedDataStore.shared.refreshData(force: true)
                 SharedDataStore.shared.notifyWidgetToRefresh()
-                
+
                 await MainActor.run {
                     self.username = userInfo.username
                     self.isAuthenticatingOAuth = false
@@ -230,18 +229,18 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private func cancelOAuth() {
         isAuthenticatingOAuth = false
         deviceCodeResponse = nil
     }
-    
+
     private func signOut() {
         try? SharedDataStore.shared.clearAllData()
         username = ""
         saveStatusMessage = nil
     }
-    
+
     private func clearData() {
         try? SharedDataStore.shared.clearAllData()
         username = ""
