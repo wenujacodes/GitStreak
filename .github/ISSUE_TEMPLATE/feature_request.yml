@@ -24,14 +24,6 @@ body:
       description: Describe the solution or feature you'd like to see.
       placeholder: It would be great if GitStreak could...
     validations:
-      required: true
-
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives Considered
-      description: Have you considered any alternative solutions or workarounds?
-    validations:
       required: false
 
   - type: dropdown
@@ -55,13 +47,5 @@ body:
     attributes:
       label: Mockups / References
       description: If you have any mockups, sketches, or references from other apps, attach them here.
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional Context
-      description: Any other context, use cases, or information about the feature request.
     validations:
       required: false
