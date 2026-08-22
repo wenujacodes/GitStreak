@@ -1,10 +1,16 @@
 import SwiftUI
 import GitStreakKit
 
+enum NavigationDirection {
+    case forward, backward
+}
+
 struct OnboardingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let onComplete: () -> Void
 
     @State private var currentStep = 0
+    @State private var navigationDirection: NavigationDirection = .forward
     @State private var isLoading = false
     @State private var errorMessage: String? = nil
     @State private var fetchedData: ContributionData? = nil
@@ -14,45 +20,108 @@ struct OnboardingView: View {
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
     @State private var isPollingOAuth = false
 
+    private var appBgColor: Color {
+        colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(NSColor.windowBackgroundColor)
+    }
+
+    private var glassCardBg: Color {
+        colorScheme == .dark ? Color(hex: "#141518") : Color(NSColor.controlBackgroundColor)
+    }
+
+    private func advanceStep() {
+        navigationDirection = .forward
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            currentStep = min(currentStep + 1, 3)
+        }
+    }
+
+    private func regressStep() {
+        navigationDirection = .backward
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            currentStep = max(currentStep - 1, 0)
+        }
+    }
+
+    private var currentTransition: AnyTransition {
+        let insertionEdge: Edge = navigationDirection == .forward ? .trailing : .leading
+        let removalEdge: Edge = navigationDirection == .forward ? .leading : .trailing
+        return .asymmetric(
+            insertion: .move(edge: insertionEdge).combined(with: .opacity),
+            removal: .move(edge: removalEdge).combined(with: .opacity)
+        )
+    }
+
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Spacer()
 
-            Group {
+            ZStack {
                 switch currentStep {
                 case 0:
                     welcomeStep
+                        .transition(currentTransition)
                 case 1:
                     connectStep
+                        .transition(currentTransition)
                 case 2:
                     previewStep
+                        .transition(currentTransition)
                 case 3:
                     doneStep
+                        .transition(currentTransition)
                 default:
                     EmptyView()
                 }
             }
-            .animation(.easeInOut, value: currentStep)
+            .clipped()
 
             Spacer()
 
-            HStack {
-                if currentStep > 0 && currentStep < 3 && !isAuthenticatingOAuth {
-                    Button("Back") {
-                        currentStep -= 1
+            HStack(alignment: .center) {
+                HStack(spacing: 6) {
+                    ForEach(0..<4, id: \.self) { index in
+                        Capsule()
+                            .fill(index == currentStep ? Color.orange : Color.primary.opacity(0.18))
+                            .frame(width: index == currentStep ? 24 : 6, height: 6)
+                            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: currentStep)
                     }
-                    .buttonStyle(.link)
                 }
+
                 Spacer()
+
+                HStack(spacing: 12) {
+                    if currentStep > 0 && currentStep < 3 && !isAuthenticatingOAuth {
+                        Button(action: regressStep) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                        .buttonStyle(ModernSecondaryButtonStyle())
+                    }
+
+                    if currentStep == 0 {
+                        Button("Get Started", action: advanceStep)
+                            .buttonStyle(ModernPrimaryButtonStyle())
+                    } else if currentStep == 2 {
+                        Button("Continue", action: advanceStep)
+                            .buttonStyle(ModernPrimaryButtonStyle())
+                    } else if currentStep == 3 {
+                        Button("Open GitStreak", action: onComplete)
+                            .buttonStyle(ModernPrimaryButtonStyle())
+                    }
+                }
             }
-            .padding()
+            .padding(.horizontal, 28)
+            .padding(.vertical, 18)
+            .background(colorScheme == .dark ? Color(hex: "#0E0F12") : Color(NSColor.controlBackgroundColor))
         }
         .frame(minWidth: 900, maxWidth: 900, minHeight: 700, maxHeight: 700)
-        .padding()
+        .background(appBgColor)
     }
 
     private var welcomeStep: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 22) {
             Image(systemName: "flame.fill")
                 .resizable()
                 .scaledToFit()
@@ -61,7 +130,8 @@ struct OnboardingView: View {
 
             VStack(spacing: 6) {
                 Text("GitStreak")
-                    .font(.system(size: 28, weight: .bold))
+                    .font(.system(size: 34, weight: .bold))
+                    .foregroundColor(.primary)
 
                 Text("Make your coding habit visible")
                     .font(.title3)
@@ -71,32 +141,25 @@ struct OnboardingView: View {
             Text("Track your GitHub contributions right on your desktop with a calm, beautiful widget.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
-                .frame(maxWidth: 360)
-
-            Button("Get Started") {
-                currentStep += 1
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .padding(.top, 10)
+                .frame(maxWidth: 400)
         }
     }
 
     private var connectStep: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 22) {
             VStack(spacing: 6) {
                 Text("Connect to GitHub")
                     .font(.title2)
                     .fontWeight(.bold)
+                    .foregroundColor(.primary)
 
-                Text("Sign in with 1-click via GitHub to track your contribution activity.")
-                    .font(.caption)
+                Text("Sign in via GitHub Device Flow to display your activity widget.")
+                    .font(.callout)
                     .foregroundColor(.secondary)
             }
 
             if isAuthenticatingOAuth, let devCode = deviceCodeResponse {
-
-                VStack(spacing: 16) {
+                VStack(spacing: 18) {
                     VStack(spacing: 8) {
                         Text("ENTER THIS CODE ON GITHUB:")
                             .font(GSTypography.monoBadge)
@@ -114,14 +177,12 @@ struct OnboardingView: View {
                         Button("Open GitHub in Browser") {
                             OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.regular)
+                        .buttonStyle(ModernPrimaryButtonStyle())
 
                         Button("Cancel") {
                             cancelOAuth()
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.regular)
+                        .buttonStyle(ModernSecondaryButtonStyle())
                     }
 
                     HStack(spacing: 8) {
@@ -136,27 +197,25 @@ struct OnboardingView: View {
                 .padding(24)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(nsColor: .controlBackgroundColor))
+                        .fill(glassCardBg)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                        .stroke(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1), lineWidth: 1)
                 )
-                .frame(maxWidth: 420)
+                .frame(maxWidth: 440)
+                .transition(.scale.combined(with: .opacity))
             } else {
-
                 VStack(spacing: 16) {
                     Button(action: startOAuthFlow) {
                         HStack(spacing: 10) {
                             Image(systemName: "person.badge.key.fill")
                                 .font(.system(size: 14))
                             Text("Sign in with GitHub")
-                                .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                    .buttonStyle(ModernPrimaryButtonStyle())
                     .disabled(isLoading)
 
                     if let errorMessage = errorMessage {
@@ -167,15 +226,23 @@ struct OnboardingView: View {
                     }
                 }
                 .frame(maxWidth: 320)
+                .transition(.scale.combined(with: .opacity))
             }
         }
     }
 
     private var previewStep: some View {
-        VStack(spacing: 18) {
-            Text("Here's your activity")
-                .font(.title2)
-                .fontWeight(.bold)
+        VStack(spacing: 20) {
+            VStack(spacing: 4) {
+                Text("Your Activity & Theme")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+
+                Text("Preview your contribution matrix and pick a color theme.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             if let data = fetchedData {
                 VStack(spacing: 12) {
@@ -203,14 +270,18 @@ struct OnboardingView: View {
                     )
                     .padding(.horizontal, 14)
                     .padding(.vertical, 12)
-                    .background(Color(NSColor.controlBackgroundColor))
+                    .background(glassCardBg)
                     .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
+                    )
                 }
                 .frame(maxWidth: 520)
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Select a theme:")
+                Text("Theme Palette:")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -219,7 +290,9 @@ struct OnboardingView: View {
                         ForEach(ThemeRegistry.allThemes, id: \.id) { theme in
                             ThemeSwatchGridItem(theme: theme, isSelected: selectedThemeID == theme.id)
                                 .onTapGesture {
-                                    selectedThemeID = theme.id
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedThemeID = theme.id
+                                    }
                                     UserPreferences.shared.selectedThemeID = theme.id
                                 }
                         }
@@ -228,66 +301,89 @@ struct OnboardingView: View {
                 }
             }
             .frame(maxWidth: 520)
-
-            Button("Continue") {
-                currentStep += 1
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
         }
     }
 
     private var doneStep: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 64, height: 64)
-                .foregroundColor(.green)
+        VStack(spacing: 24) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 56))
+                .foregroundColor(.orange)
 
             VStack(spacing: 6) {
-                Text("You're all set!")
+                Text("Widget Ready")
                     .font(.title2)
                     .fontWeight(.bold)
+                    .foregroundColor(.primary)
 
-                Text("Add the GitStreak widget to your desktop to start tracking.")
+                Text("Add GitStreak to your desktop wallpaper in 4 easy steps:")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Label("Right-click your desktop wallpaper", systemImage: "1.circle.fill")
-                Label("Select 'Edit Widgets...'", systemImage: "2.circle.fill")
-                Label("Search for 'GitStreak' and pick a widget size", systemImage: "3.circle.fill")
-                Label("Drag it anywhere on your desktop", systemImage: "4.circle.fill")
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 12) {
+                    Image(systemName: "desktopcomputer")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    Text("Right-click your desktop wallpaper")
+                        .foregroundColor(.primary)
+                }
+                HStack(spacing: 12) {
+                    Image(systemName: "plus.square.on.square")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    Text("Select 'Edit Widgets...'")
+                        .foregroundColor(.primary)
+                }
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    Text("Search for 'GitStreak' and pick a widget size")
+                        .foregroundColor(.primary)
+                }
+                HStack(spacing: 12) {
+                    Image(systemName: "hand.tap.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    Text("Drag it anywhere onto your desktop")
+                        .foregroundColor(.primary)
+                }
             }
             .font(.callout)
-            .padding()
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(10)
-
-            Button("Open GitStreak") {
-                onComplete()
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .padding(.top, 10)
+            .padding(20)
+            .background(glassCardBg)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1), lineWidth: 1)
+            )
+            .frame(maxWidth: 460)
         }
     }
 
     private func startOAuthFlow() {
-        isLoading = true
-        errorMessage = nil
+        withAnimation(.easeInOut(duration: 0.25)) {
+            isLoading = true
+            errorMessage = nil
+        }
 
         Task {
             do {
                 let codeResponse = try await OAuthService.shared.requestDeviceCode()
 
                 await MainActor.run {
-                    self.deviceCodeResponse = codeResponse
-                    self.isAuthenticatingOAuth = true
-                    self.isLoading = false
-                    self.isPollingOAuth = true
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        self.deviceCodeResponse = codeResponse
+                        self.isAuthenticatingOAuth = true
+                        self.isLoading = false
+                        self.isPollingOAuth = true
+                    }
                 }
 
                 OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
@@ -306,22 +402,26 @@ struct OnboardingView: View {
                     self.fetchedData = data
                     self.isAuthenticatingOAuth = false
                     self.isPollingOAuth = false
-                    self.currentStep += 1
+                    self.advanceStep()
                 }
             } catch {
                 await MainActor.run {
-                    self.isLoading = false
-                    self.isAuthenticatingOAuth = false
-                    self.isPollingOAuth = false
-                    self.errorMessage = error.localizedDescription
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        self.isLoading = false
+                        self.isAuthenticatingOAuth = false
+                        self.isPollingOAuth = false
+                        self.errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
     }
 
     private func cancelOAuth() {
-        isAuthenticatingOAuth = false
-        isPollingOAuth = false
-        deviceCodeResponse = nil
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            isAuthenticatingOAuth = false
+            isPollingOAuth = false
+            deviceCodeResponse = nil
+        }
     }
 }

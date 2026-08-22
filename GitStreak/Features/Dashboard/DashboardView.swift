@@ -11,11 +11,11 @@ struct DashboardView: View {
     private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
-        colorScheme == .dark ? Color(red: 18/255, green: 19/255, blue: 19/255) : Color(nsColor: .windowBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(nsColor: .windowBackgroundColor)
     }
 
     private var cardBgColor: Color {
-        colorScheme == .dark ? Color(red: 24/255, green: 25/255, blue: 25/255) : Color(nsColor: .controlBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#141518") : Color(nsColor: .controlBackgroundColor)
     }
 
     private var borderColor: Color {
