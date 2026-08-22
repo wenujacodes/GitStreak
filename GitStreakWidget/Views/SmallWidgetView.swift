@@ -15,28 +15,28 @@ struct SmallWidgetView: View {
             switch entry.state {
             case .loaded:
                 if let username = entry.username, let data = entry.contributionData {
-                    // Header: ~/username in compact monospaced text
-                    Text("~/\(username)")
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    // Header: @username using standard font matching Medium/Large widgets
+                    Text("@\(username)")
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                     
                     Spacer(minLength: 2)
                     
-                    // Compact Streak Metric
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    // Compact Streak Metric using standard system fonts
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text("\(data.currentStreak)")
-                            .font(.system(size: 22, weight: .bold, design: .monospaced))
+                            .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.primary)
                         
                         Text("day streak")
-                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                     }
                     
                     Spacer(minLength: 4)
                     
-                    // Heatmap Grid: 11 weeks, smaller cells, balanced side & bottom margins
+                    // Heatmap Grid: 11 weeks
                     HStack {
                         Spacer(minLength: 0)
                         ContributionGridView(
@@ -50,42 +50,34 @@ struct SmallWidgetView: View {
                     }
                 }
             case .noUser:
-                VStack(spacing: 6) {
-                    Text("~/gitstreak")
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundColor(.secondary)
-                    Spacer()
+                VStack(spacing: 8) {
                     Image(systemName: "person.crop.circle.badge.plus")
-                        .font(.system(size: 18))
+                        .font(.system(size: 24))
                         .foregroundColor(.secondary)
                     Text("Add GitHub Account")
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.caption)
                         .foregroundColor(.secondary)
-                    Spacer()
+                        .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .noData:
-                VStack(spacing: 6) {
-                    Text("~/gitstreak")
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundColor(.secondary)
-                    Spacer()
+                VStack(spacing: 8) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 18))
+                        .font(.system(size: 24))
                         .foregroundColor(.secondary)
                     Text("Open app to sync")
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.caption)
                         .foregroundColor(.secondary)
-                    Spacer()
+                        .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .error(let msg):
-                VStack(spacing: 6) {
+                VStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 18))
+                        .font(.system(size: 24))
                         .foregroundColor(.orange)
                     Text(msg)
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
