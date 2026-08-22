@@ -38,10 +38,12 @@ body:
     id: feature-area
     attributes:
       label: Feature Area
-      description: Which part of Snapzy does this relate to?
+      description: Which part of GitStreak does this relate to?
       options:
-        - Widget
-        - UI
+        - Desktop Widget
+        - Main App UI
+        - OAuth & Authentication
+        - Color Themes
         - Settings / Preferences
         - Auto-Update (Sparkle)
         - Other

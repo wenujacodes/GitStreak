@@ -50,13 +50,13 @@ body:
   - type: textarea
     id: screenshots
     attributes:
-      label: 
+      label: Screenshots
       description: If applicable, add screenshots or screen recordings to help explain the issue.
     validations:
       required: false
 
   - type: input
-    id: GitStreak-version
+    id: gitstreak-version
     attributes:
       label: GitStreak Version
       description: Which version of GitStreak are you using?
@@ -70,7 +70,6 @@ body:
       label: macOS Version
       description: Which macOS version are you running?
       options:
-        - macOS 26 (Tahoe)
         - macOS 15 (Sequoia)
         - macOS 14 (Sonoma)
         - Other (specify in description)
