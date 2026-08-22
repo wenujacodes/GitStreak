@@ -24,6 +24,9 @@ struct SettingsView: View {
         }
         .frame(width: 480, height: 260)
         .padding()
+        .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
+            self.username = UserPreferences.shared.username ?? ""
+        }
     }
     
     private var generalTab: some View {
@@ -82,6 +85,16 @@ struct SettingsView: View {
                         }
                         
                         Spacer()
+                        
+                        if !username.isEmpty {
+                            Button(role: .destructive, action: signOut) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    Text("Sign Out")
+                                }
+                            }
+                            .controlSize(.regular)
+                        }
                         
                         Button(action: startOAuthFlow) {
                             HStack(spacing: 6) {
@@ -207,8 +220,15 @@ struct SettingsView: View {
         deviceCodeResponse = nil
     }
     
+    private func signOut() {
+        try? SharedDataStore.shared.clearAllData()
+        username = ""
+        saveStatusMessage = nil
+    }
+    
     private func clearData() {
         try? SharedDataStore.shared.clearAllData()
-        NSApplication.shared.terminate(nil)
+        username = ""
+        saveStatusMessage = nil
     }
 }

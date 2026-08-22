@@ -51,13 +51,13 @@ public final class UserPreferences: @unchecked Sendable {
     
     private func saveModel() {
         lock.lock()
-        defer { lock.unlock() }
-        
         let url = Self.sharedFileURL
         if let data = try? JSONEncoder().encode(model) {
             try? data.write(to: url)
         }
+        lock.unlock()
         
+        NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "GitStreakWidget")
     }
     
@@ -129,4 +129,8 @@ public final class UserPreferences: @unchecked Sendable {
             saveModel()
         }
     }
+}
+
+extension Notification.Name {
+    public static let userPreferencesDidChange = Notification.Name("UserPreferencesDidChangeNotification")
 }

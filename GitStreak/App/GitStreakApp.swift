@@ -37,13 +37,18 @@ struct ContentView: View {
     @State private var hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
     
     var body: some View {
-        if hasCompletedOnboarding {
-            DashboardView()
-        } else {
-            OnboardingView(onComplete: {
-                UserPreferences.shared.hasCompletedOnboarding = true
-                hasCompletedOnboarding = true
-            })
+        Group {
+            if hasCompletedOnboarding {
+                DashboardView()
+            } else {
+                OnboardingView(onComplete: {
+                    UserPreferences.shared.hasCompletedOnboarding = true
+                    hasCompletedOnboarding = true
+                })
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
+            self.hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
         }
     }
 }
