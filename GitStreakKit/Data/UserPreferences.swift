@@ -46,6 +46,7 @@ public final class UserPreferences: @unchecked Sendable {
         if let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode(PreferencesModel.self, from: data) {
             self.model = decoded
+            UserDefaults.standard.set(decoded.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         }
     }
     
@@ -55,6 +56,7 @@ public final class UserPreferences: @unchecked Sendable {
         if let data = try? JSONEncoder().encode(model) {
             try? data.write(to: url)
         }
+        UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         lock.unlock()
         
         NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)

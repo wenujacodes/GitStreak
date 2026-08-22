@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct GitStreakApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,9 @@ struct GitStreakApp: App {
         }
         .windowResizability(.contentSize)
         .commands {
+            if !hasCompletedOnboarding {
+                CommandGroup(replacing: .appSettings) { }
+            }
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates...") {
                     SparkleUpdaterViewModel.shared.checkForUpdates()

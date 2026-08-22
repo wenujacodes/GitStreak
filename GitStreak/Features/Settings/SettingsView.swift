@@ -2,6 +2,7 @@ import SwiftUI
 import GitStreakKit
 
 struct SettingsView: View {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @State private var username: String = UserPreferences.shared.username ?? ""
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
@@ -11,19 +12,40 @@ struct SettingsView: View {
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
     
     var body: some View {
-        TabView {
-            generalTab
-                .tabItem {
-                    Label("General", systemImage: "gearshape")
+        Group {
+            if hasCompletedOnboarding {
+                TabView {
+                    generalTab
+                        .tabItem {
+                            Label("General", systemImage: "gearshape")
+                        }
+                    
+                    aboutTab
+                        .tabItem {
+                            Label("About", systemImage: "info.circle")
+                        }
                 }
-            
-            aboutTab
-                .tabItem {
-                    Label("About", systemImage: "info.circle")
+                .frame(width: 480, height: 260)
+                .padding()
+            } else {
+                VStack(spacing: 12) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(.secondary)
+                    
+                    Text("Setup Required")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                    
+                    Text("Please complete the onboarding setup before accessing Settings.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
                 }
+                .frame(width: 380, height: 180)
+                .padding()
+            }
         }
-        .frame(width: 480, height: 260)
-        .padding()
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
         }
