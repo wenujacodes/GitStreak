@@ -106,17 +106,7 @@ struct OnboardingView: View {
                             .foregroundColor(.secondary)
                             .tracking(1)
                         
-                        Text(devCode.userCode)
-                            .font(.system(size: 28, weight: .bold, design: .monospaced))
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.primary.opacity(0.08))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.primary.opacity(0.15), lineWidth: 1)
-                            )
+                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 28, paddingVertical: 8, paddingHorizontal: 16, cornerRadius: 8)
                         
                         Text("✓ Code copied to clipboard")
                             .font(.caption2)

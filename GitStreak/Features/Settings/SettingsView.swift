@@ -39,13 +39,7 @@ struct SettingsView: View {
                                 .font(GSTypography.monoBadge)
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text(devCode.userCode)
-                                .font(.system(size: 16, weight: .bold, design: .monospaced))
-                                .foregroundColor(.primary)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.primary.opacity(0.08))
-                                .cornerRadius(4)
+                            CopyableUserCodeView(userCode: devCode.userCode, fontSize: 16, paddingVertical: 4, paddingHorizontal: 8, cornerRadius: 4)
                         }
                         
                         HStack(spacing: 8) {
