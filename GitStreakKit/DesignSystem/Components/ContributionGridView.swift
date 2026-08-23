@@ -127,6 +127,7 @@ private struct ContributionWeekColumnView: View {
 
                     ContributionGridCellView(
                         day: day,
+                        dayIndex: dayIndex,
                         cellColor: cellColor,
                         radius: radius,
                         strokeColor: strokeColor,
@@ -148,6 +149,7 @@ private struct ContributionWeekColumnView: View {
 
 private struct ContributionGridCellView: View {
     let day: ContributionDay
+    let dayIndex: Int
     let cellColor: Color
     let radius: CGFloat
     let strokeColor: Color
@@ -165,7 +167,7 @@ private struct ContributionGridCellView: View {
             )
             .scaleEffect(isHovered ? 1.3 : 1.0)
             .shadow(color: isHovered ? Color.black.opacity(0.4) : Color.clear, radius: 4, x: 0, y: 2)
-            .overlay(alignment: .top) {
+            .overlay(alignment: dayIndex <= 1 ? .bottom : .top) {
                 if isHovered && showTooltips {
                     VStack(spacing: 1) {
                         Text("\(day.contributionCount) contributions")
@@ -186,7 +188,7 @@ private struct ContributionGridCellView: View {
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
                     )
-                    .offset(y: -36)
+                    .offset(y: dayIndex <= 1 ? 36 : -36)
                     .fixedSize()
                     .allowsHitTesting(false)
                 }
