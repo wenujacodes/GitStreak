@@ -29,12 +29,12 @@ struct SmallWidgetView: View {
                                 weeks: data.weeks,
                                 theme: entry.theme,
                                 maxWeeks: 7,
-                                cellSize: 14.5,
-                                columnSpacing: 3.5,
-                                rowSpacing: 3.0,
+                                cellSize: 15.0,
+                                columnSpacing: 4.5,
+                                rowSpacing: 4.0,
                                 cornerRadius: 1.5
                             )
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                             Spacer(minLength: 0)
                         }
                         Spacer(minLength: 0)
@@ -78,7 +78,7 @@ struct SmallWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(10)
+        .padding(5)
         .background(widgetGradient)
         .containerBackground(for: .widget) {
             widgetGradient
