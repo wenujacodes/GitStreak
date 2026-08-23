@@ -48,7 +48,14 @@ public actor GitHubAPIClient {
     public func fetchContributions(username: String, token: String) async throws -> (GitHubUser, [ContributionWeek], Int) {
         var request = URLRequest(url: endpoint, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedToken.isEmpty {
+            if trimmedToken.hasPrefix("Bearer ") {
+                request.setValue(trimmedToken, forHTTPHeaderField: "Authorization")
+            } else {
+                request.setValue("Bearer \(trimmedToken)", forHTTPHeaderField: "Authorization")
+            }
+        }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("GitStreak", forHTTPHeaderField: "User-Agent")
         request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")

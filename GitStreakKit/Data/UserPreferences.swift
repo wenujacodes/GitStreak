@@ -7,6 +7,7 @@ public enum AppearanceMode: String, Codable, Sendable, CaseIterable {
 
 public struct PreferencesModel: Codable, Sendable {
     public var username: String?
+    public var accessToken: String?
     public var selectedThemeID: String = "github"
     public var hasCompletedOnboarding: Bool = false
     public var preferredAppearance: AppearanceMode = .system
@@ -76,6 +77,20 @@ public final class UserPreferences: @unchecked Sendable {
         set {
             lock.lock()
             model.username = newValue
+            lock.unlock()
+            saveModel()
+        }
+    }
+
+    public var accessToken: String? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return model.accessToken
+        }
+        set {
+            lock.lock()
+            model.accessToken = newValue
             lock.unlock()
             saveModel()
         }

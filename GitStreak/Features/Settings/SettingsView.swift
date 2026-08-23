@@ -11,11 +11,10 @@ struct SettingsView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @State private var selectedTab: SettingsTab = .general
     @State private var username: String = UserPreferences.shared.username ?? ""
+    @State private var patInput: String = TokenStorage.loadToken() ?? ""
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
-
-    @State private var isAuthenticatingOAuth = false
-    @State private var deviceCodeResponse: DeviceCodeResponse? = nil
+    @State private var isSavingPAT = false
     @State private var avatarURL: URL? = SharedDataStore.shared.getCachedData()?.user.avatarURL
 
     var body: some View {
@@ -34,7 +33,7 @@ struct SettingsView: View {
                             Label("About", systemImage: "info.circle")
                         }
                 }
-                .frame(width: 520, height: 280)
+                .frame(width: 540, height: 300)
                 .padding()
             } else {
                 VStack(spacing: 12) {
@@ -59,106 +58,92 @@ struct SettingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
+            if self.patInput.isEmpty {
+                self.patInput = TokenStorage.loadToken() ?? ""
+            }
         }
     }
 
     private var generalTab: some View {
         VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("GitHub Authentication")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                Text("GitStreak authenticates securely with GitHub via 1-click Device Flow and stores your token in the local Keychain.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 16) {
+                HStack(spacing: 12) {
+                    if !username.isEmpty {
+                        AvatarView(avatarURL: avatarURL, size: 38)
+                    } else {
+                        Circle()
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 38, height: 38)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(.white)
+                            )
+                    }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Connected Account")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+
+                        if !username.isEmpty {
+                            Text("@\(username)")
+                                .font(GSTypography.monoCaption)
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text("No account connected")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                Spacer()
+
+                if !username.isEmpty {
+                    Button(action: signOut) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            Text("Sign Out")
+                        }
+                    }
+                    .buttonStyle(ModernSecondaryButtonStyle())
+                }
             }
 
-            if let devCode = deviceCodeResponse, isAuthenticatingOAuth {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("ENTER THIS CODE ON GITHUB:")
-                            .font(GSTypography.monoBadge)
-                            .foregroundColor(.secondary)
-                            .tracking(1)
-                        Spacer()
-                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 16, paddingVertical: 4, paddingHorizontal: 8, cornerRadius: 4)
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("GitHub Personal Access Token")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+
+                Text("Enter your Personal Access Token (ghp_... or github_pat_...) to access contribution data.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                HStack(spacing: 8) {
+                    SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $patInput)
+                        .textFieldStyle(.roundedBorder)
+
+                    Button("Save Token") {
+                        savePersonalToken()
                     }
-
-                    HStack(spacing: 10) {
-                        Button("Open GitHub") {
-                            OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
-                        }
-                        .buttonStyle(ModernPrimaryButtonStyle())
-
-                        Button("Cancel") {
-                            cancelOAuth()
-                        }
-                        .buttonStyle(ModernSecondaryButtonStyle())
-
-                        Spacer()
-
-                        ProgressView()
-                            .controlSize(.small)
-                    }
+                    .buttonStyle(ModernPrimaryButtonStyle())
+                    .disabled(isSavingPAT || patInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
-                .padding(.vertical, 4)
-            } else {
-                HStack(spacing: 16) {
-                    HStack(spacing: 12) {
-                        if !username.isEmpty {
-                            AvatarView(avatarURL: avatarURL, size: 38)
-                        } else {
-                            Circle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 38, height: 38)
-                                .overlay(
-                                    Image(systemName: "person.fill")
-                                        .foregroundColor(.white)
-                                )
-                        }
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Connected Account")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-
-                            if !username.isEmpty {
-                                Text("@\(username)")
-                                    .font(GSTypography.monoCaption)
-                                    .foregroundColor(.secondary)
-                            } else {
-                                Text("No account connected")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+                HStack {
+                    Button(action: openCreateTokenURL) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.up.right.square")
+                            Text("Generate Token on GitHub")
                         }
+                        .font(.caption)
                     }
+                    .buttonStyle(.link)
 
                     Spacer()
-
-                    HStack(spacing: 8) {
-                        if !username.isEmpty {
-                            Button(action: signOut) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "rectangle.portrait.and.arrow.right")
-                                    Text("Sign Out")
-                                }
-                            }
-                            .buttonStyle(ModernSecondaryButtonStyle())
-                        }
-
-                        Button(action: startOAuthFlow) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "person.badge.key.fill")
-                                Text(username.isEmpty ? "Sign in with GitHub" : "Switch Account")
-                            }
-                        }
-                        .buttonStyle(ModernPrimaryButtonStyle())
-                    }
                 }
-                .padding(.vertical, 4)
             }
 
             if let msg = saveStatusMessage {
@@ -243,51 +228,49 @@ struct SettingsView: View {
         .padding(16)
     }
 
-    private func startOAuthFlow() {
+    private func openCreateTokenURL() {
+        if let url = URL(string: "https://github.com/settings/tokens/new?description=GitStreak&scopes=read:user,user:email") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    private func savePersonalToken() {
+        let cleanToken = patInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanToken.isEmpty else { return }
+
+        isSavingPAT = true
         saveStatusMessage = nil
+
         Task {
             do {
-                let codeResponse = try await OAuthService.shared.requestDeviceCode()
+                TokenStorage.saveToken(cleanToken)
 
-                await MainActor.run {
-                    self.deviceCodeResponse = codeResponse
-                    self.isAuthenticatingOAuth = true
-                }
-
-                OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
-
-                let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
-                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
-
-                TokenStorage.saveToken(accessToken)
+                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: cleanToken)
                 UserPreferences.shared.username = userInfo.username
+
                 let data = try await SharedDataStore.shared.refreshData(force: true)
                 SharedDataStore.shared.notifyWidgetToRefresh()
 
                 await MainActor.run {
                     self.username = userInfo.username
                     self.avatarURL = data.user.avatarURL
-                    self.isAuthenticatingOAuth = false
-                    self.saveStatusMessage = "Successfully connected as @\(userInfo.username)!"
+                    self.isSavingPAT = false
+                    self.saveStatusMessage = "Personal Access Token saved successfully! (@\(userInfo.username))"
                 }
             } catch {
                 await MainActor.run {
-                    self.isAuthenticatingOAuth = false
-                    self.saveStatusMessage = "OAuth failed: \(error.localizedDescription)"
+                    self.isSavingPAT = false
+                    self.saveStatusMessage = "Failed to save token: \(error.localizedDescription)"
                 }
             }
         }
-    }
-
-    private func cancelOAuth() {
-        isAuthenticatingOAuth = false
-        deviceCodeResponse = nil
     }
 
     private func signOut() {
         try? SharedDataStore.shared.clearAllData()
         username = ""
         avatarURL = nil
+        patInput = ""
         saveStatusMessage = nil
     }
 
@@ -295,6 +278,7 @@ struct SettingsView: View {
         try? SharedDataStore.shared.clearAllData()
         username = ""
         avatarURL = nil
+        patInput = ""
         saveStatusMessage = nil
     }
 }

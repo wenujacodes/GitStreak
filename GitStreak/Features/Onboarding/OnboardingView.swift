@@ -16,9 +16,7 @@ struct OnboardingView: View {
     @State private var fetchedData: ContributionData? = nil
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
 
-    @State private var isAuthenticatingOAuth = false
-    @State private var deviceCodeResponse: DeviceCodeResponse? = nil
-    @State private var isPollingOAuth = false
+    @State private var patInput: String = TokenStorage.loadToken() ?? ""
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
@@ -86,7 +84,7 @@ struct OnboardingView: View {
                 Spacer()
 
                 HStack(spacing: 12) {
-                    if currentStep > 0 && currentStep < 3 && !isAuthenticatingOAuth {
+                    if currentStep > 0 && currentStep < 3 {
                         Button(action: regressStep) {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
@@ -143,78 +141,64 @@ struct OnboardingView: View {
     }
 
     private var connectStep: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 24) {
             VStack(spacing: 8) {
-                Text("Connect to GitHub")
+                Text("Connect GitHub Token")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
 
-                Text("Sign in via GitHub Device Flow to display your activity widget.")
+                Text("Paste your GitHub Personal Access Token to display your contribution activity.")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
 
-            if isAuthenticatingOAuth, let devCode = deviceCodeResponse {
-                VStack(spacing: 22) {
-                    VStack(spacing: 12) {
-                        Text("ENTER THIS CODE ON GITHUB:")
-                            .font(GSTypography.monoBadge)
-                            .foregroundColor(.secondary)
-                            .tracking(1.5)
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Personal Access Token (ghp_... or github_pat_...)")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
 
-                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 32, paddingVertical: 10, paddingHorizontal: 20, cornerRadius: 8)
+                    SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $patInput)
+                        .textFieldStyle(.roundedBorder)
 
-                        Text("✓ Code copied to clipboard")
+                    HStack {
+                        Button(action: openCreateTokenURL) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.up.right.square")
+                                Text("Generate Token on GitHub")
+                            }
                             .font(.caption)
-                            .foregroundColor(.green)
-                    }
-
-                    HStack(spacing: 16) {
-                        Button("Open GitHub in Browser") {
-                            OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
                         }
-                        .buttonStyle(ModernPrimaryButtonStyle())
+                        .buttonStyle(.link)
 
-                        Button("Cancel") {
-                            cancelOAuth()
-                        }
-                        .buttonStyle(ModernSecondaryButtonStyle())
+                        Spacer()
                     }
+                }
 
+                Button(action: connectWithPAT) {
                     HStack(spacing: 8) {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("Waiting for authorization on GitHub...")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.top, 4)
-                }
-                .frame(maxWidth: 520)
-                .transition(.scale.combined(with: .opacity))
-            } else {
-                VStack(spacing: 20) {
-                    Button(action: startOAuthFlow) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "person.badge.key.fill")
-                                .font(.system(size: 15))
-                            Text("Sign in with GitHub")
+                        if isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "key.fill")
                         }
-                        .frame(maxWidth: .infinity)
+                        Text("Connect Account")
                     }
-                    .buttonStyle(ModernPrimaryButtonStyle())
-                    .disabled(isLoading)
-
-                    if let errorMessage = errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.callout)
-                            .multilineTextAlignment(.center)
-                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: 360)
-                .transition(.scale.combined(with: .opacity))
+                .buttonStyle(ModernPrimaryButtonStyle())
+                .disabled(isLoading || patInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.callout)
+                        .multilineTextAlignment(.center)
+                }
             }
+            .frame(maxWidth: 420)
         }
     }
 
@@ -342,7 +326,16 @@ struct OnboardingView: View {
         }
     }
 
-    private func startOAuthFlow() {
+    private func openCreateTokenURL() {
+        if let url = URL(string: "https://github.com/settings/tokens/new?description=GitStreak&scopes=read:user,user:email") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    private func connectWithPAT() {
+        let cleanToken = patInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanToken.isEmpty else { return }
+
         withAnimation(.easeInOut(duration: 0.25)) {
             isLoading = true
             errorMessage = nil
@@ -350,53 +343,27 @@ struct OnboardingView: View {
 
         Task {
             do {
-                let codeResponse = try await OAuthService.shared.requestDeviceCode()
-
-                await MainActor.run {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        self.deviceCodeResponse = codeResponse
-                        self.isAuthenticatingOAuth = true
-                        self.isLoading = false
-                        self.isPollingOAuth = true
-                    }
-                }
-
-                OAuthService.openDeviceLogin(userCode: codeResponse.userCode, verificationUri: codeResponse.verificationUri)
-
-                let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
-                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
-
+                let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: cleanToken)
                 let service = ContributionService()
-                let data = try await service.fetchContributions(username: userInfo.username, token: accessToken)
+                let data = try await service.fetchContributions(username: userInfo.username, token: cleanToken)
 
-                TokenStorage.saveToken(accessToken)
+                TokenStorage.saveToken(cleanToken)
                 UserPreferences.shared.username = userInfo.username
                 SharedDataStore.shared.notifyWidgetToRefresh()
 
                 await MainActor.run {
                     self.fetchedData = data
-                    self.isAuthenticatingOAuth = false
-                    self.isPollingOAuth = false
+                    self.isLoading = false
                     self.advanceStep()
                 }
             } catch {
                 await MainActor.run {
                     withAnimation(.easeInOut(duration: 0.25)) {
                         self.isLoading = false
-                        self.isAuthenticatingOAuth = false
-                        self.isPollingOAuth = false
-                        self.errorMessage = error.localizedDescription
+                        self.errorMessage = "Invalid Token: \(error.localizedDescription)"
                     }
                 }
             }
-        }
-    }
-
-    private func cancelOAuth() {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-            isAuthenticatingOAuth = false
-            isPollingOAuth = false
-            deviceCodeResponse = nil
         }
     }
 }

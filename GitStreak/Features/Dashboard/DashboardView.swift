@@ -370,6 +370,7 @@ struct DashboardView: View {
     }
 
     private func refreshData(silent: Bool = false, force: Bool = true) async {
+        guard !isLoading else { return }
         if !silent {
             isLoading = true
         }
