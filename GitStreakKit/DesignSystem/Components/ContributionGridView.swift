@@ -60,8 +60,16 @@ public struct ContributionGridView: View {
     private func cellView(for day: ContributionDay) -> some View {
         let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
         let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
+        let strokeColor = colorScheme == .dark
+            ? Color.white.opacity(0.07)
+            : Color.black.opacity(0.08)
+
         let rect = RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
+            .overlay(
+                RoundedRectangle(cornerRadius: radius)
+                    .stroke(strokeColor, lineWidth: 0.5)
+            )
             .frame(width: cellSize, height: cellSize)
 
         if showTooltips {
