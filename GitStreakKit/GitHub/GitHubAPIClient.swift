@@ -45,7 +45,7 @@ public actor GitHubAPIClient {
 
     public init() {}
 
-    public func fetchContributions(username: String, token: String) async throws -> (GitHubUser, [ContributionWeek], Int) {
+    public func fetchContributions(username: String, token: String) async throws -> (GitHubUser, [ContributionWeek], Int, UserActivityStats) {
         var request = URLRequest(url: endpoint, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         request.httpMethod = "POST"
         let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)

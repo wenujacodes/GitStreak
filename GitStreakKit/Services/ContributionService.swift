@@ -10,7 +10,7 @@ public actor ContributionService {
     }
 
     public func fetchContributions(username: String, token: String) async throws -> ContributionData {
-        let (user, weeks, totalContributions) = try await apiClient.fetchContributions(username: username, token: token)
+        let (user, weeks, totalContributions, activityStats) = try await apiClient.fetchContributions(username: username, token: token)
 
         let allDays = weeks.flatMap { $0.contributionDays }
         if allDays.isEmpty, let cached = cacheManager.load() {
@@ -29,6 +29,7 @@ public actor ContributionService {
             totalContributions: finalTotal,
             currentStreak: currentStreakCount,
             longestStreak: longestStreakCount,
+            activityStats: activityStats,
             fetchedAt: Date()
         )
 

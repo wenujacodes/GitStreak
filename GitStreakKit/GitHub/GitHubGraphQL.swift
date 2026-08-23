@@ -9,6 +9,11 @@ public struct GitHubGraphQL {
         avatarUrl(size: 200)
         bio
         contributionsCollection(from: $from, to: $to) {
+          totalCommitContributions
+          totalIssueContributions
+          totalPullRequestContributions
+          totalPullRequestReviewContributions
+          totalRepositoryContributions
           contributionCalendar {
             totalContributions
             weeks {
