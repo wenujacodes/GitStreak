@@ -326,6 +326,17 @@ struct DashboardView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             checkAndAutoRefresh()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .contributionDataDidUpdate)) { notification in
+            if let updatedData = notification.object as? ContributionData {
+                self.contributionData = updatedData
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
+            self.selectedThemeID = UserPreferences.shared.selectedThemeID
+            if let cached = SharedDataStore.shared.getCachedData() {
+                self.contributionData = cached
+            }
+        }
     }
 
     private func relativeTimeString(from date: Date) -> String {

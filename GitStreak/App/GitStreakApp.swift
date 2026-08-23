@@ -3,8 +3,22 @@ import AppKit
 import GitStreakKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var backgroundRefreshTimer: Timer?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        startBackgroundRefreshTimer()
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
+    }
+
+    private func startBackgroundRefreshTimer() {
+        backgroundRefreshTimer = Timer.scheduledTimer(withTimeInterval: 900, repeats: true) { _ in
+            Task {
+                _ = try? await SharedDataStore.shared.refreshData(force: false)
+            }
+        }
     }
 }
 

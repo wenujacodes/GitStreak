@@ -30,6 +30,7 @@ public final class SharedDataStore: @unchecked Sendable {
         preferences.lastRefreshDate = Date()
 
         notifyWidgetToRefresh()
+        NotificationCenter.default.post(name: .contributionDataDidUpdate, object: data)
         return data
     }
 
@@ -54,4 +55,8 @@ public final class SharedDataStore: @unchecked Sendable {
 
         notifyWidgetToRefresh()
     }
+}
+
+extension Notification.Name {
+    public static let contributionDataDidUpdate = Notification.Name("ContributionDataDidUpdateNotification")
 }
