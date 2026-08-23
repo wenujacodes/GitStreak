@@ -8,6 +8,7 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
+    @State private var isFastPolling = false
     private let autoRefreshTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
@@ -84,9 +85,9 @@ struct DashboardView: View {
                     }
                     .buttonStyle(DevHeaderButtonStyle())
 
-                    Button(action: { Task { await refreshData() } }) {
+                    Button(action: { triggerSmartRefresh() }) {
                         Group {
-                            if isLoading {
+                            if isLoading || isFastPolling {
                                 ProgressView()
                                     .controlSize(.small)
                                     .frame(width: 50)
@@ -366,6 +367,40 @@ struct DashboardView: View {
             Task { await refreshData(silent: false, force: true) }
         } else {
             Task { await refreshData(silent: true, force: true) }
+        }
+    }
+
+    private func triggerSmartRefresh() {
+        Task {
+            let initialCount = contributionData?.totalContributions ?? 0
+            await refreshData(silent: false, force: true)
+
+            let newCount = contributionData?.totalContributions ?? 0
+            if newCount == initialCount && !isFastPolling {
+                startFastPollLoop(initialCount: initialCount)
+            }
+        }
+    }
+
+    private func startFastPollLoop(initialCount: Int) {
+        isFastPolling = true
+        Task {
+            for _ in 1...9 {
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                guard !Task.isCancelled else { break }
+                let data = try? await SharedDataStore.shared.refreshData(force: true)
+                if let data = data {
+                    await MainActor.run {
+                        self.contributionData = data
+                    }
+                    if data.totalContributions > initialCount {
+                        break
+                    }
+                }
+            }
+            await MainActor.run {
+                self.isFastPolling = false
+            }
         }
     }
 

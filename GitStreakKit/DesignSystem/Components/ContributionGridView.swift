@@ -7,6 +7,9 @@ public struct ContributionGridView: View {
     public let maxWeeks: Int
     public let cellSize: CGFloat
     public let cellSpacing: CGFloat
+    public let columnSpacing: CGFloat?
+    public let rowSpacing: CGFloat?
+    public let cornerRadius: CGFloat?
     public let showTooltips: Bool
 
     public init(
@@ -15,6 +18,9 @@ public struct ContributionGridView: View {
         maxWeeks: Int = 13,
         cellSize: CGFloat = GSSpacing.gridCellSize,
         cellSpacing: CGFloat = GSSpacing.gridCellSpacing,
+        columnSpacing: CGFloat? = nil,
+        rowSpacing: CGFloat? = nil,
+        cornerRadius: CGFloat? = nil,
         showTooltips: Bool = false
     ) {
         self.weeks = weeks
@@ -22,15 +28,20 @@ public struct ContributionGridView: View {
         self.maxWeeks = maxWeeks
         self.cellSize = cellSize
         self.cellSpacing = cellSpacing
+        self.columnSpacing = columnSpacing
+        self.rowSpacing = rowSpacing
+        self.cornerRadius = cornerRadius
         self.showTooltips = showTooltips
     }
 
     public var body: some View {
         let displayWeeks = Array(weeks.suffix(maxWeeks))
+        let colSpacing = columnSpacing ?? cellSpacing
+        let rSpacing = rowSpacing ?? cellSpacing
 
-        HStack(spacing: cellSpacing) {
+        HStack(spacing: colSpacing) {
             ForEach(Array(displayWeeks.enumerated()), id: \.offset) { _, week in
-                VStack(spacing: cellSpacing) {
+                VStack(spacing: rSpacing) {
                     ForEach(0..<7, id: \.self) { dayIndex in
                         if dayIndex < week.contributionDays.count {
                             let day = week.contributionDays[dayIndex]
@@ -48,7 +59,8 @@ public struct ContributionGridView: View {
     @ViewBuilder
     private func cellView(for day: ContributionDay) -> some View {
         let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
-        let rect = RoundedRectangle(cornerRadius: max(2, cellSize * 0.2))
+        let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
+        let rect = RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
             .frame(width: cellSize, height: cellSize)
 

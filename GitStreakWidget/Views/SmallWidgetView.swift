@@ -28,10 +28,13 @@ struct SmallWidgetView: View {
                             ContributionGridView(
                                 weeks: data.weeks,
                                 theme: entry.theme,
-                                maxWeeks: 8,
+                                maxWeeks: 7,
                                 cellSize: 14.5,
-                                cellSpacing: 3.0
+                                columnSpacing: 3.5,
+                                rowSpacing: 3.0,
+                                cornerRadius: 1.5
                             )
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                             Spacer(minLength: 0)
                         }
                         Spacer(minLength: 0)

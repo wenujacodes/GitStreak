@@ -26,7 +26,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
 
     public func color(for level: ContributionLevel, colorScheme: ColorScheme = .dark) -> Color {
         if level.intensity == 0 {
-            return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
+            return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#0E131F")
         }
 
         switch level.intensity {
@@ -34,7 +34,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         case 2: return Color(hex: mediumHex)
         case 3: return Color(hex: highHex)
         case 4: return Color(hex: veryHighHex)
-        default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
+        default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#0E131F")
         }
     }
 
@@ -47,7 +47,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
     }
 
     public func allColors(for colorScheme: ColorScheme) -> [Color] {
-        let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
+        let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#0E131F")
         return [empty, Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
     }
 }
