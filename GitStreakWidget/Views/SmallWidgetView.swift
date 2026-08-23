@@ -6,8 +6,14 @@ struct SmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
 
-    private var widgetBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#121316") : Color(NSColor.windowBackgroundColor)
+    private var widgetGradient: LinearGradient {
+        LinearGradient(
+            colors: colorScheme == .dark
+                ? [Color(hex: "#242426"), Color(hex: "#141416")]
+                : [Color(hex: "#F5F5F7"), Color(hex: "#E5E5EA")],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 
     var body: some View {
@@ -70,9 +76,9 @@ struct SmallWidgetView: View {
             }
         }
         .padding(10)
-        .background(widgetBgColor)
+        .background(widgetGradient)
         .containerBackground(for: .widget) {
-            widgetBgColor
+            widgetGradient
         }
     }
 }
