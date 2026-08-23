@@ -2,7 +2,7 @@ import Foundation
 
 public final class CacheManager: Sendable {
     private static let fileName = "contribution_cache.json"
-    private static let staleDuration: TimeInterval = 30 * 60
+    private static let staleDuration: TimeInterval = 5
 
     private static let sharedFileURL: URL = {
         let home: String

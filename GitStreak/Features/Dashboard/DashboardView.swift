@@ -8,7 +8,7 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
-    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
+    private let autoRefreshTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(nsColor: .windowBackgroundColor)
@@ -349,7 +349,7 @@ struct DashboardView: View {
         if let cached = SharedDataStore.shared.getCachedData() {
             self.contributionData = cached
 
-            if Date().timeIntervalSince(cached.fetchedAt) >= 15 * 60 {
+            if Date().timeIntervalSince(cached.fetchedAt) >= 5 {
                 Task {
                     await refreshData(silent: true)
                 }
@@ -367,7 +367,7 @@ struct DashboardView: View {
             return
         }
 
-        if Date().timeIntervalSince(data.fetchedAt) >= 15 * 60 {
+        if Date().timeIntervalSince(data.fetchedAt) >= 5 {
             Task { await refreshData(silent: true) }
         }
     }
