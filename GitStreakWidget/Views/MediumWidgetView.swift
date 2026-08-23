@@ -17,57 +17,30 @@ struct MediumWidgetView: View {
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 14) {
+        VStack(spacing: 0) {
             switch entry.state {
             case .loaded:
-                if let username = entry.username, let data = entry.contributionData {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 8) {
-                            AvatarView(
-                                avatarURL: data.user.avatarURL,
-                                size: 28
+                if let _ = entry.username, let data = entry.contributionData {
+                    VStack {
+                        Spacer(minLength: 0)
+                        HStack {
+                            Spacer(minLength: 0)
+                            ContributionGridView(
+                                weeks: data.weeks,
+                                theme: entry.theme,
+                                maxWeeks: 17,
+                                cellSize: 14.5,
+                                columnSpacing: 3.5,
+                                rowSpacing: 3.0,
+                                cornerRadius: 1.5
                             )
-
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text(data.user.displayName ?? username)
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                Text("@\(username)")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            Spacer(minLength: 0)
                         }
-
-                        Spacer()
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Total")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(.secondary)
-                            Text("\(data.totalContributions)")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.primary)
-                        }
-
-                        StreakBadgeView(
-                            streakCount: data.currentStreak,
-                            label: "day streak",
-                            style: .compact
-                        )
+                        Spacer(minLength: 0)
                     }
-                    .frame(maxWidth: 110, alignment: .leading)
-
-                    Spacer(minLength: 0)
-
-                    ContributionGridView(
-                        weeks: data.weeks,
-                        theme: entry.theme,
-                        maxWeeks: 11,
-                        cellSize: 10.5,
-                        cellSpacing: 2.5
-                    )
+                } else {
+                    EmptyView()
                 }
             case .noUser:
                 VStack(spacing: 6) {
@@ -104,7 +77,7 @@ struct MediumWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(14)
+        .padding(5)
         .background(widgetGradient)
         .containerBackground(for: .widget) {
             widgetGradient
