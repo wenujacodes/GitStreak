@@ -208,19 +208,21 @@ struct DashboardView: View {
 
                                 Spacer(minLength: 0)
 
-                                ContributionGridView(
-                                    weeks: data.weeks,
-                                    theme: ThemeRegistry.theme(for: selectedThemeID),
-                                    maxWeeks: 53,
-                                    cellSize: 11.5,
-                                    cellSpacing: 2.8,
-                                    showTooltips: true
-                                )
-
-                                Spacer(minLength: 0)
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    ContributionGridView(
+                                        weeks: data.weeks,
+                                        theme: ThemeRegistry.theme(for: selectedThemeID),
+                                        maxWeeks: 53,
+                                        cellSize: 13.5,
+                                        columnSpacing: 3.5,
+                                        rowSpacing: 3.0,
+                                        cornerRadius: 1.5,
+                                        showTooltips: true
+                                    )
+                                    .padding(.vertical, 8)
+                                }
+                                .defaultScrollAnchor(.trailing)
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 4)
 
                             HStack {
                                 Spacer()

@@ -41,37 +41,60 @@ public struct ContributionGridView: View {
 
         HStack(spacing: colSpacing) {
             ForEach(Array(displayWeeks.enumerated()), id: \.offset) { _, week in
-                VStack(spacing: rSpacing) {
-                    ForEach(0..<7, id: \.self) { dayIndex in
-                        if dayIndex < week.contributionDays.count {
-                            let day = week.contributionDays[dayIndex]
-                            cellView(for: day)
-                        } else {
-                            Color.clear
-                                .frame(width: cellSize, height: cellSize)
-                        }
-                    }
-                }
+                ContributionWeekColumnView(
+                    week: week,
+                    rSpacing: rSpacing,
+                    cellSize: cellSize,
+                    theme: theme,
+                    cornerRadius: cornerRadius,
+                    showTooltips: showTooltips,
+                    colorScheme: colorScheme
+                )
             }
         }
     }
+}
 
-    @ViewBuilder
-    private func cellView(for day: ContributionDay) -> some View {
-        let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
-        let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
-        let strokeColor = colorScheme == .dark
-            ? Color.white.opacity(0.07)
-            : Color.black.opacity(0.08)
+private struct ContributionWeekColumnView: View {
+    let week: ContributionWeek
+    let rSpacing: CGFloat
+    let cellSize: CGFloat
+    let theme: ThemeColors
+    let cornerRadius: CGFloat?
+    let showTooltips: Bool
+    let colorScheme: ColorScheme
 
-        ContributionGridCellView(
-            day: day,
-            cellColor: cellColor,
-            radius: radius,
-            strokeColor: strokeColor,
-            cellSize: cellSize,
-            showTooltips: showTooltips
-        )
+    @State private var isColumnHovered = false
+
+    var body: some View {
+        VStack(spacing: rSpacing) {
+            ForEach(0..<7, id: \.self) { dayIndex in
+                if dayIndex < week.contributionDays.count {
+                    let day = week.contributionDays[dayIndex]
+                    let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
+                    let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
+                    let strokeColor = colorScheme == .dark
+                        ? Color.white.opacity(0.07)
+                        : Color.black.opacity(0.08)
+
+                    ContributionGridCellView(
+                        day: day,
+                        cellColor: cellColor,
+                        radius: radius,
+                        strokeColor: strokeColor,
+                        cellSize: cellSize,
+                        showTooltips: showTooltips
+                    )
+                } else {
+                    Color.clear
+                        .frame(width: cellSize, height: cellSize)
+                }
+            }
+        }
+        .zIndex(isColumnHovered ? 1000 : 1)
+        .onHover { hovering in
+            isColumnHovered = hovering
+        }
     }
 }
 
@@ -120,7 +143,7 @@ private struct ContributionGridCellView: View {
                     .allowsHitTesting(false)
                 }
             }
-            .zIndex(isHovered ? 100 : 1)
+            .zIndex(isHovered ? 1000 : 1)
             .animation(.easeOut(duration: 0.1), value: isHovered)
             .frame(width: cellSize, height: cellSize)
             .onHover { hovering in
