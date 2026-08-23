@@ -8,7 +8,7 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
-    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
+    private let autoRefreshTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
@@ -363,9 +363,9 @@ struct DashboardView: View {
 
     private func checkAndAutoRefresh() {
         if contributionData == nil {
-            Task { await refreshData(silent: false, force: false) }
+            Task { await refreshData(silent: false, force: true) }
         } else {
-            Task { await refreshData(silent: true, force: false) }
+            Task { await refreshData(silent: true, force: true) }
         }
     }
 
