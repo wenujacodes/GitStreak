@@ -1,31 +1,44 @@
 import SwiftUI
 import GitStreakKit
 
+enum SettingsTab: Hashable {
+    case general
+    case about
+}
+
 struct SettingsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
+    @State private var selectedTab: SettingsTab = .general
     @State private var username: String = UserPreferences.shared.username ?? ""
     @State private var showingClearConfirmation = false
     @State private var saveStatusMessage: String?
 
     @State private var isAuthenticatingOAuth = false
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
+    @State private var avatarURL: URL? = SharedDataStore.shared.getCachedData()?.user.avatarURL
+
+    private var appBgColor: Color {
+        colorScheme == .dark ? Color(hex: "#131313") : Color(NSColor.windowBackgroundColor)
+    }
 
     var body: some View {
         Group {
             if hasCompletedOnboarding {
-                TabView {
+                TabView(selection: $selectedTab) {
                     generalTab
+                        .tag(SettingsTab.general)
                         .tabItem {
                             Label("General", systemImage: "gearshape")
                         }
 
                     aboutTab
+                        .tag(SettingsTab.about)
                         .tabItem {
                             Label("About", systemImage: "info.circle")
                         }
                 }
-                .frame(width: 480, height: 260)
+                .frame(width: 520, height: 280)
                 .padding()
             } else {
                 VStack(spacing: 12) {
@@ -46,48 +59,74 @@ struct SettingsView: View {
                 .padding()
             }
         }
+        .background(appBgColor)
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
+            self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
         }
     }
 
     private var generalTab: some View {
-        Form {
-            Section {
-                if let devCode = deviceCodeResponse, isAuthenticatingOAuth {
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack {
-                            Text("ENTER THIS CODE ON GITHUB:")
-                                .font(GSTypography.monoBadge)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            CopyableUserCodeView(userCode: devCode.userCode, fontSize: 16, paddingVertical: 4, paddingHorizontal: 8, cornerRadius: 4)
-                        }
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("GitHub Authentication")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Text("GitStreak authenticates securely with GitHub via 1-click Device Flow and stores your token in the local Keychain.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
-                        HStack(spacing: 8) {
-                            Button("Open GitHub") {
-                                OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
-                            }
-                            .buttonStyle(ModernPrimaryButtonStyle())
-
-                            Button("Cancel") {
-                                cancelOAuth()
-                            }
-                            .buttonStyle(ModernSecondaryButtonStyle())
-
-                            Spacer()
-
-                            ProgressView()
-                                .controlSize(.small)
-                        }
+            if let devCode = deviceCodeResponse, isAuthenticatingOAuth {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("ENTER THIS CODE ON GITHUB:")
+                            .font(GSTypography.monoBadge)
+                            .foregroundColor(.secondary)
+                            .tracking(1)
+                        Spacer()
+                        CopyableUserCodeView(userCode: devCode.userCode, fontSize: 16, paddingVertical: 4, paddingHorizontal: 8, cornerRadius: 4)
                     }
-                    .padding(.vertical, 4)
-                } else {
+
+                    HStack(spacing: 10) {
+                        Button("Open GitHub") {
+                            OAuthService.openDeviceLogin(userCode: devCode.userCode, verificationUri: devCode.verificationUri)
+                        }
+                        .buttonStyle(ModernPrimaryButtonStyle())
+
+                        Button("Cancel") {
+                            cancelOAuth()
+                        }
+                        .buttonStyle(ModernSecondaryButtonStyle())
+
+                        Spacer()
+
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                }
+                .padding(.vertical, 4)
+            } else {
+                HStack(spacing: 16) {
                     HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 2) {
+                        if !username.isEmpty {
+                            AvatarView(avatarURL: avatarURL, size: 38)
+                        } else {
+                            Circle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 38, height: 38)
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .foregroundColor(.white)
+                                )
+                        }
+
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Connected Account")
                                 .font(.subheadline)
-                                .fontWeight(.medium)
+                                .fontWeight(.semibold)
 
                             if !username.isEmpty {
                                 Text("@\(username)")
@@ -99,9 +138,11 @@ struct SettingsView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
+                    }
 
-                        Spacer()
+                    Spacer()
 
+                    HStack(spacing: 8) {
                         if !username.isEmpty {
                             Button(action: signOut) {
                                 HStack(spacing: 4) {
@@ -120,25 +161,19 @@ struct SettingsView: View {
                         }
                         .buttonStyle(ModernPrimaryButtonStyle())
                     }
-                    .padding(.vertical, 4)
                 }
-
-                if let msg = saveStatusMessage {
-                    Text(msg)
-                        .font(.caption)
-                        .foregroundColor(msg.contains("failed") ? .red : .green)
-                }
-            } header: {
-                Text("GitHub Authentication")
-            } footer: {
-                Text("GitStreak authenticates securely with GitHub via 1-click Device Flow and stores your token in the local Keychain.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 4)
+                .padding(.vertical, 4)
             }
+
+            if let msg = saveStatusMessage {
+                Text(msg)
+                    .font(.caption)
+                    .foregroundColor(msg.contains("failed") ? .red : .green)
+            }
+
+            Spacer()
         }
-        .formStyle(.grouped)
-        .padding()
+        .padding(16)
     }
 
     private var aboutTab: some View {
@@ -153,7 +188,7 @@ struct SettingsView: View {
                 Text("GitStreak")
                     .font(.title2)
                     .fontWeight(.bold)
-                Text("Version 1.0.0 (Build 1)")
+                Text("Version 1.0.0 (MIT)")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -162,7 +197,18 @@ struct SettingsView: View {
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 20)
+
+            Link(destination: URL(string: "https://github.com/wenujacodes/GitStreak")!) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.up.right.square")
+                    Text("github.com/wenujacodes/GitStreak")
+                }
+                .font(.caption)
+                .foregroundColor(.orange)
+            }
 
             Text("© 2026 Wenuja Liyanamana")
                 .font(.caption)
@@ -178,10 +224,10 @@ struct SettingsView: View {
 
                 Spacer()
 
-                Button("Reset & Clear All Data", role: .destructive) {
+                Button("Reset & Clear All Data") {
                     showingClearConfirmation = true
                 }
-                .buttonStyle(ModernSecondaryButtonStyle())
+                .buttonStyle(DestructiveButtonStyle())
             }
             .confirmationDialog("Are you sure you want to clear all data?", isPresented: $showingClearConfirmation) {
                 Button("Clear Everything", role: .destructive) {
@@ -192,7 +238,7 @@ struct SettingsView: View {
                 Text("This will remove your cached contribution history, stored GitHub credentials, and reset the app.")
             }
         }
-        .padding()
+        .padding(16)
     }
 
     private func startOAuthFlow() {
@@ -213,11 +259,12 @@ struct SettingsView: View {
 
                 try KeychainService.save(token: accessToken, forKey: "github_pat")
                 UserPreferences.shared.username = userInfo.username
-                _ = try await SharedDataStore.shared.refreshData(force: true)
+                let data = try await SharedDataStore.shared.refreshData(force: true)
                 SharedDataStore.shared.notifyWidgetToRefresh()
 
                 await MainActor.run {
                     self.username = userInfo.username
+                    self.avatarURL = data.user.avatarURL
                     self.isAuthenticatingOAuth = false
                     self.saveStatusMessage = "Successfully connected as @\(userInfo.username)!"
                 }
@@ -238,12 +285,14 @@ struct SettingsView: View {
     private func signOut() {
         try? SharedDataStore.shared.clearAllData()
         username = ""
+        avatarURL = nil
         saveStatusMessage = nil
     }
 
     private func clearData() {
         try? SharedDataStore.shared.clearAllData()
         username = ""
+        avatarURL = nil
         saveStatusMessage = nil
     }
 }

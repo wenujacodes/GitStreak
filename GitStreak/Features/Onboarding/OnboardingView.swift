@@ -21,7 +21,7 @@ struct OnboardingView: View {
     @State private var isPollingOAuth = false
 
     private var appBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(NSColor.windowBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
     }
 
     private func advanceStep() {

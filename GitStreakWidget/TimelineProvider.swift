@@ -10,11 +10,6 @@ struct GitStreakTimelineProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (GitStreakEntry) -> Void) {
-        if context.isPreview {
-            completion(GitStreakEntry.placeholder)
-            return
-        }
-
         let entry = createEntry()
         if case .noUser = entry.state {
             completion(GitStreakEntry.placeholder)
@@ -26,7 +21,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
         let entry = createEntry()
 
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date().addingTimeInterval(1800)
+        let nextUpdate = Date().addingTimeInterval(5)
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }

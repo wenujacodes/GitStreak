@@ -6,44 +6,34 @@ struct SmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
 
-    private var widgetBgColor: Color {
-        colorScheme == .dark ? Color(red: 30/255, green: 30/255, blue: 31/255) : Color(NSColor.windowBackgroundColor)
+    private var widgetGradient: LinearGradient {
+        LinearGradient(
+            colors: colorScheme == .dark
+                ? [Color(hex: "#222224"), Color(hex: "#141416")]
+                : [Color(hex: "#F5F5F7"), Color(hex: "#E5E5EA")],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             switch entry.state {
             case .loaded:
-                if let username = entry.username, let data = entry.contributionData {
-
-                    Text("@\(username)")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-
-                    Spacer(minLength: 2)
-
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text("\(data.currentStreak)")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.primary)
-
-                        Text("day streak")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
-
-                    Spacer(minLength: 4)
-
-                    HStack {
+                if let _ = entry.username, let data = entry.contributionData {
+                    VStack {
                         Spacer(minLength: 0)
-                        ContributionGridView(
-                            weeks: data.weeks,
-                            theme: entry.theme,
-                            maxWeeks: 11,
-                            cellSize: 9.5,
-                            cellSpacing: 2.2
-                        )
+                        HStack {
+                            Spacer(minLength: 0)
+                            ContributionGridView(
+                                weeks: data.weeks,
+                                theme: entry.theme,
+                                maxWeeks: 1,
+                                cellSize: 14,
+                                cellSpacing: 4
+                            )
+                            Spacer(minLength: 0)
+                        }
                         Spacer(minLength: 0)
                     }
                 }
@@ -83,12 +73,10 @@ struct SmallWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.top, 13)
-        .padding(.bottom, 14)
-        .background(widgetBgColor)
+        .padding(12)
+        .background(widgetGradient)
         .containerBackground(for: .widget) {
-            widgetBgColor
+            widgetGradient
         }
     }
 }

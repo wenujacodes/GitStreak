@@ -26,7 +26,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
 
     public func color(for level: ContributionLevel, colorScheme: ColorScheme = .dark) -> Color {
         if level.intensity == 0 {
-            return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
+            return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
         }
 
         switch level.intensity {
@@ -34,7 +34,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         case 2: return Color(hex: mediumHex)
         case 3: return Color(hex: highHex)
         case 4: return Color(hex: veryHighHex)
-        default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
+        default: return colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
         }
     }
 
@@ -47,7 +47,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
     }
 
     public func allColors(for colorScheme: ColorScheme) -> [Color] {
-        let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#333942")
+        let empty = colorScheme == .light ? Color(hex: "#dce0e5") : Color(hex: "#161B22")
         return [empty, Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
     }
 }
@@ -195,6 +195,42 @@ private struct ModernSecondaryButtonView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(colorScheme == .dark ? Color.white.opacity(isHovered ? 0.16 : 0.08) : Color.black.opacity(isHovered ? 0.16 : 0.08), lineWidth: 1)
+            )
+            .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .onHover { hovering in
+                isHovered = hovering
+            }
+    }
+}
+
+public struct DestructiveButtonStyle: ButtonStyle {
+    public init() {}
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        DestructiveButtonView(configuration: configuration)
+    }
+}
+
+private struct DestructiveButtonView: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let configuration: ButtonStyle.Configuration
+    @State private var isHovered = false
+    
+    var body: some View {
+        configuration.label
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(isHovered ? .white : Color(hex: "#FF4D4D"))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isHovered ? Color(hex: "#D32F2F") : (colorScheme == .dark ? Color.red.opacity(0.1) : Color.red.opacity(0.06)))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isHovered ? Color(hex: "#D32F2F") : Color.red.opacity(0.3), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
             .animation(.easeInOut(duration: 0.15), value: isHovered)
