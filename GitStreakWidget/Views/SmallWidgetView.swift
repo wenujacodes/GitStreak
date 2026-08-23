@@ -6,14 +6,8 @@ struct SmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
 
-    private var widgetGradient: LinearGradient {
-        LinearGradient(
-            colors: colorScheme == .dark
-                ? [Color(hex: "#222224"), Color(hex: "#141416")]
-                : [Color(hex: "#F5F5F7"), Color(hex: "#E5E5EA")],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    private var widgetBgColor: Color {
+        colorScheme == .dark ? Color(hex: "#121316") : Color(NSColor.windowBackgroundColor)
     }
 
     var body: some View {
@@ -28,14 +22,16 @@ struct SmallWidgetView: View {
                             ContributionGridView(
                                 weeks: data.weeks,
                                 theme: entry.theme,
-                                maxWeeks: 1,
-                                cellSize: 14,
-                                cellSpacing: 4
+                                maxWeeks: 8,
+                                cellSize: 14.5,
+                                cellSpacing: 3.0
                             )
                             Spacer(minLength: 0)
                         }
                         Spacer(minLength: 0)
                     }
+                } else {
+                    EmptyView()
                 }
             case .noUser:
                 VStack(spacing: 8) {
@@ -73,10 +69,10 @@ struct SmallWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(12)
-        .background(widgetGradient)
+        .padding(10)
+        .background(widgetBgColor)
         .containerBackground(for: .widget) {
-            widgetGradient
+            widgetBgColor
         }
     }
 }

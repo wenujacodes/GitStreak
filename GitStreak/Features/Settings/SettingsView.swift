@@ -18,10 +18,6 @@ struct SettingsView: View {
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
     @State private var avatarURL: URL? = SharedDataStore.shared.getCachedData()?.user.avatarURL
 
-    private var appBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#131313") : Color(NSColor.windowBackgroundColor)
-    }
-
     var body: some View {
         Group {
             if hasCompletedOnboarding {
@@ -59,7 +55,7 @@ struct SettingsView: View {
                 .padding()
             }
         }
-        .background(appBgColor)
+        .background(Color(NSColor.windowBackgroundColor))
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
@@ -181,14 +177,14 @@ struct SettingsView: View {
             Image(systemName: "flame.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 48, height: 48)
+                .frame(width: 44, height: 44)
                 .foregroundColor(.orange)
 
             VStack(spacing: 2) {
                 Text("GitStreak")
                     .font(.title2)
                     .fontWeight(.bold)
-                Text("Version 1.0.0 (MIT)")
+                Text("Version 1.0.0")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -199,19 +195,25 @@ struct SettingsView: View {
                 .foregroundColor(.secondary)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 16)
 
-            Link(destination: URL(string: "https://github.com/wenujacodes/GitStreak")!) {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.up.right.square")
-                    Text("github.com/wenujacodes/GitStreak")
+            Button(action: {
+                if let url = URL(string: "https://github.com/wenujacodes/GitStreak") {
+                    NSWorkspace.shared.open(url)
                 }
-                .font(.caption)
-                .foregroundColor(.orange)
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "chevron.left.forwardslash.chevron.right")
+                        .font(.system(size: 11, weight: .bold))
+                    Text("github.com/wenujacodes/GitStreak")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
             }
+            .buttonStyle(ModernSecondaryButtonStyle())
 
-            Text("© 2026 Wenuja Liyanamana")
-                .font(.caption)
+            Text("© 2026 Wenuja Liyanamana (MIT License)")
+                .font(.caption2)
                 .foregroundColor(.secondary)
 
             Spacer()
