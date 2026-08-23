@@ -47,6 +47,7 @@
 		BB84D3C9466C8B76B37A6373 /* ContributionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E9F223A53FEBAF3E765476 /* ContributionService.swift */; };
 		BC5F242510F8BF657A4592FC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB71291845827F4D5272854 /* SettingsView.swift */; };
 		BE4B6E95492CFF76127F291C /* LargeWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE9BACAC7FF1D583CCEE171B /* LargeWidgetView.swift */; };
+		C1AF0CDC1DE01A2A87203939 /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF0A99043E3A84A7660560 /* TokenStorage.swift */; };
 		C4EE2A1FABD76290F991CD12 /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895253AC45BD069C98F9893B /* OAuthService.swift */; };
 		C7C645D327471228D06CC12D /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB7BF840D9C24DF14E89F6B /* SparkleUpdater.swift */; };
 		CE73428A29950FD4993DE257 /* ContributionDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50971AACFE90239560C6DE5 /* ContributionDay.swift */; };
@@ -171,6 +172,7 @@
 		9FCF89DDB0AB2336A939300E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A407E72F50CDE846DE025361 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		A50971AACFE90239560C6DE5 /* ContributionDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionDay.swift; sourceTree = "<group>"; };
+		AEDF0A99043E3A84A7660560 /* TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorage.swift; sourceTree = "<group>"; };
 		AFD8C04B25E9DC475A118D2D /* ContributionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionData.swift; sourceTree = "<group>"; };
 		B5902EFC8E98D75481C70008 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B641C7BFD90C5785E99C0A56 /* GitHubAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAPIClient.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				F0A0637D9EF1FEFBAF6204C3 /* EntitlementService.swift */,
 				FB3BA3994A68BA6B2FDC0D95 /* KeychainService.swift */,
 				E99D1853C3C4F970F2750EB4 /* StreakCalculator.swift */,
+				AEDF0A99043E3A84A7660560 /* TokenStorage.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -640,6 +643,7 @@
 				A9217554AEF1E7D0FD496A91 /* StreakBadgeView.swift in Sources */,
 				64CF16278CA604BEEF527774 /* StreakCalculator.swift in Sources */,
 				51DC74681702895BE9F8AC43 /* Theme.swift in Sources */,
+				C1AF0CDC1DE01A2A87203939 /* TokenStorage.swift in Sources */,
 				6C016F8CEFF129E36F8AEFB1 /* Typography.swift in Sources */,
 				F202F4E0EC73F9B6D99FB241 /* UserPreferences.swift in Sources */,
 			);

@@ -369,7 +369,7 @@ struct OnboardingView: View {
                 let service = ContributionService()
                 let data = try await service.fetchContributions(username: userInfo.username, token: accessToken)
 
-                try KeychainService.save(token: accessToken, forKey: "github_pat")
+                TokenStorage.saveToken(accessToken)
                 UserPreferences.shared.username = userInfo.username
                 SharedDataStore.shared.notifyWidgetToRefresh()
 

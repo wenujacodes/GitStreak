@@ -21,7 +21,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
         let entry = createEntry()
 
-        let nextUpdate = Date().addingTimeInterval(5)
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
@@ -31,6 +31,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
         let cache = cacheManager.load()
 
         let prefs = UserPreferences.shared
+        prefs.reloadFromDisk()
         let theme = ThemeRegistry.theme(for: prefs.selectedThemeID)
         let username = prefs.username ?? cache?.user.username
 

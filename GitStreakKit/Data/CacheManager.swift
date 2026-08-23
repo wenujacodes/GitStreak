@@ -2,7 +2,7 @@ import Foundation
 
 public final class CacheManager: Sendable {
     private static let fileName = "contribution_cache.json"
-    private static let staleDuration: TimeInterval = 5
+    private static let staleDuration: TimeInterval = 60
 
     private static let sharedFileURL: URL = {
         let home: String
@@ -22,7 +22,7 @@ public final class CacheManager: Sendable {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         let encodedData = try encoder.encode(data)
-        try encodedData.write(to: Self.sharedFileURL)
+        try encodedData.write(to: Self.sharedFileURL, options: .atomic)
     }
 
     public func load() -> ContributionData? {

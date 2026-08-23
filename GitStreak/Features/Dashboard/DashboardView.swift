@@ -8,7 +8,7 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
-    private let autoRefreshTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
@@ -362,26 +362,23 @@ struct DashboardView: View {
     }
 
     private func checkAndAutoRefresh() {
-        guard let data = contributionData else {
-            Task { await refreshData(silent: false) }
-            return
-        }
-
-        if Date().timeIntervalSince(data.fetchedAt) >= 5 {
-            Task { await refreshData(silent: true) }
+        if contributionData == nil {
+            Task { await refreshData(silent: false, force: false) }
+        } else {
+            Task { await refreshData(silent: true, force: false) }
         }
     }
 
-    private func refreshData(silent: Bool = false) async {
+    private func refreshData(silent: Bool = false, force: Bool = true) async {
         if !silent {
             isLoading = true
         }
-        errorMessage = nil
 
         do {
-            let data = try await SharedDataStore.shared.refreshData(force: true)
+            let data = try await SharedDataStore.shared.refreshData(force: force)
             await MainActor.run {
                 self.contributionData = data
+                self.errorMessage = nil
                 self.isLoading = false
             }
         } catch {

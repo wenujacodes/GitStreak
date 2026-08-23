@@ -38,6 +38,10 @@ public final class UserPreferences: @unchecked Sendable {
         loadModel()
     }
 
+    public func reloadFromDisk() {
+        loadModel()
+    }
+
     private func loadModel() {
         lock.lock()
         defer { lock.unlock() }
@@ -54,7 +58,7 @@ public final class UserPreferences: @unchecked Sendable {
         lock.lock()
         let url = Self.sharedFileURL
         if let data = try? JSONEncoder().encode(model) {
-            try? data.write(to: url)
+            try? data.write(to: url, options: .atomic)
         }
         UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         lock.unlock()
@@ -79,7 +83,8 @@ public final class UserPreferences: @unchecked Sendable {
 
     public var selectedThemeID: String {
         get {
-            loadModel()
+            lock.lock()
+            defer { lock.unlock() }
             return model.selectedThemeID
         }
         set {

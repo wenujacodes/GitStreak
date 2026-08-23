@@ -259,7 +259,7 @@ struct SettingsView: View {
                 let accessToken = try await OAuthService.shared.pollForToken(deviceCode: codeResponse.deviceCode, interval: codeResponse.interval)
                 let userInfo = try await OAuthService.shared.fetchAuthenticatedUser(token: accessToken)
 
-                try KeychainService.save(token: accessToken, forKey: "github_pat")
+                TokenStorage.saveToken(accessToken)
                 UserPreferences.shared.username = userInfo.username
                 let data = try await SharedDataStore.shared.refreshData(force: true)
                 SharedDataStore.shared.notifyWidgetToRefresh()

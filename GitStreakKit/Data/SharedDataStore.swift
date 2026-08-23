@@ -19,7 +19,7 @@ public final class SharedDataStore: @unchecked Sendable {
             throw NSError(domain: "SharedDataStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Username is not set"])
         }
 
-        let token = KeychainService.load(forKey: "github_pat") ?? ""
+        let token = TokenStorage.loadToken() ?? ""
 
         let data: ContributionData
         if force {
@@ -44,7 +44,7 @@ public final class SharedDataStore: @unchecked Sendable {
 
     public func clearAllData() throws {
         try cacheManager.clear()
-        try KeychainService.delete(forKey: "github_pat")
+        TokenStorage.clearToken()
 
         preferences.username = nil
         preferences.selectedThemeID = "github"
