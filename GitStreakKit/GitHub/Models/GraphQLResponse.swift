@@ -32,6 +32,11 @@ public struct GraphQLUser: Codable, Sendable, Equatable {
 }
 
 public struct ContributionsCollection: Codable, Sendable, Equatable {
+    public let totalCommitContributions: Int?
+    public let totalIssueContributions: Int?
+    public let totalPullRequestContributions: Int?
+    public let totalPullRequestReviewContributions: Int?
+    public let totalRepositoryContributions: Int?
     public let contributionCalendar: ContributionCalendar
 }
 
@@ -41,7 +46,7 @@ public struct ContributionCalendar: Codable, Sendable, Equatable {
 }
 
 extension GraphQLResponse {
-    public func toDomainModel() throws -> (user: GitHubUser, weeks: [ContributionWeek], totalContributions: Int) {
+    public func toDomainModel() throws -> (user: GitHubUser, weeks: [ContributionWeek], totalContributions: Int, activityStats: UserActivityStats) {
         if let errors = errors, let firstError = errors.first {
             throw GitHubAPIError.serverError(firstError.message)
         }
@@ -57,7 +62,14 @@ extension GraphQLResponse {
         let gitHubUser = user.toDomainModel()
         let weeks = user.contributionsCollection.contributionCalendar.weeks
         let totalContributions = user.contributionsCollection.contributionCalendar.totalContributions
+        let activityStats = UserActivityStats(
+            commits: user.contributionsCollection.totalCommitContributions ?? totalContributions,
+            issues: user.contributionsCollection.totalIssueContributions ?? 0,
+            pullRequests: user.contributionsCollection.totalPullRequestContributions ?? 0,
+            reviews: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
+            repositories: user.contributionsCollection.totalRepositoryContributions ?? 0
+        )
 
-        return (gitHubUser, weeks, totalContributions)
+        return (gitHubUser, weeks, totalContributions, activityStats)
     }
 }

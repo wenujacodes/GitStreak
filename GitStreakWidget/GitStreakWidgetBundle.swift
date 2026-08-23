@@ -5,5 +5,6 @@ import SwiftUI
 struct GitStreakWidgetBundle: WidgetBundle {
     var body: some Widget {
         GitStreakWidget()
+        GitStreakRadarWidget()
     }
 }

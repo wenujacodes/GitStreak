@@ -13,6 +13,11 @@ final class GraphQLResponseTests: XCTestCase {
               "avatarUrl": "https://avatars.githubusercontent.com/u/583231",
               "bio": "GitHub's mascot",
               "contributionsCollection": {
+                "totalCommitContributions": 120,
+                "totalIssueContributions": 5,
+                "totalPullRequestContributions": 18,
+                "totalPullRequestReviewContributions": 7,
+                "totalRepositoryContributions": 3,
                 "contributionCalendar": {
                   "totalContributions": 42,
                   "weeks": [
@@ -36,7 +41,7 @@ final class GraphQLResponseTests: XCTestCase {
 
         let decoder = JSONDecoder()
         let response = try decoder.decode(GraphQLResponse.self, from: json)
-        let (user, weeks, total) = try response.toDomainModel()
+        let (user, weeks, total, stats) = try response.toDomainModel()
 
         XCTAssertEqual(user.username, "octocat")
         XCTAssertEqual(user.displayName, "The Octocat")
@@ -47,6 +52,11 @@ final class GraphQLResponseTests: XCTestCase {
         XCTAssertEqual(weeks[0].contributionDays.count, 1)
         XCTAssertEqual(weeks[0].contributionDays[0].contributionCount, 5)
         XCTAssertEqual(weeks[0].contributionDays[0].level, .secondQuartile)
+        XCTAssertEqual(stats.commits, 120)
+        XCTAssertEqual(stats.issues, 5)
+        XCTAssertEqual(stats.pullRequests, 18)
+        XCTAssertEqual(stats.reviews, 7)
+        XCTAssertEqual(stats.repositories, 3)
     }
 
     func testDecodeGraphQLErrorPayload() throws {
