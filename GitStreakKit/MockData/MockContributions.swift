@@ -83,12 +83,22 @@ public enum MockContributions {
         let currentStreak = currentStreakOverride ?? StreakCalculator.currentStreak(days: allDays)
         let longestStreak = longestStreakOverride ?? StreakCalculator.longestStreak(days: allDays)
 
+        let finalTotal = totalOverride ?? totalContributions
+        let activityStats = UserActivityStats(
+            commits: finalTotal,
+            issues: max(0, Int(Double(finalTotal) * 0.04)),
+            pullRequests: max(0, Int(Double(finalTotal) * 0.12)),
+            reviews: max(0, Int(Double(finalTotal) * 0.06)),
+            repositories: max(0, min(50, Int(Double(finalTotal) * 0.02) + (finalTotal > 0 ? 3 : 0)))
+        )
+
         return ContributionData(
             user: sampleUser,
             weeks: weeks,
-            totalContributions: totalOverride ?? totalContributions,
+            totalContributions: finalTotal,
             currentStreak: currentStreak,
             longestStreak: longestStreak,
+            activityStats: activityStats,
             fetchedAt: Date()
         )
     }
