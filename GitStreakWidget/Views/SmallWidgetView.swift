@@ -10,7 +10,7 @@ struct SmallWidgetView: View {
         LinearGradient(
             colors: colorScheme == .dark
                 ? [Color(hex: "#242426"), Color(hex: "#141416")]
-                : [Color(hex: "#F5F5F7"), Color(hex: "#E5E5EA")],
+                : [Color.white, Color.white],
             startPoint: .top,
             endPoint: .bottom
         )
