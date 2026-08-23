@@ -64,18 +64,67 @@ public struct ContributionGridView: View {
             ? Color.white.opacity(0.07)
             : Color.black.opacity(0.08)
 
-        let rect = RoundedRectangle(cornerRadius: radius)
+        ContributionGridCellView(
+            day: day,
+            cellColor: cellColor,
+            radius: radius,
+            strokeColor: strokeColor,
+            cellSize: cellSize,
+            showTooltips: showTooltips
+        )
+    }
+}
+
+private struct ContributionGridCellView: View {
+    let day: ContributionDay
+    let cellColor: Color
+    let radius: CGFloat
+    let strokeColor: Color
+    let cellSize: CGFloat
+    let showTooltips: Bool
+
+    @State private var isHovered = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
             .overlay(
                 RoundedRectangle(cornerRadius: radius)
-                    .stroke(strokeColor, lineWidth: 0.5)
+                    .stroke(isHovered ? Color.white.opacity(0.85) : strokeColor, lineWidth: isHovered ? 1.2 : 0.5)
             )
+            .scaleEffect(isHovered ? 1.3 : 1.0)
+            .shadow(color: isHovered ? Color.black.opacity(0.4) : Color.clear, radius: 4, x: 0, y: 2)
+            .overlay(alignment: .top) {
+                if isHovered && showTooltips {
+                    VStack(spacing: 1) {
+                        Text("\(day.contributionCount) contributions")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.white)
+                        Text(day.date)
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.75))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color(hex: "#1A1D24"))
+                            .shadow(color: Color.black.opacity(0.6), radius: 6, x: 0, y: 3)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .offset(y: -36)
+                    .fixedSize()
+                    .allowsHitTesting(false)
+                }
+            }
+            .zIndex(isHovered ? 100 : 1)
+            .animation(.easeOut(duration: 0.1), value: isHovered)
             .frame(width: cellSize, height: cellSize)
-
-        if showTooltips {
-            rect.help("\(day.contributionCount) contributions on \(day.date)")
-        } else {
-            rect
-        }
+            .onHover { hovering in
+                isHovered = hovering
+            }
     }
 }
