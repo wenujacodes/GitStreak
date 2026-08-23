@@ -39,6 +39,7 @@ public final class SharedDataStore: @unchecked Sendable {
 
     public func notifyWidgetToRefresh() {
         WidgetCenter.shared.reloadTimelines(ofKind: "GitStreakWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "GitStreakRadarWidget")
         WidgetCenter.shared.reloadAllTimelines()
     }
 
