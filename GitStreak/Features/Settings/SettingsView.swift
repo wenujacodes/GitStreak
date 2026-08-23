@@ -11,10 +11,6 @@ struct SettingsView: View {
     @State private var isAuthenticatingOAuth = false
     @State private var deviceCodeResponse: DeviceCodeResponse? = nil
 
-    private var appBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#0B0C0E") : Color(NSColor.windowBackgroundColor)
-    }
-
     var body: some View {
         Group {
             if hasCompletedOnboarding {
@@ -50,7 +46,6 @@ struct SettingsView: View {
                 .padding()
             }
         }
-        .background(appBgColor)
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
         }
