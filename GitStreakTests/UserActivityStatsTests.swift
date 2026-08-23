@@ -47,4 +47,31 @@ final class UserActivityStatsTests: XCTestCase {
         XCTAssertEqual(stats.reviews, 0)
         XCTAssertEqual(stats.repositories, 2)
     }
+
+    func testDynamicCeiling() {
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 0), 10)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 3), 5)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 8), 10)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 18), 20)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 45), 50)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 850), 1000)
+        XCTAssertEqual(UserActivityStats.niceCeiling(for: 3500), 5000)
+    }
+
+    func testDynamicFraction() {
+        let stats = UserActivityStats(commits: 850, issues: 8, pullRequests: 95, reviews: 24, repositories: 14)
+        XCTAssertEqual(stats.dynamicFraction(for: 0), 0.0, accuracy: 0.001)
+        XCTAssertGreaterThan(stats.commitFraction, stats.pullRequestFraction)
+        XCTAssertGreaterThan(stats.pullRequestFraction, stats.reviewFraction)
+        XCTAssertGreaterThan(stats.reviewFraction, stats.repositoryFraction)
+        XCTAssertGreaterThan(stats.repositoryFraction, stats.issueFraction)
+        XCTAssertLessThanOrEqual(stats.commitFraction, 1.0)
+    }
+
+    func testDynamicLevels() {
+        let stats = UserActivityStats(commits: 850, issues: 8, pullRequests: 95, reviews: 24, repositories: 14)
+        let levels = stats.dynamicLevels
+        XCTAssertEqual(levels.count, 5)
+        XCTAssertEqual(levels.last?.label, "1K")
+    }
 }

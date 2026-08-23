@@ -14,13 +14,9 @@ public struct ActivityRadarChartView: View {
         ("Repo", -Double.pi / 2 + 8 * Double.pi / 5)
     ]
 
-    private let levels: [(scale: Double, label: String)] = [
-        (0.2, "1"),
-        (0.4, "10"),
-        (0.6, "100"),
-        (0.8, "1K"),
-        (1.0, "10K")
-    ]
+    private var levels: [(scale: Double, label: String)] {
+        stats.dynamicLevels
+    }
 
     public init(stats: UserActivityStats, theme: ThemeColors = ThemeRegistry.github) {
         self.stats = stats
@@ -134,48 +130,73 @@ public struct ActivityRadarChartView: View {
                         .position(x: center.x, y: center.y + yOffset)
                 }
 
-                // Axis Labels
+                // Axis Labels with Stat Values
                 // Commit (Top)
-                Text("Commit")
-                    .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .position(x: center.x, y: center.y - maxRadius - 10)
+                VStack(spacing: 0) {
+                    Text("Commit")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("\(stats.commits)")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(chartAccentColor)
+                }
+                .position(x: center.x, y: center.y - maxRadius - 13)
 
                 // Issue (Top Right)
-                Text("Issue")
-                    .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .position(
-                        x: center.x + maxRadius * cos(axes[1].angle) + 20,
-                        y: center.y + maxRadius * sin(axes[1].angle)
-                    )
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Issue")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("\(stats.issues)")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(chartAccentColor)
+                }
+                .position(
+                    x: center.x + maxRadius * cos(axes[1].angle) + 18,
+                    y: center.y + maxRadius * sin(axes[1].angle)
+                )
 
                 // PullReq (Bottom Right)
-                Text("PullReq")
-                    .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .position(
-                        x: center.x + maxRadius * cos(axes[2].angle) + 12,
-                        y: center.y + maxRadius * sin(axes[2].angle) + 11
-                    )
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("PullReq")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("\(stats.pullRequests)")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(chartAccentColor)
+                }
+                .position(
+                    x: center.x + maxRadius * cos(axes[2].angle) + 14,
+                    y: center.y + maxRadius * sin(axes[2].angle) + 11
+                )
 
                 // Review (Bottom Left)
-                Text("Review")
-                    .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .position(
-                        x: center.x + maxRadius * cos(axes[3].angle) - 12,
-                        y: center.y + maxRadius * sin(axes[3].angle) + 11
-                    )
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text("Review")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("\(stats.reviews)")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(chartAccentColor)
+                }
+                .position(
+                    x: center.x + maxRadius * cos(axes[3].angle) - 14,
+                    y: center.y + maxRadius * sin(axes[3].angle) + 11
+                )
 
                 // Repo (Top Left)
-                Text("Repo")
-                    .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .position(
-                        x: center.x + maxRadius * cos(axes[4].angle) - 20,
-                        y: center.y + maxRadius * sin(axes[4].angle)
-                    )
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text("Repo")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("\(stats.repositories)")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(chartAccentColor)
+                }
+                .position(
+                    x: center.x + maxRadius * cos(axes[4].angle) - 18,
+                    y: center.y + maxRadius * sin(axes[4].angle)
+                )
             }
         }
     }

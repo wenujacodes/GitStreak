@@ -23,13 +23,22 @@ public actor ContributionService {
         let currentStreakCount = StreakCalculator.currentStreak(days: allDays)
         let longestStreakCount = StreakCalculator.longestStreak(days: allDays)
 
+        let accurateCommits = max(activityStats.commits, finalTotal - (activityStats.issues + activityStats.pullRequests + activityStats.reviews))
+        let accurateStats = UserActivityStats(
+            commits: max(accurateCommits, activityStats.commits),
+            issues: activityStats.issues,
+            pullRequests: activityStats.pullRequests,
+            reviews: activityStats.reviews,
+            repositories: activityStats.repositories
+        )
+
         let data = ContributionData(
             user: user,
             weeks: weeks,
             totalContributions: finalTotal,
             currentStreak: currentStreakCount,
             longestStreak: longestStreakCount,
-            activityStats: activityStats,
+            activityStats: accurateStats,
             fetchedAt: Date()
         )
 
