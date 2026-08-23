@@ -197,6 +197,7 @@ struct DashboardView: View {
 
                             HStack(alignment: .top, spacing: 8) {
                                 VStack(alignment: .leading, spacing: 2) {
+                                    Spacer().frame(height: 14)
                                     Text(" ").font(.system(size: 8))
                                     Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
                                     Text(" ").font(.system(size: 8))
@@ -217,6 +218,7 @@ struct DashboardView: View {
                                         columnSpacing: 3.5,
                                         rowSpacing: 3.0,
                                         cornerRadius: 1.5,
+                                        showMonthHeaders: true,
                                         showTooltips: true
                                     )
                                     .padding(.vertical, 8)
