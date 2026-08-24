@@ -7,5 +7,6 @@ struct GitStreakWidgetBundle: WidgetBundle {
         GitStreakWidget()
         GitStreakRadarWidget()
         PullRequestsWidget()
+        IssuesWidget()
     }
 }

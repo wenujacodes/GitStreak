@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 import GitStreakKit
 
-public struct PullRequestsSmallWidgetView: View {
+public struct IssuesSmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
 
@@ -25,11 +25,10 @@ public struct PullRequestsSmallWidgetView: View {
             switch entry.state {
             case .loaded:
                 if let data = entry.contributionData {
-                    let count = data.activityStats.reviews > 0 ? data.activityStats.reviews : data.activityStats.pullRequests
-                    let labelText = data.activityStats.reviews > 0 ? "Reviews Requested" : "Pull Requests"
+                    let count = data.activityStats.issues
 
                     VStack(alignment: .leading, spacing: 0) {
-                        PullRequestIconView()
+                        IssueIconView()
                             .frame(width: 26, height: 26)
                             .foregroundColor(.primary)
 
@@ -41,7 +40,7 @@ public struct PullRequestsSmallWidgetView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
 
-                        Text(labelText)
+                        Text("Issues")
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -94,45 +93,19 @@ public struct PullRequestsSmallWidgetView: View {
     }
 }
 
-public struct PullRequestIconView: View {
+public struct IssueIconView: View {
     public init() {}
 
     public var body: some View {
-        if let nsImage = NSImage(named: "GitPullRequest") ?? NSImage(contentsOfFile: "/Users/wenujaliyanamana/Desktop/gitstreak/git-pull-request.png") {
+        if let nsImage = NSImage(named: "GitIssue") ?? NSImage(contentsOfFile: "/Users/wenujaliyanamana/Desktop/gitstreak/git-issue.png") {
             Image(nsImage: nsImage)
                 .resizable()
                 .renderingMode(.template)
                 .aspectRatio(contentMode: .fit)
         } else {
-            Canvas { context, size in
-                let w = size.width
-                let h = size.height
-                let strokeWidth = w * 0.11
-
-                var leftLine = Path()
-                leftLine.move(to: CGPoint(x: w * 0.25, y: h * 0.25))
-                leftLine.addLine(to: CGPoint(x: w * 0.25, y: h * 0.75))
-                context.stroke(leftLine, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-
-                var rightBranch = Path()
-                rightBranch.move(to: CGPoint(x: w * 0.75, y: h * 0.75))
-                rightBranch.addLine(to: CGPoint(x: w * 0.75, y: h * 0.4))
-                rightBranch.addQuadCurve(to: CGPoint(x: w * 0.42, y: h * 0.25), control: CGPoint(x: w * 0.75, y: h * 0.25))
-                context.stroke(rightBranch, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-
-                var arrow = Path()
-                arrow.move(to: CGPoint(x: w * 0.52, y: h * 0.17))
-                arrow.addLine(to: CGPoint(x: w * 0.40, y: h * 0.25))
-                arrow.addLine(to: CGPoint(x: w * 0.52, y: h * 0.33))
-                context.stroke(arrow, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round, lineJoin: .round))
-
-                let r = w * 0.12
-                for center in [CGPoint(x: w * 0.25, y: h * 0.22), CGPoint(x: w * 0.25, y: h * 0.78), CGPoint(x: w * 0.75, y: h * 0.78)] {
-                    var circle = Path()
-                    circle.addEllipse(in: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2))
-                    context.fill(circle, with: .color(.primary))
-                }
-            }
+            Image(systemName: "exclamationmark.circle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
         }
     }
 }
