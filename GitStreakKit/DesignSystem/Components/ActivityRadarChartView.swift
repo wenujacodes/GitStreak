@@ -127,9 +127,9 @@ public struct ActivityRadarChartView: View {
                 // Numbers along the vertical (Commit) axis
                 ForEach(levels.indices, id: \.self) { idx in
                     let level = levels[idx]
-                    let yOffset = -maxRadius * level.scale + 6.5
+                    let yOffset = -maxRadius * level.scale + 5.5
                     Text(level.label)
-                        .font(.system(size: 6.5, weight: .semibold, design: .monospaced))
+                        .font(.system(size: 5.5, weight: .semibold, design: .monospaced))
                         .foregroundColor(scaleLabelColor)
                         .position(x: center.x, y: center.y + yOffset)
                 }
@@ -137,43 +137,43 @@ public struct ActivityRadarChartView: View {
                 // Axis Labels
                 // Commit (Top)
                 Text("Commit")
-                    .font(.system(size: 11.5, weight: .semibold))
+                    .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.primary)
-                    .position(x: center.x, y: center.y - maxRadius - 10)
+                    .position(x: center.x, y: center.y - maxRadius - 9)
 
                 // Issue (Top Right)
                 Text("Issue")
-                    .font(.system(size: 11.5, weight: .semibold))
+                    .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.primary)
                     .position(
-                        x: center.x + maxRadius * cos(axes[1].angle) + 20,
+                        x: center.x + maxRadius * cos(axes[1].angle) + 16,
                         y: center.y + maxRadius * sin(axes[1].angle)
                     )
 
                 // PullReq (Bottom Right)
                 Text("PullReq")
-                    .font(.system(size: 11.5, weight: .semibold))
+                    .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.primary)
                     .position(
-                        x: center.x + maxRadius * cos(axes[2].angle) + 12,
-                        y: center.y + maxRadius * sin(axes[2].angle) + 11
+                        x: center.x + maxRadius * cos(axes[2].angle) + 10,
+                        y: center.y + maxRadius * sin(axes[2].angle) + 8
                     )
 
                 // Review (Bottom Left)
                 Text("Review")
-                    .font(.system(size: 11.5, weight: .semibold))
+                    .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.primary)
                     .position(
-                        x: center.x + maxRadius * cos(axes[3].angle) - 12,
-                        y: center.y + maxRadius * sin(axes[3].angle) + 11
+                        x: center.x + maxRadius * cos(axes[3].angle) - 10,
+                        y: center.y + maxRadius * sin(axes[3].angle) + 8
                     )
 
                 // Repo (Top Left)
                 Text("Repo")
-                    .font(.system(size: 11.5, weight: .semibold))
+                    .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.primary)
                     .position(
-                        x: center.x + maxRadius * cos(axes[4].angle) - 20,
+                        x: center.x + maxRadius * cos(axes[4].angle) - 16,
                         y: center.y + maxRadius * sin(axes[4].angle)
                     )
             }
