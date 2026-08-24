@@ -38,7 +38,7 @@ public actor ContributionService {
             totalContributions: finalTotal,
             currentStreak: currentStreakCount,
             longestStreak: longestStreakCount,
-            activityStats: activityStats,
+            activityStats: accurateStats,
             fetchedAt: Date()
         )
 
