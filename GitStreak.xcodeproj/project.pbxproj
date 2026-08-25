@@ -12,12 +12,14 @@
 		0FFF40B6C6585743323A0395 /* MediumWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10A56901D0ABFBADAF8CFB /* MediumWidgetView.swift */; };
 		13A75C5D5263D0CDDC0EAC8C /* GitHubAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B641C7BFD90C5785E99C0A56 /* GitHubAPIClient.swift */; };
 		1C03DB32CCC89E660C72C4EA /* GitStreakKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A5CF76584D2ACD1625D318 /* GitStreakKit.framework */; };
+		2164567D8CDF6D008D2E9783 /* GitStreakComboWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DCF7D906251D390FEA0D6D /* GitStreakComboWidget.swift */; };
 		2673289C71E5B3F956496684 /* PullRequestsSmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CCA3620251F312A34874B4 /* PullRequestsSmallWidgetView.swift */; };
 		2A4956C04F2F979C31D3BE2A /* GraphQLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E633D348A8909B8AFC65838 /* GraphQLResponse.swift */; };
 		362660B3988EB43C5D404463 /* ContributionGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD859B7A2F6787E8EB36031 /* ContributionGridView.swift */; };
 		39CE3FE185EEC7C9963BFCEC /* UserActivityStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCCF2F62561C225AD563D24F /* UserActivityStats.swift */; };
 		417DA2BD205AB2358207B8FC /* WidgetEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C8C09243F59CA6BA15CAA8C /* WidgetEntry.swift */; };
 		432CDB749930AB5BB4B3F62E /* MockContributions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0894261130670C38CB0A9A /* MockContributions.swift */; };
+		473B0FCE96AC27583C68E6CD /* RadarComboMediumWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */; };
 		51DC74681702895BE9F8AC43 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5902EFC8E98D75481C70008 /* Theme.swift */; };
 		528DD1A9F5CAAC0C6B84DEA0 /* IssuesSmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700B42FC2424EDA3950955F1 /* IssuesSmallWidgetView.swift */; };
 		53C2F4CC38274390EE70E67B /* GitHubUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFA792EACB9AB76E2FF3A48 /* GitHubUser.swift */; };
@@ -162,6 +164,7 @@
 		5343E61DCD99DD8A7FEEA767 /* GitStreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitStreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		586BE7145FB99D0B7A742C6F /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		5AFA792EACB9AB76E2FF3A48 /* GitHubUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubUser.swift; sourceTree = "<group>"; };
+		5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarComboMediumWidgetView.swift; sourceTree = "<group>"; };
 		5C27AC1E165BD2F456F257CA /* ThemePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePickerView.swift; sourceTree = "<group>"; };
 		5CD859B7A2F6787E8EB36031 /* ContributionGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionGridView.swift; sourceTree = "<group>"; };
 		64764049799B71EC83B143ED /* TimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProvider.swift; sourceTree = "<group>"; };
@@ -174,6 +177,7 @@
 		700B42FC2424EDA3950955F1 /* IssuesSmallWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuesSmallWidgetView.swift; sourceTree = "<group>"; };
 		715A0C1DE630AE90F99ACCAA /* GitStreakWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitStreakWidget.swift; sourceTree = "<group>"; };
 		7E2E879776888FD8C32C2C2E /* RadarSmallWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarSmallWidgetView.swift; sourceTree = "<group>"; };
+		85DCF7D906251D390FEA0D6D /* GitStreakComboWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitStreakComboWidget.swift; sourceTree = "<group>"; };
 		864B7B4E2449EFF15D33EEA2 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		87DF3CBA28DD26C99F95292C /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		895253AC45BD069C98F9893B /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
@@ -254,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				B8A3226B3C512420E3E3E6FB /* Assets.xcassets */,
+				85DCF7D906251D390FEA0D6D /* GitStreakComboWidget.swift */,
 				C9801491578665918F7A9B1C /* GitStreakRadarWidget.swift */,
 				BAA04E0938A5A8A1C74181BE /* GitStreakWidget.entitlements */,
 				715A0C1DE630AE90F99ACCAA /* GitStreakWidget.swift */,
@@ -274,6 +279,7 @@
 				FE9BACAC7FF1D583CCEE171B /* LargeWidgetView.swift */,
 				4B10A56901D0ABFBADAF8CFB /* MediumWidgetView.swift */,
 				D2CCA3620251F312A34874B4 /* PullRequestsSmallWidgetView.swift */,
+				5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */,
 				7E2E879776888FD8C32C2C2E /* RadarSmallWidgetView.swift */,
 				35EF69D88D8D48A1CA57B806 /* SmallWidgetView.swift */,
 			);
@@ -683,6 +689,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2164567D8CDF6D008D2E9783 /* GitStreakComboWidget.swift in Sources */,
 				7D32485EE33B81EC7FB73F85 /* GitStreakRadarWidget.swift in Sources */,
 				CF77C4031317317FC23A6848 /* GitStreakWidget.swift in Sources */,
 				DA0623758389ADA17360767A /* GitStreakWidgetBundle.swift in Sources */,
@@ -692,6 +699,7 @@
 				0FFF40B6C6585743323A0395 /* MediumWidgetView.swift in Sources */,
 				2673289C71E5B3F956496684 /* PullRequestsSmallWidgetView.swift in Sources */,
 				6273EBE35E5470EAA88C2683 /* PullRequestsWidget.swift in Sources */,
+				473B0FCE96AC27583C68E6CD /* RadarComboMediumWidgetView.swift in Sources */,
 				9D41F53EA89DA594162014A9 /* RadarSmallWidgetView.swift in Sources */,
 				F9C2DA52163491F022F08AA9 /* SmallWidgetView.swift in Sources */,
 				5AFEFD2FB54A4746B8FCEF7E /* TimelineProvider.swift in Sources */,
