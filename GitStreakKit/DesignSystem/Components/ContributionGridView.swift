@@ -49,6 +49,8 @@ public struct ContributionGridView: View {
             ForEach(Array(displayWeeks.enumerated()), id: \.offset) { weekIdx, week in
                 ContributionWeekColumnView(
                     week: week,
+                    weekIndex: weekIdx,
+                    totalWeeks: displayWeeks.count,
                     monthLabel: monthLabel(for: weekIdx, in: displayWeeks),
                     rSpacing: rSpacing,
                     cellSize: cellSize,
@@ -99,6 +101,8 @@ public struct ContributionGridView: View {
 
 private struct ContributionWeekColumnView: View {
     let week: ContributionWeek
+    let weekIndex: Int
+    let totalWeeks: Int
     let monthLabel: String?
     let rSpacing: CGFloat
     let cellSize: CGFloat
@@ -133,6 +137,8 @@ private struct ContributionWeekColumnView: View {
                     ContributionGridCellView(
                         day: day,
                         dayIndex: dayIndex,
+                        weekIndex: weekIndex,
+                        totalWeeks: totalWeeks,
                         cellColor: cellColor,
                         radius: radius,
                         strokeColor: strokeColor,
@@ -145,7 +151,7 @@ private struct ContributionWeekColumnView: View {
                 }
             }
         }
-        .zIndex(isColumnHovered ? 1000 : 1)
+        .zIndex(isColumnHovered ? 9999 : 1)
         .onHover { hovering in
             isColumnHovered = hovering
         }
@@ -153,8 +159,11 @@ private struct ContributionWeekColumnView: View {
 }
 
 private struct ContributionGridCellView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let day: ContributionDay
     let dayIndex: Int
+    let weekIndex: Int
+    let totalWeeks: Int
     let cellColor: Color
     let radius: CGFloat
     let strokeColor: Color
@@ -164,6 +173,14 @@ private struct ContributionGridCellView: View {
     @State private var isHovered = false
 
     var body: some View {
+        let xOffset: CGFloat = {
+            if weekIndex < 3 { return 34 }
+            if weekIndex > totalWeeks - 4 { return -34 }
+            return 0
+        }()
+        let yOffset: CGFloat = dayIndex <= 2 ? 26 : -26
+        let tooltipAlignment: Alignment = dayIndex <= 2 ? .bottom : .top
+
         RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
             .overlay(
@@ -172,33 +189,29 @@ private struct ContributionGridCellView: View {
             )
             .scaleEffect(isHovered ? 1.3 : 1.0)
             .shadow(color: isHovered ? Color.black.opacity(0.4) : Color.clear, radius: 4, x: 0, y: 2)
-            .overlay(alignment: dayIndex <= 1 ? .bottom : .top) {
+            .overlay(alignment: tooltipAlignment) {
                 if isHovered && showTooltips {
-                    VStack(spacing: 1) {
+                    VStack(spacing: 2) {
                         Text("\(day.contributionCount) contributions")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.white)
                         Text(day.date)
                             .font(.system(size: 9, weight: .medium))
-                            .foregroundColor(Color.white.opacity(0.75))
+                            .foregroundColor(Color.white.opacity(0.80))
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(hex: "#1A1D24"))
-                            .shadow(color: Color.black.opacity(0.6), radius: 6, x: 0, y: 3)
+                            .fill(Color(hex: "#131313").opacity(0.70))
+                            .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 3)
                     )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    )
-                    .offset(y: dayIndex <= 1 ? 36 : -36)
+                    .offset(x: xOffset, y: yOffset)
                     .fixedSize()
                     .allowsHitTesting(false)
                 }
             }
-            .zIndex(isHovered ? 1000 : 1)
+            .zIndex(isHovered ? 9999 : 1)
             .animation(.easeOut(duration: 0.1), value: isHovered)
             .frame(width: cellSize, height: cellSize)
             .onHover { hovering in
