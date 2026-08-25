@@ -29,7 +29,7 @@ public struct IssuesSmallWidgetView: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         IssueIconView()
-                            .frame(width: 23, height: 23)
+                            .frame(width: 20, height: 20)
                             .foregroundColor(.primary)
 
                         Spacer()
