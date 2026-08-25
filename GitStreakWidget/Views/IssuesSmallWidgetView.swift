@@ -29,7 +29,7 @@ public struct IssuesSmallWidgetView: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         IssueIconView()
-                            .frame(width: 26, height: 26)
+                            .frame(width: 23, height: 23)
                             .foregroundColor(.primary)
 
                         Spacer()
@@ -97,15 +97,31 @@ public struct IssueIconView: View {
     public init() {}
 
     public var body: some View {
-        if let nsImage = NSImage(named: "GitIssue") ?? NSImage(contentsOfFile: "/Users/wenujaliyanamana/Desktop/gitstreak/git-issue.png") {
-            Image(nsImage: nsImage)
-                .resizable()
-                .renderingMode(.template)
-                .aspectRatio(contentMode: .fit)
-        } else {
-            Image(systemName: "exclamationmark.circle")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+        Canvas { context, size in
+            let scale = min(size.width, size.height) / 16.0
+            let center = CGPoint(x: size.width / 2, y: size.height / 2)
+
+            // Outer Ring (r = 7.25 * scale, lineWidth = 1.5 * scale -> outer boundary r=8.0, inner boundary r=6.5)
+            var outerRing = Path()
+            let ringRadius = 7.25 * scale
+            outerRing.addEllipse(in: CGRect(
+                x: center.x - ringRadius,
+                y: center.y - ringRadius,
+                width: ringRadius * 2,
+                height: ringRadius * 2
+            ))
+            context.stroke(outerRing, with: .color(.primary), style: StrokeStyle(lineWidth: 1.5 * scale))
+
+            // Inner Dot (r = 1.5 * scale)
+            var innerDot = Path()
+            let dotRadius = 1.5 * scale
+            innerDot.addEllipse(in: CGRect(
+                x: center.x - dotRadius,
+                y: center.y - dotRadius,
+                width: dotRadius * 2,
+                height: dotRadius * 2
+            ))
+            context.fill(innerDot, with: .color(.primary))
         }
     }
 }

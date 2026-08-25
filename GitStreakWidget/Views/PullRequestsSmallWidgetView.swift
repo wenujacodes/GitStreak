@@ -30,8 +30,8 @@ public struct PullRequestsSmallWidgetView: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         PullRequestIconView()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.primary)
+                            .frame(width: 23, height: 23)
+                            .foregroundColor(colorScheme == .dark ? .white : .primary)
 
                         Spacer()
 
