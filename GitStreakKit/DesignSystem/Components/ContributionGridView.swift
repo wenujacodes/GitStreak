@@ -12,6 +12,7 @@ public struct ContributionGridView: View {
     public let cornerRadius: CGFloat?
     public let showMonthHeaders: Bool
     public let showTooltips: Bool
+    public let isWidget: Bool
 
     public init(
         weeks: [ContributionWeek],
@@ -23,7 +24,8 @@ public struct ContributionGridView: View {
         rowSpacing: CGFloat? = nil,
         cornerRadius: CGFloat? = nil,
         showMonthHeaders: Bool = false,
-        showTooltips: Bool = false
+        showTooltips: Bool = false,
+        isWidget: Bool = false
     ) {
         self.weeks = weeks
         self.theme = theme
@@ -35,6 +37,7 @@ public struct ContributionGridView: View {
         self.cornerRadius = cornerRadius
         self.showMonthHeaders = showMonthHeaders
         self.showTooltips = showTooltips
+        self.isWidget = isWidget
     }
 
     public var body: some View {
@@ -53,7 +56,8 @@ public struct ContributionGridView: View {
                     cornerRadius: cornerRadius,
                     showMonthHeaders: showMonthHeaders,
                     showTooltips: showTooltips,
-                    colorScheme: colorScheme
+                    colorScheme: colorScheme,
+                    isWidget: isWidget
                 )
             }
         }
@@ -103,6 +107,7 @@ private struct ContributionWeekColumnView: View {
     let showMonthHeaders: Bool
     let showTooltips: Bool
     let colorScheme: ColorScheme
+    let isWidget: Bool
 
     @State private var isColumnHovered = false
 
@@ -119,7 +124,7 @@ private struct ContributionWeekColumnView: View {
             ForEach(0..<7, id: \.self) { dayIndex in
                 if dayIndex < week.contributionDays.count {
                     let day = week.contributionDays[dayIndex]
-                    let cellColor = theme.color(for: day.level, colorScheme: colorScheme)
+                    let cellColor = theme.color(for: day.level, colorScheme: colorScheme, isWidget: isWidget)
                     let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
                     let strokeColor = colorScheme == .dark
                         ? Color.white.opacity(0.07)

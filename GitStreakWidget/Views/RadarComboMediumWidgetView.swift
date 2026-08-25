@@ -60,7 +60,8 @@ public struct RadarComboMediumWidgetView: View {
                             columnSpacing: 3.0,
                             rowSpacing: 2.5,
                             cornerRadius: 2.0,
-                            showTooltips: false
+                            showTooltips: false,
+                            isWidget: true
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 

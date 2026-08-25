@@ -33,7 +33,8 @@ struct SmallWidgetView: View {
                                 columnSpacing: 4.5,
                                 rowSpacing: 4.0,
                                 cornerRadius: 1.5,
-                                showTooltips: true
+                                showTooltips: true,
+                                isWidget: true
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                             Spacer(minLength: 0)
