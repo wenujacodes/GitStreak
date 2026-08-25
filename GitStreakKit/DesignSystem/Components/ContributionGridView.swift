@@ -173,13 +173,19 @@ private struct ContributionGridCellView: View {
     @State private var isHovered = false
 
     var body: some View {
-        let xOffset: CGFloat = {
-            if weekIndex < 3 { return 34 }
-            if weekIndex > totalWeeks - 4 { return -34 }
-            return 0
+        let isRightHalf = weekIndex >= (totalWeeks / 2)
+        let isTopRow = dayIndex < 3
+
+        let tooltipAlignment: Alignment = {
+            if isTopRow {
+                return isRightHalf ? .topTrailing : .topLeading
+            } else {
+                return isRightHalf ? .bottomTrailing : .bottomLeading
+            }
         }()
-        let yOffset: CGFloat = dayIndex <= 2 ? 26 : -26
-        let tooltipAlignment: Alignment = dayIndex <= 2 ? .bottom : .top
+
+        let yOffset: CGFloat = isTopRow ? 20 : -20
+        let xOffset: CGFloat = isRightHalf ? -12 : 12
 
         RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
@@ -203,8 +209,8 @@ private struct ContributionGridCellView: View {
                     .padding(.vertical, 5)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(hex: "#131313").opacity(0.70))
-                            .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 3)
+                            .fill(Color(hex: "#131313").opacity(0.85))
+                            .shadow(color: Color.black.opacity(0.5), radius: 6, x: 0, y: 3)
                     )
                     .offset(x: xOffset, y: yOffset)
                     .fixedSize()
