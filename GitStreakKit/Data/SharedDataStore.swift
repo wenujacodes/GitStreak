@@ -14,7 +14,7 @@ public final class SharedDataStore: @unchecked Sendable {
         self.preferences = UserPreferences.shared
     }
 
-    public func refreshData(force: Bool = true) async throws -> ContributionData {
+    public func refreshData(year: Int? = nil, force: Bool = true) async throws -> ContributionData {
         guard let username = preferences.username, !username.isEmpty else {
             throw NSError(domain: "SharedDataStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Username is not set"])
         }
@@ -22,8 +22,8 @@ public final class SharedDataStore: @unchecked Sendable {
         let token = TokenStorage.loadToken() ?? ""
 
         let data: ContributionData
-        if force {
-            data = try await contributionService.fetchContributions(username: username, token: token)
+        if force || year != nil {
+            data = try await contributionService.fetchContributions(username: username, token: token, year: year)
         } else {
             data = try await contributionService.refreshIfNeeded(username: username, token: token)
         }

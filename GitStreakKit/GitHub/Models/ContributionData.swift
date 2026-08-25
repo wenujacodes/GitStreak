@@ -7,6 +7,8 @@ public struct ContributionData: Codable, Sendable, Equatable {
     public let currentStreak: Int
     public let longestStreak: Int
     public let activityStats: UserActivityStats
+    public let availableYears: [Int]
+    public let selectedYear: Int?
     public let fetchedAt: Date
 
     public init(
@@ -16,6 +18,8 @@ public struct ContributionData: Codable, Sendable, Equatable {
         currentStreak: Int,
         longestStreak: Int,
         activityStats: UserActivityStats = UserActivityStats(),
+        availableYears: [Int] = [2026, 2025, 2024, 2023, 2022],
+        selectedYear: Int? = nil,
         fetchedAt: Date = Date()
     ) {
         self.user = user
@@ -24,11 +28,13 @@ public struct ContributionData: Codable, Sendable, Equatable {
         self.currentStreak = currentStreak
         self.longestStreak = longestStreak
         self.activityStats = activityStats
+        self.availableYears = availableYears.isEmpty ? [2026, 2025, 2024, 2023, 2022] : availableYears
+        self.selectedYear = selectedYear
         self.fetchedAt = fetchedAt
     }
 
     enum CodingKeys: String, CodingKey {
-        case user, weeks, totalContributions, currentStreak, longestStreak, activityStats, fetchedAt
+        case user, weeks, totalContributions, currentStreak, longestStreak, activityStats, availableYears, selectedYear, fetchedAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -39,6 +45,9 @@ public struct ContributionData: Codable, Sendable, Equatable {
         self.currentStreak = try container.decode(Int.self, forKey: .currentStreak)
         self.longestStreak = try container.decode(Int.self, forKey: .longestStreak)
         self.activityStats = try container.decodeIfPresent(UserActivityStats.self, forKey: .activityStats) ?? UserActivityStats(commits: self.totalContributions)
+        let defaultYears = Array((2020...Calendar.current.component(.year, from: Date())).reversed())
+        self.availableYears = try container.decodeIfPresent([Int].self, forKey: .availableYears) ?? defaultYears
+        self.selectedYear = try container.decodeIfPresent(Int.self, forKey: .selectedYear)
         self.fetchedAt = try container.decodeIfPresent(Date.self, forKey: .fetchedAt) ?? Date()
     }
 
@@ -50,6 +59,8 @@ public struct ContributionData: Codable, Sendable, Equatable {
         try container.encode(currentStreak, forKey: .currentStreak)
         try container.encode(longestStreak, forKey: .longestStreak)
         try container.encode(activityStats, forKey: .activityStats)
+        try container.encode(availableYears, forKey: .availableYears)
+        try container.encodeIfPresent(selectedYear, forKey: .selectedYear)
         try container.encode(fetchedAt, forKey: .fetchedAt)
     }
 

@@ -9,8 +9,8 @@ public actor ContributionService {
         self.cacheManager = cacheManager
     }
 
-    public func fetchContributions(username: String, token: String) async throws -> ContributionData {
-        let (user, weeks, totalContributions, activityStats) = try await apiClient.fetchContributions(username: username, token: token)
+    public func fetchContributions(username: String, token: String, year: Int? = nil) async throws -> ContributionData {
+        let (user, weeks, totalContributions, activityStats, contributionYears) = try await apiClient.fetchContributions(username: username, token: token, year: year)
 
         let allDays = weeks.flatMap { $0.contributionDays }
         if allDays.isEmpty, let cached = cacheManager.load() {
@@ -19,7 +19,7 @@ public actor ContributionService {
 
         let cached = cacheManager.load()
         let calculatedTotal = allDays.reduce(0) { $0 + $1.contributionCount }
-        let finalTotal = max(totalContributions, cached?.totalContributions ?? 0, calculatedTotal)
+        let finalTotal = max(totalContributions, calculatedTotal)
         let currentStreakCount = StreakCalculator.currentStreak(days: allDays)
         let longestStreakCount = StreakCalculator.longestStreak(days: allDays)
 
@@ -32,6 +32,8 @@ public actor ContributionService {
             repositories: activityStats.repositories
         )
 
+        let yearsList = contributionYears.isEmpty ? (cached?.availableYears ?? [2026, 2025, 2024, 2023, 2022]) : contributionYears
+
         let data = ContributionData(
             user: user,
             weeks: weeks,
@@ -39,10 +41,14 @@ public actor ContributionService {
             currentStreak: currentStreakCount,
             longestStreak: longestStreakCount,
             activityStats: accurateStats,
+            availableYears: yearsList,
+            selectedYear: year,
             fetchedAt: Date()
         )
 
-        try cacheManager.save(data)
+        if year == nil {
+            try? cacheManager.save(data)
+        }
         return data
     }
 

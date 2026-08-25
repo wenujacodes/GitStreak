@@ -9,6 +9,7 @@ struct DashboardView: View {
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
     @State private var isFastPolling = false
+    @State private var selectedYear: Int? = nil
     private let autoRefreshTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
@@ -186,67 +187,105 @@ struct DashboardView: View {
                         )
 
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("ACTIVITY TIMELINE (PAST YEAR)")
+                            HStack(spacing: 6) {
+                                Text("ACTIVITY TIMELINE")
                                     .font(GSTypography.monoCaption)
                                     .foregroundColor(.secondary)
                                     .tracking(0.8)
 
-                                Spacer()
-                            }
-
-                            HStack(alignment: .top, spacing: 8) {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Spacer().frame(height: 14)
-                                    Text(" ").font(.system(size: 8))
-                                    Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                    Text(" ").font(.system(size: 8))
-                                    Text("W").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                    Text(" ").font(.system(size: 8))
-                                    Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                    Text(" ").font(.system(size: 8))
-                                }
-
-                                Spacer(minLength: 0)
-
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    ContributionGridView(
-                                        weeks: data.weeks,
-                                        theme: ThemeRegistry.theme(for: selectedThemeID),
-                                        maxWeeks: 53,
-                                        cellSize: 13.5,
-                                        columnSpacing: 3.5,
-                                        rowSpacing: 3.0,
-                                        cornerRadius: 1.5,
-                                        showMonthHeaders: true,
-                                        showTooltips: true
-                                    )
-                                    .padding(.vertical, 8)
-                                }
-                                .defaultScrollAnchor(.trailing)
-                            }
-
-                            HStack {
-                                Spacer()
-
-                                HStack(spacing: 5) {
-                                    Text("Less")
-                                        .font(GSTypography.monoBadge)
+                                if let yr = selectedYear {
+                                    Text("(\(String(yr)))")
+                                        .font(GSTypography.monoCaption)
+                                        .foregroundColor(.orange)
+                                        .bold()
+                                } else {
+                                    Text("(PAST YEAR)")
+                                        .font(GSTypography.monoCaption)
                                         .foregroundColor(.secondary)
+                                }
 
-                                    let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
-                                    let colors = currentTheme.allColors(for: colorScheme)
-                                    ForEach(colors.indices, id: \.self) { idx in
-                                        RoundedRectangle(cornerRadius: 2)
-                                            .fill(colors[idx])
-                                            .frame(width: 10, height: 10)
+                                Spacer()
+                            }
+
+                            HStack(alignment: .top, spacing: 14) {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack(alignment: .top, spacing: 8) {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Spacer().frame(height: 14)
+                                            Text(" ").font(.system(size: 8))
+                                            Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                            Text(" ").font(.system(size: 8))
+                                            Text("W").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                            Text(" ").font(.system(size: 8))
+                                            Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                                            Text(" ").font(.system(size: 8))
+                                        }
+
+                                        Spacer(minLength: 0)
+
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            ContributionGridView(
+                                                weeks: data.weeks,
+                                                theme: ThemeRegistry.theme(for: selectedThemeID),
+                                                maxWeeks: 53,
+                                                cellSize: 13.5,
+                                                columnSpacing: 3.5,
+                                                rowSpacing: 3.0,
+                                                cornerRadius: 1.5,
+                                                showMonthHeaders: true,
+                                                showTooltips: true
+                                            )
+                                            .padding(.vertical, 8)
+                                        }
+                                        .defaultScrollAnchor(.trailing)
                                     }
 
-                                    Text("More")
-                                        .font(GSTypography.monoBadge)
-                                        .foregroundColor(.secondary)
+                                    HStack {
+                                        Spacer()
+
+                                        HStack(spacing: 5) {
+                                            Text("Less")
+                                                .font(GSTypography.monoBadge)
+                                                .foregroundColor(.secondary)
+
+                                            let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
+                                            let colors = currentTheme.allColors(for: colorScheme)
+                                            ForEach(colors.indices, id: \.self) { idx in
+                                                RoundedRectangle(cornerRadius: 2)
+                                                    .fill(colors[idx])
+                                                    .frame(width: 10, height: 10)
+                                            }
+
+                                            Text("More")
+                                                .font(GSTypography.monoBadge)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .padding(.horizontal, 4)
+                                    }
                                 }
-                                .padding(.horizontal, 4)
+
+                                Divider()
+                                    .frame(height: 140)
+                                    .opacity(0.15)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    YearPillButton(
+                                        title: "Past Year",
+                                        isSelected: selectedYear == nil
+                                    ) {
+                                        selectYear(nil)
+                                    }
+
+                                    ForEach(data.availableYears, id: \.self) { yr in
+                                        YearPillButton(
+                                            title: String(yr),
+                                            isSelected: selectedYear == yr
+                                        ) {
+                                            selectYear(yr)
+                                        }
+                                    }
+                                }
+                                .frame(width: 85, alignment: .topLeading)
                             }
                         }
                         .padding(16)
@@ -408,14 +447,22 @@ struct DashboardView: View {
         }
     }
 
-    private func refreshData(silent: Bool = false, force: Bool = true) async {
+    private func selectYear(_ year: Int?) {
+        self.selectedYear = year
+        Task {
+            await refreshData(year: year, silent: false, force: true)
+        }
+    }
+
+    private func refreshData(year: Int? = nil, silent: Bool = false, force: Bool = true) async {
         guard !isLoading else { return }
         if !silent {
             isLoading = true
         }
 
         do {
-            let data = try await SharedDataStore.shared.refreshData(force: force)
+            let targetYear = year ?? selectedYear
+            let data = try await SharedDataStore.shared.refreshData(year: targetYear, force: force)
             await MainActor.run {
                 self.contributionData = data
                 self.errorMessage = nil
@@ -448,5 +495,37 @@ struct DevHeaderButtonStyle: ButtonStyle {
                     .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
             )
             .contentShape(Rectangle())
+    }
+}
+
+struct YearPillButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 13, weight: isSelected ? .bold : .medium))
+                .foregroundColor(isSelected ? .white : (isHovered ? .primary : Color(hex: "#8B949E")))
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(
+                            isSelected
+                            ? Color(hex: "#1F6FEB")
+                            : (isHovered ? Color.white.opacity(0.06) : Color.clear)
+                        )
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.12)) {
+                isHovered = hovering
+            }
+        }
     }
 }
