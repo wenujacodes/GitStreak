@@ -16,7 +16,7 @@ struct DashboardView: View {
     }
 
     private var cardBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#141518") : Color(nsColor: .controlBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(nsColor: .controlBackgroundColor)
     }
 
     private var borderColor: Color {

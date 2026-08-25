@@ -30,8 +30,8 @@ public struct PullRequestsSmallWidgetView: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         PullRequestIconView()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.primary)
+                            .frame(width: 23, height: 23)
+                            .foregroundColor(colorScheme == .dark ? .white : .primary)
 
                         Spacer()
 
@@ -98,40 +98,56 @@ public struct PullRequestIconView: View {
     public init() {}
 
     public var body: some View {
-        if let nsImage = NSImage(named: "GitPullRequest") ?? NSImage(contentsOfFile: "/Users/wenujaliyanamana/Desktop/gitstreak/git-pull-request.png") {
-            Image(nsImage: nsImage)
-                .resizable()
-                .renderingMode(.template)
-                .aspectRatio(contentMode: .fit)
-        } else {
-            Canvas { context, size in
-                let w = size.width
-                let h = size.height
-                let strokeWidth = w * 0.11
+        Canvas { context, size in
+            let scale = min(size.width, size.height) / 16.0
+            let centerOffset = CGPoint(
+                x: (size.width - 16.0 * scale) / 2,
+                y: (size.height - 16.0 * scale) / 2
+            )
 
-                var leftLine = Path()
-                leftLine.move(to: CGPoint(x: w * 0.25, y: h * 0.25))
-                leftLine.addLine(to: CGPoint(x: w * 0.25, y: h * 0.75))
-                context.stroke(leftLine, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+            context.translateBy(x: centerOffset.x, y: centerOffset.y)
+            context.scaleBy(x: scale, y: scale)
 
-                var rightBranch = Path()
-                rightBranch.move(to: CGPoint(x: w * 0.75, y: h * 0.75))
-                rightBranch.addLine(to: CGPoint(x: w * 0.75, y: h * 0.4))
-                rightBranch.addQuadCurve(to: CGPoint(x: w * 0.42, y: h * 0.25), control: CGPoint(x: w * 0.75, y: h * 0.25))
-                context.stroke(rightBranch, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+            let strokeStyle = StrokeStyle(lineWidth: 1.35, lineCap: .round, lineJoin: .round)
 
-                var arrow = Path()
-                arrow.move(to: CGPoint(x: w * 0.52, y: h * 0.17))
-                arrow.addLine(to: CGPoint(x: w * 0.40, y: h * 0.25))
-                arrow.addLine(to: CGPoint(x: w * 0.52, y: h * 0.33))
-                context.stroke(arrow, with: .color(.primary), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round, lineJoin: .round))
+            // 1. Left Vertical Stem
+            var leftStem = Path()
+            leftStem.move(to: CGPoint(x: 3.25, y: 3.25))
+            leftStem.addLine(to: CGPoint(x: 3.25, y: 12.75))
+            context.stroke(leftStem, with: .color(.primary), style: strokeStyle)
 
-                let r = w * 0.12
-                for center in [CGPoint(x: w * 0.25, y: h * 0.22), CGPoint(x: w * 0.25, y: h * 0.78), CGPoint(x: w * 0.75, y: h * 0.78)] {
-                    var circle = Path()
-                    circle.addEllipse(in: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2))
-                    context.fill(circle, with: .color(.primary))
-                }
+            // 2. Right Stem & Top Curve to Arrow
+            var rightBranch = Path()
+            rightBranch.move(to: CGPoint(x: 12.75, y: 12.75))
+            rightBranch.addLine(to: CGPoint(x: 12.75, y: 5.5))
+            rightBranch.addQuadCurve(to: CGPoint(x: 10.25, y: 3.0), control: CGPoint(x: 12.75, y: 3.0))
+            rightBranch.addLine(to: CGPoint(x: 9.0, y: 3.0))
+            context.stroke(rightBranch, with: .color(.primary), style: strokeStyle)
+
+            // 3. Left-pointing Arrow Head
+            var arrow = Path()
+            arrow.move(to: CGPoint(x: 9.4, y: 1.0))
+            arrow.addLine(to: CGPoint(x: 7.2, y: 3.0))
+            arrow.addLine(to: CGPoint(x: 9.4, y: 5.0))
+            context.stroke(arrow, with: .color(.primary), style: strokeStyle)
+
+            // 4. Octicon Node Circles at (3.25, 3.25), (3.25, 12.75), (12.75, 12.75)
+            let circleCenters = [
+                CGPoint(x: 3.25, y: 3.25),
+                CGPoint(x: 3.25, y: 12.75),
+                CGPoint(x: 12.75, y: 12.75)
+            ]
+
+            for center in circleCenters {
+                var ring = Path()
+                let r = 1.4
+                ring.addEllipse(in: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2))
+                context.stroke(ring, with: .color(.primary), style: StrokeStyle(lineWidth: 1.35))
+
+                var dot = Path()
+                let dotR = 0.65
+                dot.addEllipse(in: CGRect(x: center.x - dotR, y: center.y - dotR, width: dotR * 2, height: dotR * 2))
+                context.fill(dot, with: .color(.primary))
             }
         }
     }

@@ -6,6 +6,7 @@ struct GitStreakWidgetBundle: WidgetBundle {
     var body: some Widget {
         GitStreakWidget()
         GitStreakRadarWidget()
+        GitStreakComboWidget()
         PullRequestsWidget()
         IssuesWidget()
     }

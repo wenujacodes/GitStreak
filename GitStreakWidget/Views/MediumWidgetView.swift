@@ -33,7 +33,8 @@ struct MediumWidgetView: View {
                                 columnSpacing: 3.5,
                                 rowSpacing: 3.0,
                                 cornerRadius: 1.5,
-                                showTooltips: true
+                                showTooltips: true,
+                                isWidget: true
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                             Spacer(minLength: 0)

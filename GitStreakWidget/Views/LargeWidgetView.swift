@@ -69,7 +69,8 @@ struct LargeWidgetView: View {
                             maxWeeks: 13,
                             cellSize: 11,
                             cellSpacing: 2.5,
-                            showTooltips: true
+                            showTooltips: true,
+                            isWidget: true
                         )
 
                         Spacer(minLength: 0)
