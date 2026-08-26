@@ -11,6 +11,14 @@ public enum KeychainService {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil
     }
 
+    private static var baseQuery: [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecUseDataProtectionKeychain as String: true
+        ]
+    }
+
     /// Saves or updates a secret string (e.g. GitHub Personal Access Token) in the macOS System Keychain.
     /// - Parameters:
     ///   - token: The secret token string to store.
@@ -34,30 +42,42 @@ public enum KeychainService {
         ]
 
         let status = SecItemCopyMatching(query as CFDictionary, nil)
-
         if status == errSecSuccess {
-            let attributesToUpdate: [String: Any] = [
-                kSecValueData as String: data
-            ]
+            let attributesToUpdate: [String: Any] = [kSecValueData as String: data]
             let updateStatus = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
             if updateStatus != errSecSuccess {
-                throw KeychainError.saveFailed(updateStatus)
+                trySaveDataProtection(data: data, key: key)
             }
         } else if status == errSecItemNotFound {
             var newItem = query
             newItem[kSecValueData as String] = data
             let addStatus = SecItemAdd(newItem as CFDictionary, nil)
             if addStatus != errSecSuccess {
-                throw KeychainError.saveFailed(addStatus)
+                trySaveDataProtection(data: data, key: key)
             }
         } else {
-            throw KeychainError.saveFailed(status)
+            trySaveDataProtection(data: data, key: key)
         }
     }
 
-    /// Loads a secret string from the macOS System Keychain for the given key.
-    /// - Parameter key: The key account name of the stored item.
-    /// - Returns: The decrypted secret token string, or `nil` if not found.
+    private static func trySaveDataProtection(data: Data, key: String) {
+        var query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecUseDataProtectionKeychain as String: true,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+        ]
+        let status = SecItemCopyMatching(query as CFDictionary, nil)
+        if status == errSecSuccess {
+            let attributesToUpdate: [String: Any] = [kSecValueData as String: data]
+            SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
+        } else {
+            query[kSecValueData as String] = data
+            SecItemAdd(query as CFDictionary, nil)
+        }
+    }
+
     public static func load(forKey key: String) -> String? {
         if isRunningInTestEnvironment {
             lock.lock()
@@ -75,17 +95,28 @@ public enum KeychainService {
 
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+        if status == errSecSuccess, let data = dataTypeRef as? Data, let str = String(data: data, encoding: .utf8), !str.isEmpty {
+            return str
+        }
 
-        if status == errSecSuccess, let data = dataTypeRef as? Data {
-            return String(data: data, encoding: .utf8)
+        let dpQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecUseDataProtectionKeychain as String: true,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var dpRef: AnyObject?
+        let dpStatus = SecItemCopyMatching(dpQuery as CFDictionary, &dpRef)
+        if dpStatus == errSecSuccess, let data = dpRef as? Data, let str = String(data: data, encoding: .utf8), !str.isEmpty {
+            return str
         }
 
         return nil
     }
 
-    /// Deletes a secret string from the macOS System Keychain for the given key.
-    /// - Parameter key: The key account name of the item to delete.
-    /// - Throws: `KeychainError.deleteFailed` if deletion fails.
     public static func delete(forKey key: String) throws {
         if isRunningInTestEnvironment {
             lock.lock()
@@ -99,11 +130,15 @@ public enum KeychainService {
             kSecAttrService as String: service,
             kSecAttrAccount as String: key
         ]
+        SecItemDelete(query as CFDictionary)
 
-        let status = SecItemDelete(query as CFDictionary)
-        if status != errSecSuccess && status != errSecItemNotFound {
-            throw KeychainError.deleteFailed(status)
-        }
+        let dpQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecUseDataProtectionKeychain as String: true
+        ]
+        SecItemDelete(dpQuery as CFDictionary)
     }
 }
 

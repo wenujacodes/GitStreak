@@ -65,7 +65,9 @@ public final class UserPreferences: @unchecked Sendable {
         Self.groupDefaults.synchronize()
         lock.unlock()
 
-        NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
+        }
         WidgetCenter.shared.reloadAllTimelines()
     }
 

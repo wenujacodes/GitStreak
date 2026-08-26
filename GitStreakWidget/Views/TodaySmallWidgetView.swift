@@ -30,45 +30,63 @@ public struct TodaySmallWidgetView: View {
 
                     if family == .systemMedium {
                         HStack(spacing: 16) {
-                            VStack(alignment: .leading, spacing: 0) {
-                                GitCommitIcon(size: 24, color: .primary)
-
-                                Spacer()
-
-                                Text("\(count)")
-                                    .font(.system(size: 42, weight: .bold))
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-
-                                Text("Today's Commits")
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
+                            // LEFT SIDE: 10-column week contribution graph (no icons)
+                            VStack {
+                                Spacer(minLength: 0)
+                                ContributionGridView(
+                                    weeks: data.weeks,
+                                    theme: entry.theme,
+                                    maxWeeks: 10,
+                                    cellSize: 13.0,
+                                    columnSpacing: 3.5,
+                                    rowSpacing: 3.0,
+                                    cornerRadius: 2.0,
+                                    showTooltips: false,
+                                    isWidget: true
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                Spacer(minLength: 0)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(maxWidth: .infinity, alignment: .center)
 
                             Divider()
                                 .opacity(0.3)
 
-                            VStack(alignment: .leading, spacing: 12) {
+                            // RIGHT SIDE: Today's Commits & Total Contributions (NO ICONS, NO TRUNCATION)
+                            VStack(alignment: .leading, spacing: 14) {
+                                Spacer(minLength: 0)
+
+                                // Today's Commits
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(data.bestDayContributions)")
-                                        .font(.system(size: 20, weight: .bold))
-                                        .foregroundColor(.primary)
-                                    Text("Best Single Day")
-                                        .font(.system(size: 11, weight: .regular))
+                                    Text("Today's Commits")
+                                        .font(.system(size: 11, weight: .medium))
                                         .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
+
+                                    Text("\(data.todayContributions)")
+                                        .font(.system(size: 28, weight: .bold))
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
                                 }
 
+                                // Total Contributions
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(data.totalContributions)")
-                                        .font(.system(size: 20, weight: .bold))
-                                        .foregroundColor(.primary)
                                     Text("Total Contributions")
-                                        .font(.system(size: 11, weight: .regular))
+                                        .font(.system(size: 11, weight: .medium))
                                         .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.65)
+
+                                    Text("\(data.totalContributions)")
+                                        .font(.system(size: 24, weight: .bold))
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
                                 }
+
+                                Spacer(minLength: 0)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }

@@ -156,16 +156,38 @@ public final class OAuthService: @unchecked Sendable {
     /// - Parameter token: GitHub Personal Access Token or OAuth token.
     /// - Returns: Tuple containing username, optional display name, and optional avatar URL.
     public func fetchAuthenticatedUser(token: String) async throws -> (username: String, name: String?, avatarURL: URL?) {
+        let cleanToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanToken.isEmpty else {
+            throw OAuthError.userFetchFailed("Token is empty.")
+        }
+
         let url = URL(string: "https://api.github.com/user")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if cleanToken.hasPrefix("Bearer ") {
+            request.setValue(cleanToken, forHTTPHeaderField: "Authorization")
+        } else {
+            request.setValue("Bearer \(cleanToken)", forHTTPHeaderField: "Authorization")
+        }
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("GitStreak", forHTTPHeaderField: "User-Agent")
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw OAuthError.userFetchFailed("HTTP Status \((response as? HTTPURLResponse)?.statusCode ?? 0)")
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OAuthError.invalidResponse
+        }
+
+        switch httpResponse.statusCode {
+        case 200:
+            break
+        case 401:
+            throw OAuthError.userFetchFailed("Unauthorized token. Please ensure your GitHub token is valid.")
+        case 403:
+            throw OAuthError.userFetchFailed("Access denied or API rate limit. Check token permissions (repo, read:user).")
+        case 404:
+            throw OAuthError.userFetchFailed("GitHub user profile not found.")
+        default:
+            throw OAuthError.userFetchFailed("HTTP Status \(httpResponse.statusCode)")
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],

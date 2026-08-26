@@ -80,11 +80,21 @@ public actor GitHubAPIClient {
         case 401:
             throw GitHubAPIError.unauthorized
         case 403:
-            throw GitHubAPIError.rateLimited
+            let message = parseErrorMessage(from: data)
+            let remaining = httpResponse.value(forHTTPHeaderField: "x-ratelimit-remaining")
+            if remaining == "0" || message.lowercased().contains("rate limit") {
+                throw GitHubAPIError.rateLimited
+            } else if !message.isEmpty {
+                throw GitHubAPIError.serverError(message)
+            } else {
+                throw GitHubAPIError.serverError("Access forbidden (HTTP 403). Please check your token permissions.")
+            }
         case 404:
             throw GitHubAPIError.userNotFound
         default:
-            throw GitHubAPIError.serverError("HTTP Status \(httpResponse.statusCode)")
+            let message = parseErrorMessage(from: data)
+            let desc = message.isEmpty ? "HTTP Status \(httpResponse.statusCode)" : message
+            throw GitHubAPIError.serverError(desc)
         }
 
         let decoder = JSONDecoder()
@@ -96,5 +106,13 @@ public actor GitHubAPIClient {
         }
 
         return try graphQLResponse.toDomainModel()
+    }
+
+    private func parseErrorMessage(from data: Data) -> String {
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let message = json["message"] as? String {
+            return message
+        }
+        return ""
     }
 }

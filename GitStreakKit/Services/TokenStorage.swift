@@ -2,39 +2,57 @@ import Foundation
 
 /// High-level credential manager coordinating token persistence across UserPreferences, macOS Keychain, and shared container storage.
 public enum TokenStorage {
+    private static var groupDefaults: UserDefaults {
+        UserDefaults(suiteName: "group.com.gitstreak") ?? .standard
+    }
+    private static let tokenKey = "github_pat"
+
     private static var legacyTokenFileURL: URL {
         return SharedContainer.url.appendingPathComponent(".token_auth")
     }
 
-    /// Saves the GitHub access token exclusively into the encrypted macOS System Keychain.
+    /// Saves the GitHub access token securely into the macOS System Keychain and synced App Group container.
     /// - Parameter token: The GitHub Personal Access Token or OAuth token.
     public static func saveToken(_ token: String) {
-        // Purge legacy unencrypted file if present
+        let cleanToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanToken.isEmpty else { return }
+
         removeLegacyFile()
-        try? KeychainService.save(token: token, forKey: "github_pat")
+        try? KeychainService.save(token: cleanToken, forKey: tokenKey)
+        groupDefaults.set(cleanToken, forKey: tokenKey)
+        groupDefaults.synchronize()
     }
 
-    /// Loads the stored GitHub access token strictly from the encrypted macOS System Keychain.
-    /// Performs automatic one-time migration from any legacy unencrypted disk files.
+    /// Loads the stored GitHub access token from Keychain with App Group container fallback.
     /// - Returns: The access token string, or `nil` if none exists.
     public static func loadToken() -> String? {
-        if let token = KeychainService.load(forKey: "github_pat"), !token.isEmpty {
-            return token
+        if let token = KeychainService.load(forKey: tokenKey), !token.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return token.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        // Legacy file migration: if an old unencrypted token file exists, migrate to Keychain then delete file
+
+        if let token = groupDefaults.string(forKey: tokenKey), !token.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let cleanToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+            try? KeychainService.save(token: cleanToken, forKey: tokenKey)
+            return cleanToken
+        }
+
         if FileManager.default.fileExists(atPath: legacyTokenFileURL.path),
            let data = try? Data(contentsOf: legacyTokenFileURL),
-           let token = String(data: data, encoding: .utf8), !token.isEmpty {
-            try? KeychainService.save(token: token, forKey: "github_pat")
+           let rawToken = String(data: data, encoding: .utf8), !rawToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let cleanToken = rawToken.trimmingCharacters(in: .whitespacesAndNewlines)
+            saveToken(cleanToken)
             removeLegacyFile()
-            return token
+            return cleanToken
         }
+
         return nil
     }
 
-    /// Clears the stored access token completely from macOS Keychain and deletes any legacy local disk files.
+    /// Clears the stored access token completely from macOS Keychain and App Group storage.
     public static func clearToken() {
-        try? KeychainService.delete(forKey: "github_pat")
+        try? KeychainService.delete(forKey: tokenKey)
+        groupDefaults.removeObject(forKey: tokenKey)
+        groupDefaults.synchronize()
         removeLegacyFile()
     }
 

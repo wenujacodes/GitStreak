@@ -27,6 +27,12 @@ struct GitStreakWidgetEntryView: View {
             SmallWidgetView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+        case .systemLarge, .systemExtraLarge:
+            MediumWidgetView(entry: entry)
+        #if compiler(>=6.0)
+        case .systemExtraLargePortrait:
+            MediumWidgetView(entry: entry)
+        #endif
         @unknown default:
             SmallWidgetView(entry: entry)
         }

@@ -11,7 +11,7 @@ struct DashboardView: View {
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
     @State private var isFastPolling = false
     @State private var selectedYear: Int? = nil
-    private let autoRefreshTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
+    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
@@ -405,53 +405,26 @@ struct DashboardView: View {
 
     private func checkAndAutoRefresh() {
         if contributionData == nil {
-            Task { await refreshData(silent: false, force: true) }
+            Task { await refreshData(silent: false, force: false) }
         } else {
-            Task { await refreshData(silent: true, force: true) }
+            Task { await refreshData(silent: true, force: false) }
         }
     }
 
     private func triggerSmartRefresh() {
         Task {
-            let initialCount = contributionData?.totalContributions ?? 0
             await refreshData(silent: false, force: true)
-
-            let newCount = contributionData?.totalContributions ?? 0
-            if newCount == initialCount && !isFastPolling {
-                startFastPollLoop(initialCount: initialCount)
-            }
-        }
-    }
-
-    private func startFastPollLoop(initialCount: Int) {
-        isFastPolling = true
-        Task {
-            for _ in 1...9 {
-                try? await Task.sleep(nanoseconds: 5_000_000_000)
-                guard !Task.isCancelled else { break }
-                let data = try? await SharedDataStore.shared.refreshData(force: true)
-                if let data = data {
-                    await MainActor.run {
-                        self.contributionData = data
-                    }
-                    if data.totalContributions > initialCount {
-                        break
-                    }
-                }
-            }
-            await MainActor.run {
-                self.isFastPolling = false
-            }
         }
     }
 
     private func selectYear(_ year: Int?) {
         self.selectedYear = year
         Task {
-            await refreshData(year: year, silent: false, force: true)
+            await refreshData(year: year, silent: false, force: false)
         }
     }
 
+    @MainActor
     private func refreshData(year: Int? = nil, silent: Bool = false, force: Bool = true) async {
         guard !isLoading else { return }
         if !silent {
@@ -461,18 +434,14 @@ struct DashboardView: View {
         do {
             let targetYear = year ?? selectedYear
             let data = try await SharedDataStore.shared.refreshData(year: targetYear, force: force)
-            await MainActor.run {
-                self.contributionData = data
-                self.errorMessage = nil
-                self.isLoading = false
-            }
+            self.contributionData = data
+            self.errorMessage = nil
+            self.isLoading = false
         } catch {
-            await MainActor.run {
-                if !silent {
-                    self.errorMessage = error.localizedDescription
-                }
-                self.isLoading = false
+            if !silent {
+                self.errorMessage = error.localizedDescription
             }
+            self.isLoading = false
         }
     }
 }

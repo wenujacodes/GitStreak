@@ -162,17 +162,20 @@ struct OnboardingView: View {
                     SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $patInput)
                         .textFieldStyle(.roundedBorder)
 
-                    HStack {
+                    VStack(alignment: .leading, spacing: 4) {
                         Button(action: openCreateTokenURL) {
                             HStack(spacing: 4) {
                                 Image(systemName: "arrow.up.right.square")
-                                Text("Generate Token on GitHub")
+                                Text("Generate Token on GitHub (Pre-selected Scopes)")
                             }
                             .font(.caption)
+                            .fontWeight(.medium)
                         }
                         .buttonStyle(.link)
 
-                        Spacer()
+                        Text("Opens GitHub with required scopes (repo, read:user) automatically pre-checked.")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
                     }
                 }
 
@@ -330,7 +333,7 @@ struct OnboardingView: View {
     }
 
     private func openCreateTokenURL() {
-        if let url = URL(string: "https://github.com/settings/tokens/new?description=GitStreak&scopes=read:user,user:email") {
+        if let url = URL(string: "https://github.com/settings/tokens/new?description=GitStreak%20App&scopes=repo,read:user") {
             NSWorkspace.shared.open(url)
         }
     }

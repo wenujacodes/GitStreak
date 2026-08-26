@@ -9,7 +9,7 @@ struct MediumWidgetView: View {
     private var widgetGradient: LinearGradient {
         LinearGradient(
             colors: colorScheme == .dark
-                ? [Color(hex: "#222224"), Color(hex: "#141416")]
+                ? [Color(hex: "#242426"), Color(hex: "#141416")]
                 : [Color.white, Color.white],
             startPoint: .top,
             endPoint: .bottom
@@ -33,7 +33,7 @@ struct MediumWidgetView: View {
                                 columnSpacing: 3.5,
                                 rowSpacing: 3.0,
                                 cornerRadius: 1.5,
-                                showTooltips: true,
+                                showTooltips: false,
                                 isWidget: true
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
