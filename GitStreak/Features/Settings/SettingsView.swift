@@ -213,7 +213,7 @@ struct SettingsView: View {
                 Text("GitStreak")
                     .font(.title2)
                     .fontWeight(.bold)
-                Text("Version 1.0.0")
+                Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1.0")")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
