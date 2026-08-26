@@ -28,12 +28,25 @@ struct GitStreakApp: App {
             if !hasCompletedOnboarding {
                 CommandGroup(replacing: .appSettings) { }
             }
+            CommandGroup(replacing: .appInfo) {
+                Button("About GitStreak") {
+                    showAboutPanel()
+                }
+            }
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates...") {
                     SparkleUpdaterViewModel.shared.checkForUpdates()
                 }
             }
         }
+    }
+
+    @MainActor
+    private func showAboutPanel() {
+        NSApplication.shared.orderFrontStandardAboutPanel(options: [
+            .applicationName: "GitStreak",
+            NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): "Copyright © 2026 Wenuja Liyanamana. All rights reserved."
+        ])
     }
 }
 

@@ -186,7 +186,7 @@ struct SettingsView: View {
             }
             .buttonStyle(ModernSecondaryButtonStyle())
 
-            Text("© 2026 Wenuja Liyanamana (MIT License)")
+            Text("© 2026 Wenuja Liyanamana (BSL 1.1 License)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 

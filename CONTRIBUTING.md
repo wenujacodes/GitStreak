@@ -91,6 +91,8 @@ We use `make` to automate common development workflows:
 
 ---
 
-## License
+## License & Contribution Ownership
 
-By contributing to GitStreak, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
+By contributing to GitStreak (via Pull Requests, patches, or issues), you agree that:
+1. Your contributions will be governed by the project's [Business Source License 1.1 (BSL 1.1)](LICENSE).
+2. You grant Wenuja Liyanamana an irrevocable, worldwide, royalty-free license to use, modify, distribute, re-license, and include your contributions in GitStreak while preserving Wenuja Liyanamana's sole ownership.

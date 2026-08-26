@@ -73,4 +73,4 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
 
 ## License
 
-MIT License © 2026 Wenuja Liyanamana
+Source-Available under the [Business Source License 1.1 (BSL 1.1)](LICENSE) © 2026 Wenuja Liyanamana. Free for non-commercial personal use and open-source contributions.
