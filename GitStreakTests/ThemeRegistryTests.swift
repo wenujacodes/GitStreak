@@ -39,4 +39,17 @@ final class ThemeRegistryTests: XCTestCase {
         _ = theme.color(for: .thirdQuartile)
         _ = theme.color(for: .fourthQuartile)
     }
+
+    func testLightModeEmptyBlockColor() {
+        let theme = ThemeRegistry.github
+        let expectedLightColor = Color(hex: "#EFF2F5")
+        XCTAssertEqual(theme.color(for: .none, colorScheme: .light, isWidget: false), expectedLightColor)
+        XCTAssertEqual(theme.color(for: .none, colorScheme: .light, isWidget: true), expectedLightColor)
+    }
+
+    func testDarkModeWidgetEmptyBlockColor() {
+        let theme = ThemeRegistry.github
+        let expectedDarkWidgetColor = Color(hex: "#1A1A1A")
+        XCTAssertEqual(theme.color(for: .none, colorScheme: .dark, isWidget: true), expectedDarkWidgetColor)
+    }
 }
