@@ -497,6 +497,7 @@ struct DevHeaderButtonStyle: ButtonStyle {
 }
 
 struct YearPillButton: View {
+    @Environment(\.colorScheme) private var colorScheme
     let title: String
     let isSelected: Bool
     let action: () -> Void
@@ -506,7 +507,11 @@ struct YearPillButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 13, weight: isSelected ? .bold : .medium))
-                .foregroundColor(isSelected ? .white : (isHovered ? .primary : Color(hex: "#8B949E")))
+                .foregroundColor(
+                    isSelected
+                    ? .orange
+                    : (isHovered ? .primary : .secondary)
+                )
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
@@ -514,8 +519,17 @@ struct YearPillButton: View {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(
                             isSelected
-                            ? Color(hex: "#1F6FEB")
-                            : (isHovered ? Color.white.opacity(0.06) : Color.clear)
+                            ? Color.orange.opacity(0.12)
+                            : (isHovered ? (colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.04)) : Color.clear)
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(
+                            isSelected
+                            ? Color.orange.opacity(0.8)
+                            : (colorScheme == .dark ? Color.white.opacity(isHovered ? 0.15 : 0.0) : Color.black.opacity(isHovered ? 0.12 : 0.0)),
+                            lineWidth: isSelected ? 1.5 : 1
                         )
                 )
         }
