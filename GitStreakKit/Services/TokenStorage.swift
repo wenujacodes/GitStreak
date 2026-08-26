@@ -1,5 +1,6 @@
 import Foundation
 
+/// High-level credential manager coordinating token persistence across UserPreferences, macOS Keychain, and shared container storage.
 public enum TokenStorage {
     private static let tokenFileURL: URL = {
         let home: String
@@ -13,6 +14,8 @@ public enum TokenStorage {
         return dir.appendingPathComponent(".token_auth")
     }()
 
+    /// Saves the GitHub access token to UserPreferences, System Keychain, and the shared container file.
+    /// - Parameter token: The GitHub Personal Access Token or OAuth token.
     public static func saveToken(_ token: String) {
         UserPreferences.shared.accessToken = token
         try? KeychainService.save(token: token, forKey: "github_pat")
@@ -21,6 +24,8 @@ public enum TokenStorage {
         }
     }
 
+    /// Loads the stored GitHub access token checking in order: UserPreferences memory, System Keychain, and shared container file.
+    /// - Returns: The access token string, or `nil` if none exists.
     public static func loadToken() -> String? {
         if let token = UserPreferences.shared.accessToken, !token.isEmpty {
             return token
@@ -37,6 +42,7 @@ public enum TokenStorage {
         return nil
     }
 
+    /// Clears the stored access token from memory, Keychain, and local shared storage.
     public static func clearToken() {
         UserPreferences.shared.accessToken = nil
         try? KeychainService.delete(forKey: "github_pat")

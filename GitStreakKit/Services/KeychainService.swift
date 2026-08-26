@@ -1,9 +1,15 @@
 import Foundation
 import Security
 
+/// Low-level helper for managing secure key-value items in the macOS Keychain.
 public enum KeychainService {
     private static let service = "com.gitstreak.github"
 
+    /// Saves or updates a secret string (e.g. GitHub Personal Access Token) in the macOS System Keychain.
+    /// - Parameters:
+    ///   - token: The secret token string to store.
+    ///   - key: The key account name for the Keychain entry.
+    /// - Throws: `KeychainError.saveFailed` if the OS Keychain API encounters an error.
     public static func save(token: String, forKey key: String) throws {
         guard let data = token.data(using: .utf8) else { return }
 
@@ -35,6 +41,9 @@ public enum KeychainService {
         }
     }
 
+    /// Loads a secret string from the macOS System Keychain for the given key.
+    /// - Parameter key: The key account name of the stored item.
+    /// - Returns: The decrypted secret token string, or `nil` if not found.
     public static func load(forKey key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -54,6 +63,9 @@ public enum KeychainService {
         return nil
     }
 
+    /// Deletes a secret string from the macOS System Keychain for the given key.
+    /// - Parameter key: The key account name of the item to delete.
+    /// - Throws: `KeychainError.deleteFailed` if deletion fails.
     public static func delete(forKey key: String) throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -68,6 +80,7 @@ public enum KeychainService {
     }
 }
 
+/// Errors thrown by `KeychainService` operations.
 public enum KeychainError: Error, LocalizedError, Equatable {
     case saveFailed(OSStatus)
     case deleteFailed(OSStatus)

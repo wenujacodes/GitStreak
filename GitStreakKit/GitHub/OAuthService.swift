@@ -62,6 +62,7 @@ public enum OAuthError: LocalizedError, Sendable {
     }
 }
 
+/// Service for handling GitHub OAuth operations, Device Authorization Flow, and profile retrieval.
 public final class OAuthService: @unchecked Sendable {
     public static let shared = OAuthService()
 
@@ -70,6 +71,9 @@ public final class OAuthService: @unchecked Sendable {
 
     private init() {}
 
+    /// Initiates GitHub OAuth Device Flow by requesting a user verification code and device code.
+    /// - Parameter scopes: The requested GitHub OAuth permissions string.
+    /// - Returns: `DeviceCodeResponse` containing user code, verification URI, and polling interval.
     public func requestDeviceCode(scopes: String = defaultScopes) async throws -> DeviceCodeResponse {
         let url = URL(string: "https://github.com/login/device/code")!
         var request = URLRequest(url: url)
@@ -93,6 +97,11 @@ public final class OAuthService: @unchecked Sendable {
         return try decoder.decode(DeviceCodeResponse.self, from: data)
     }
 
+    /// Polls GitHub OAuth endpoint until the user completes device authorization in browser.
+    /// - Parameters:
+    ///   - deviceCode: The device code returned from `requestDeviceCode`.
+    ///   - interval: Initial polling interval in seconds.
+    /// - Returns: The authorized access token string.
     public func pollForToken(deviceCode: String, interval: Int = 5) async throws -> String {
         let url = URL(string: "https://github.com/login/oauth/access_token")!
         var currentInterval = max(5, interval)
@@ -143,6 +152,9 @@ public final class OAuthService: @unchecked Sendable {
         }
     }
 
+    /// Fetches the authenticated GitHub user profile using the given token.
+    /// - Parameter token: GitHub Personal Access Token or OAuth token.
+    /// - Returns: Tuple containing username, optional display name, and optional avatar URL.
     public func fetchAuthenticatedUser(token: String) async throws -> (username: String, name: String?, avatarURL: URL?) {
         let url = URL(string: "https://api.github.com/user")!
         var request = URLRequest(url: url)
@@ -168,6 +180,7 @@ public final class OAuthService: @unchecked Sendable {
         return (username: login, name: name, avatarURL: avatarURL)
     }
 
+    /// Copies the user code to clipboard and launches the default browser to complete device authorization.
     public static func openDeviceLogin(userCode: String, verificationUri: String = "https://github.com/login/device") {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(userCode, forType: .string)
