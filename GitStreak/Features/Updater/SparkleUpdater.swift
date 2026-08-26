@@ -40,9 +40,14 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
 
     public func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
         isCheckingForUpdates = false
-        lastStatusMessage = "Update check failed: \(error.localizedDescription)"
+        let nsError = error as NSError
+        if nsError.code == 1001 || error.localizedDescription.localizedCaseInsensitiveContains("up to date") {
+            lastStatusMessage = "GitStreak is up to date."
+        } else {
+            lastStatusMessage = "Update check failed: \(error.localizedDescription)"
+        }
         #if DEBUG
-        print("[SparkleUpdater] Update check failed with error: \(error)")
+        print("[SparkleUpdater] Update check finished: \(error.localizedDescription)")
         #endif
     }
 

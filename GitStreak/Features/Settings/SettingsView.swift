@@ -196,7 +196,7 @@ struct SettingsView: View {
             if let updateStatus = updaterViewModel.lastStatusMessage {
                 Text(updateStatus)
                     .font(.caption)
-                    .foregroundColor(updateStatus.contains("failed") ? .red : .secondary)
+                    .foregroundColor(updateStatus.contains("up to date") ? .green : (updateStatus.contains("failed") ? .red : .secondary))
             }
 
             HStack(spacing: 12) {

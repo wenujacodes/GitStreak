@@ -1,4 +1,4 @@
-.PHONY: all generate build test run clean check-widget register-widget
+.PHONY: all generate build test run clean check-widget register-widget release dmg
 
 PROJECT_NAME = GitStreak
 SCHEME = GitStreak
@@ -52,11 +52,14 @@ run: register-widget
 check-widget:
 	pluginkit -m -p com.apple.widgetkit-extension -v 2>/dev/null | grep -i $(PROJECT_NAME) || echo "Widget check completed."
 
-# Package release zip and generate Sparkle signature
+# Package DMG installer and Sparkle ZIP release artifacts
 release:
 	./scripts/package_release.sh 1.0.0
+
+dmg: release
 
 # Clean all build artifacts
 clean:
 	rm -rf $(BUILD_DIR) $(PROJECT_NAME).xcodeproj
+
 

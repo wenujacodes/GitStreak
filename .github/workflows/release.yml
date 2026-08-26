@@ -37,7 +37,7 @@ jobs:
 
       - name: Install Tools
         run: |
-          brew install xcodegen
+          brew install xcodegen create-dmg
 
       - name: Generate Xcode Project
         run: |
@@ -52,12 +52,23 @@ jobs:
             MARKETING_VERSION=${{ steps.vars.outputs.version }} \
             build
 
-      - name: Package Release ZIP
+      - name: Package Release Artifacts (ZIP and DMG)
         run: |
           mkdir -p release_artifacts
           cd build/Build/Products/Release
           zip -r -y ../../../../release_artifacts/GitStreak.zip GitStreak.app
           cd ../../../..
+
+          create-dmg \
+            --volname "GitStreak Installer" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "GitStreak.app" 175 190 \
+            --hide-extension "GitStreak.app" \
+            --app-drop-link 425 190 \
+            "release_artifacts/GitStreak.dmg" \
+            "build/Build/Products/Release/GitStreak.app" || true
 
       - name: Update appcast.xml
         run: |
@@ -104,4 +115,5 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
+            release_artifacts/GitStreak.dmg
             release_artifacts/GitStreak.zip
