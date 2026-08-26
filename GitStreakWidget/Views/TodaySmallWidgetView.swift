@@ -31,12 +31,7 @@ public struct TodaySmallWidgetView: View {
                     if family == .systemMedium {
                         HStack(spacing: 16) {
                             VStack(alignment: .leading, spacing: 0) {
-                                Image("GitCommit")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .scaledToFit()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(.primary)
+                                GitCommitIcon(size: 24, color: .primary)
 
                                 Spacer()
 
@@ -80,12 +75,7 @@ public struct TodaySmallWidgetView: View {
                         .padding(14)
                     } else {
                         VStack(alignment: .leading, spacing: 0) {
-                            Image("GitCommit")
-                                .resizable()
-                                .renderingMode(.template)
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
-                                .foregroundColor(.primary)
+                            GitCommitIcon(size: 22, color: .primary)
 
                             Spacer()
 
