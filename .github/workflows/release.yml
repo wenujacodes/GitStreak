@@ -35,6 +35,11 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
       - name: Install Tools
         run: |
           brew install xcodegen create-dmg
@@ -56,7 +61,7 @@ jobs:
         run: |
           mkdir -p release_artifacts
           cd build/Build/Products/Release
-          zip -r -y ../../../../release_artifacts/GitStreak.zip GitStreak.app
+          zip -r -y ../../../../release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.zip GitStreak.app
           cd ../../../..
 
           create-dmg \
@@ -67,44 +72,8 @@ jobs:
             --icon "GitStreak.app" 175 190 \
             --hide-extension "GitStreak.app" \
             --app-drop-link 425 190 \
-            "release_artifacts/GitStreak.dmg" \
+            "release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.dmg" \
             "build/Build/Products/Release/GitStreak.app" || true
-
-      - name: Update appcast.xml
-        run: |
-          BUILD_DATE=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
-          ZIP_SIZE=$(stat -f%z release_artifacts/GitStreak.zip)
-          DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/GitStreak.zip"
-
-          cat <<EOF > appcast.xml
-          <?xml version="1.0" encoding="utf-8"?>
-          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
-              <channel>
-                  <title>GitStreak Changelog</title>
-                  <link>https://raw.githubusercontent.com/${{ github.repository }}/main/appcast.xml</link>
-                  <description>Most recent updates to GitStreak</description>
-                  <language>en</language>
-                  <item>
-                      <title>Version ${{ steps.vars.outputs.version }}</title>
-                      <sparkle:releaseNotesLink>https://github.com/${{ github.repository }}/releases/tag/${{ steps.vars.outputs.tag }}</sparkle:releaseNotesLink>
-                      <pubDate>${BUILD_DATE}</pubDate>
-                      <enclosure url="${DOWNLOAD_URL}"
-                                 sparkle:shortVersionString="${{ steps.vars.outputs.version }}"
-                                 length="${ZIP_SIZE}"
-                                 type="application/octet-stream" />
-                  </item>
-              </channel>
-          </rss>
-          EOF
-
-      - name: Commit and Push appcast.xml to main
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -B main
-          git add appcast.xml
-          git commit -m "chore: update appcast.xml for ${{ steps.vars.outputs.tag }} [skip ci]" || echo "No changes to commit"
-          git push origin main
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -115,5 +84,5 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            release_artifacts/GitStreak.dmg
-            release_artifacts/GitStreak.zip
+            release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.dmg
+            release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.zip

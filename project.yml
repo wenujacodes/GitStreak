@@ -5,6 +5,7 @@ options:
     macOS: "14.0"
   createIntermediateGroups: true
   generateEmptyDirectories: true
+  objectVersion: 56
 
 settings:
   base:
