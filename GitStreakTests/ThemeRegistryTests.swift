@@ -23,8 +23,9 @@ final class ThemeRegistryTests: XCTestCase {
 
     func testAllThemesAvailableFreely() {
         let all = ThemeRegistry.allThemes
-        XCTAssertEqual(all.count, 6)
-        XCTAssertEqual(ThemeRegistry.freeThemes.count, 6)
+        XCTAssertEqual(all.count, 5)
+        XCTAssertEqual(ThemeRegistry.freeThemes.count, 5)
+        XCTAssertFalse(all.contains { $0.id == "monochrome" })
         XCTAssertTrue(all.contains { $0.id == "nord" })
         XCTAssertTrue(all.contains { $0.id == "forest" })
     }

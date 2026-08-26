@@ -65,11 +65,13 @@
 		D3380215A469F2B33B5B3F24 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FCF89DDB0AB2336A939300E /* Assets.xcassets */; };
 		DA0623758389ADA17360767A /* GitStreakWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D029ECC6A2B6177BFCB51 /* GitStreakWidgetBundle.swift */; };
 		DB5DC60C4A95AB99DEFD6DA9 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3432C715C3257BA9E6BFFAD2 /* CacheManager.swift */; };
+		DE0AA80166BA0A770B1B0ED1 /* TodaySmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6E8A405B9D75F6A2DCF8E /* TodaySmallWidgetView.swift */; };
 		DF166655EF9BECD81F78BEA4 /* ThemeRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA947BEDE6D85670B8A6D83 /* ThemeRegistryTests.swift */; };
 		DFBE3F2003068CCFE877F010 /* GitStreakWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27ECD56B6A894FFAD3518DD4 /* GitStreakWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E07F9C08F26D308C59CAF512 /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8CCED57495023556366765 /* Spacing.swift */; };
 		E42F31C9517C81D6C5ABA39B /* StatCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DA4848671B6DB6B657181C /* StatCardView.swift */; };
 		F202F4E0EC73F9B6D99FB241 /* UserPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8220B0439A3922E69A9D28 /* UserPreferences.swift */; };
+		F82237C0BB50F544283F591B /* TodayCommitsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660247658AE5FD2C25D4528D /* TodayCommitsWidget.swift */; };
 		F9C2DA52163491F022F08AA9 /* SmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EF69D88D8D48A1CA57B806 /* SmallWidgetView.swift */; };
 /* End PBXBuildFile section */
 
@@ -163,11 +165,13 @@
 		5343E61DCD99DD8A7FEEA767 /* GitStreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitStreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		586BE7145FB99D0B7A742C6F /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		5AFA792EACB9AB76E2FF3A48 /* GitHubUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubUser.swift; sourceTree = "<group>"; };
+		5BC6E8A405B9D75F6A2DCF8E /* TodaySmallWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySmallWidgetView.swift; sourceTree = "<group>"; };
 		5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarComboMediumWidgetView.swift; sourceTree = "<group>"; };
 		5C27AC1E165BD2F456F257CA /* ThemePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePickerView.swift; sourceTree = "<group>"; };
 		5CD859B7A2F6787E8EB36031 /* ContributionGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionGridView.swift; sourceTree = "<group>"; };
 		64764049799B71EC83B143ED /* TimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProvider.swift; sourceTree = "<group>"; };
 		65A5CF76584D2ACD1625D318 /* GitStreakKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GitStreakKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		660247658AE5FD2C25D4528D /* TodayCommitsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCommitsWidget.swift; sourceTree = "<group>"; };
 		6873A1FA19662F1729B8EAE2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		6D88F5612EC2D2C25EFC3B2E /* GitHubGraphQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubGraphQL.swift; sourceTree = "<group>"; };
 		6E0894261130670C38CB0A9A /* MockContributions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockContributions.swift; sourceTree = "<group>"; };
@@ -264,6 +268,7 @@
 				E844FE9274D40CFF1E38D416 /* IssuesWidget.swift */,
 				A75C062E79A965DBD67B57F9 /* PullRequestsWidget.swift */,
 				64764049799B71EC83B143ED /* TimelineProvider.swift */,
+				660247658AE5FD2C25D4528D /* TodayCommitsWidget.swift */,
 				8C8C09243F59CA6BA15CAA8C /* WidgetEntry.swift */,
 				19893C965F484FD1BEA623EB /* Views */,
 			);
@@ -279,6 +284,7 @@
 				5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */,
 				7E2E879776888FD8C32C2C2E /* RadarSmallWidgetView.swift */,
 				35EF69D88D8D48A1CA57B806 /* SmallWidgetView.swift */,
+				5BC6E8A405B9D75F6A2DCF8E /* TodaySmallWidgetView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -699,6 +705,8 @@
 				9D41F53EA89DA594162014A9 /* RadarSmallWidgetView.swift in Sources */,
 				F9C2DA52163491F022F08AA9 /* SmallWidgetView.swift in Sources */,
 				5AFEFD2FB54A4746B8FCEF7E /* TimelineProvider.swift in Sources */,
+				F82237C0BB50F544283F591B /* TodayCommitsWidget.swift in Sources */,
+				DE0AA80166BA0A770B1B0ED1 /* TodaySmallWidgetView.swift in Sources */,
 				417DA2BD205AB2358207B8FC /* WidgetEntry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

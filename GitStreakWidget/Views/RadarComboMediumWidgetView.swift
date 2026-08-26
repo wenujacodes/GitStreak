@@ -26,27 +26,41 @@ public struct RadarComboMediumWidgetView: View {
             case .loaded:
                 if let data = entry.contributionData {
                     VStack(alignment: .leading, spacing: 6) {
-                        HStack(alignment: .firstTextBaseline, spacing: 10) {
-                            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                                Text(formatStatNumber(data.totalContributions))
-                                    .font(.system(size: 20, weight: .bold))
+                        HStack(alignment: .top, spacing: 14) {
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(formatStatNumber(data.todayContributions))
+                                    .font(.system(size: 16, weight: .bold))
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                Text("Total")
-                                    .font(.system(size: 12, weight: .regular))
+                                    .minimumScaleFactor(0.8)
+                                Text("Today")
+                                    .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.secondary)
+                                    .lineLimit(1)
                             }
 
-                            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                                Text(formatStatNumber(data.longestStreak))
-                                    .font(.system(size: 20, weight: .bold))
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(formatStatNumber(data.bestDayContributions))
+                                    .font(.system(size: 16, weight: .bold))
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
+                                    .minimumScaleFactor(0.8)
                                 Text("Best")
-                                    .font(.system(size: 12, weight: .regular))
+                                    .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(formatStatNumber(data.totalContributions))
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                                Text("Total")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
                             }
                         }
 

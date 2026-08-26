@@ -61,10 +61,6 @@ public enum ThemeRegistry {
         id: "github", name: "GitHub", description: "The classic GitHub green.", isPro: false,
         noneHex: "#151B23", lowHex: "#9be9a8", mediumHex: "#40c463", highHex: "#30a14e", veryHighHex: "#216e39"
     )
-    public static let monochrome = ThemeColors(
-        id: "monochrome", name: "Monochrome", description: "Clean black and white.", isPro: false,
-        noneHex: "#151B23", lowHex: "#b0b0b0", mediumHex: "#787878", highHex: "#444444", veryHighHex: "#111111"
-    )
     public static let ocean = ThemeColors(
         id: "ocean", name: "Ocean", description: "Cool blues.", isPro: false,
         noneHex: "#151B23", lowHex: "#79b8ff", mediumHex: "#2188ff", highHex: "#0366d6", veryHighHex: "#044289"
@@ -82,7 +78,7 @@ public enum ThemeRegistry {
         noneHex: "#151B23", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
     )
 
-    public static let allThemes: [ThemeColors] = [github, monochrome, ocean, sunset, forest, nord]
+    public static let allThemes: [ThemeColors] = [github, ocean, sunset, forest, nord]
     public static let freeThemes: [ThemeColors] = allThemes
 
     public static func theme(for id: String) -> ThemeColors {

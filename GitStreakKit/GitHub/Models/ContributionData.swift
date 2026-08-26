@@ -68,6 +68,14 @@ public struct ContributionData: Codable, Sendable, Equatable {
         return weeks.flatMap { $0.contributionDays }
     }
 
+    public var todayContributions: Int {
+        return allDays.last?.contributionCount ?? 0
+    }
+
+    public var bestDayContributions: Int {
+        return allDays.map(\.contributionCount).max() ?? 0
+    }
+
     public func recentDays(count: Int) -> [ContributionDay] {
         let days = allDays
         guard count < days.count else { return days }

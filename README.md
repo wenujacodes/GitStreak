@@ -23,7 +23,6 @@ GitStreak is a native macOS application and WidgetKit widget designed to motivat
   - 100% serverless — all data is cached locally on your Mac. No intermediate backend servers.
 - **Color Themes**:
   - Classic GitHub Green
-  - Monochrome (Minimal Grayscale)
   - Ocean (Cool Blues)
   - Sunset (Warm Amber/Oranges)
   - Forest (Deep Greens)

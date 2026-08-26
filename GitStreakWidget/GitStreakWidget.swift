@@ -9,7 +9,7 @@ struct GitStreakWidget: Widget {
         StaticConfiguration(kind: kind, provider: GitStreakTimelineProvider()) { entry in
             GitStreakWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("GitStreak")
+        .configurationDisplayName("GitStreak Matrix")
         .description("Your GitHub contribution streak at a glance.")
         .supportedFamilies([.systemSmall, .systemMedium])
         .contentMarginsDisabled()
