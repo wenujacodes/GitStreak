@@ -90,6 +90,7 @@ public struct IssuesSmallWidgetView: View {
         .containerBackground(for: .widget) {
             widgetGradient
         }
+        .widgetURL(URL(string: "https://github.com/issues/assigned"))
     }
 }
 

@@ -91,6 +91,7 @@ public struct PullRequestsSmallWidgetView: View {
         .containerBackground(for: .widget) {
             widgetGradient
         }
+        .widgetURL(URL(string: "https://github.com/pulls/inbox"))
     }
 }
 
