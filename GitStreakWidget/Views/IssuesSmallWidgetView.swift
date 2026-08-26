@@ -20,12 +20,22 @@ public struct IssuesSmallWidgetView: View {
         self.entry = entry
     }
 
+    private var activeFilter: IssueWidgetFilter {
+        if let raw = UserDefaults(suiteName: "group.com.gitstreak")?.string(forKey: "issueWidgetFilter"),
+           let filter = IssueWidgetFilter(rawValue: raw) {
+            return filter
+        }
+        return UserPreferences.shared.issueWidgetFilter
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             switch entry.state {
             case .loaded:
                 if let data = entry.contributionData {
-                    let count = data.activityStats.issues
+                    let filter = activeFilter
+                    let count = data.activityStats.count(for: filter)
+                    let labelText = filter.shortLabel
 
                     VStack(alignment: .leading, spacing: 0) {
                         IssueIconView()
@@ -40,7 +50,7 @@ public struct IssuesSmallWidgetView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
 
-                        Text("Issues")
+                        Text(labelText)
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
                             .lineLimit(1)

@@ -20,13 +20,22 @@ public struct PullRequestsSmallWidgetView: View {
         self.entry = entry
     }
 
+    private var activeFilter: PRWidgetFilter {
+        if let raw = UserDefaults(suiteName: "group.com.gitstreak")?.string(forKey: "prWidgetFilter"),
+           let filter = PRWidgetFilter(rawValue: raw) {
+            return filter
+        }
+        return UserPreferences.shared.prWidgetFilter
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             switch entry.state {
             case .loaded:
                 if let data = entry.contributionData {
-                    let count = data.activityStats.reviews > 0 ? data.activityStats.reviews : data.activityStats.pullRequests
-                    let labelText = data.activityStats.reviews > 0 ? "Reviews Requested" : "Pull Requests"
+                    let filter = activeFilter
+                    let count = data.activityStats.count(for: filter)
+                    let labelText = filter.shortLabel
 
                     VStack(alignment: .leading, spacing: 0) {
                         PullRequestIconView()

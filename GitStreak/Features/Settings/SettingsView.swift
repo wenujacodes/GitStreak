@@ -16,6 +16,8 @@ struct SettingsView: View {
     @State private var saveStatusMessage: String?
     @State private var isSavingPAT = false
     @State private var avatarURL: URL? = SharedDataStore.shared.getCachedData()?.user.avatarURL
+    @State private var prWidgetFilter: PRWidgetFilter = UserPreferences.shared.prWidgetFilter
+    @State private var issueWidgetFilter: IssueWidgetFilter = UserPreferences.shared.issueWidgetFilter
     @ObservedObject private var updaterViewModel = SparkleUpdaterViewModel.shared
 
     var body: some View {
@@ -34,7 +36,7 @@ struct SettingsView: View {
                             Label("About", systemImage: "info.circle")
                         }
                 }
-                .frame(width: 540, height: 300)
+                .frame(width: 540, height: 420)
                 .padding()
             } else {
                 Color.clear
@@ -144,6 +146,54 @@ struct SettingsView: View {
                 Text(msg)
                     .font(.caption)
                     .foregroundColor(isError ? .red : .green)
+            }
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Widget Filter Options")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+
+                HStack(spacing: 20) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Pull Requests Widget:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Picker("", selection: Binding(
+                            get: { prWidgetFilter },
+                            set: { newFilter in
+                                prWidgetFilter = newFilter
+                                UserPreferences.shared.prWidgetFilter = newFilter
+                            }
+                        )) {
+                            ForEach(PRWidgetFilter.allCases, id: \.self) { filter in
+                                Text(filter.displayName).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Issues Widget:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Picker("", selection: Binding(
+                            get: { issueWidgetFilter },
+                            set: { newFilter in
+                                issueWidgetFilter = newFilter
+                                UserPreferences.shared.issueWidgetFilter = newFilter
+                            }
+                        )) {
+                            ForEach(IssueWidgetFilter.allCases, id: \.self) { filter in
+                                Text(filter.displayName).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
             }
 
             Spacer()

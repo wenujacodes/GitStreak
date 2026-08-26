@@ -6,6 +6,39 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.0</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.0</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.0 Release Notes</h2>
+                <h3>🚀 New Features & Customization</h3>
+                <ul>
+                    <li><b>Customizable Pull Requests Widget</b>: Select what category to display on desktop (Created PRs, Assigned PRs, Mentioned PRs, or Review Requests).</li>
+                    <li><b>Customizable Issues Widget</b>: Select what Issue filter to display (All Opened Issues, Currently Open Issues, or Assigned Issues).</li>
+                    <li><b>Pre-Selected GitHub Token Generator</b>: 1-click token setup pre-fills app description and pre-selects required <code>repo</code> & <code>read:user</code> scopes on GitHub.</li>
+                    <li><b>Vector Octicon Icons</b>: Native vector rendering for GitHub Octicon git-commit SVG icon.</li>
+                    <li><b>Medium Matrix Widget</b>: Pure 17-column contribution grid widget without text overlay.</li>
+                </ul>
+                <h3>🔒 Security & Privacy</h3>
+                <ul>
+                    <li><b>Keychain Encryption</b>: All GitHub Personal Access Tokens and OAuth tokens are stored in macOS System Keychain.</li>
+                    <li><b>Complete Data Wipe</b>: "Sign Out" and "Reset & Clear All Data" completely purge stored Keychain tokens, local cache, and preferences.</li>
+                    <li><b>No Password Prompts</b>: Migrated to Data Protection Keychain (<code>kSecUseDataProtectionKeychain</code>) to eliminate legacy "login keychain password" prompt popups.</li>
+                </ul>
+                <h3>⚡ Performance & Fixes</h3>
+                <ul>
+                    <li><b>Rate Limit Protection</b>: Balanced background auto-refresh to 15 minutes and cache-first year switching, using less than 0.1% of daily GitHub quotas.</li>
+                    <li><b>Sanitized Token Input</b>: Automatic whitespace and newline trimming on token paste.</li>
+                    <li><b>Thread Safety & Swift 6</b>: Resolved background thread publishing warnings and satisfied Swift 6 exhaustive widget family matching.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Wed, 26 Aug 2026 22:55:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.0/GitStreak.zip"
+                       sparkle:version="2"
+                       sparkle:shortVersionString="1.1.0"
+                       length="5317238"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.0.0</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.0.0</sparkle:releaseNotesLink>
             <pubDate>Sun, 16 Aug 2026 00:00:00 +0000</pubDate>

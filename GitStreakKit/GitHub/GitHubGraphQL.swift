@@ -28,6 +28,10 @@ public struct GitHubGraphQL {
           }
         }
       }
+      prAssigned: search(query: "type:pr assignee:$username is:open", type: ISSUE) { issueCount }
+      prMentioned: search(query: "type:pr mentions:$username is:open", type: ISSUE) { issueCount }
+      issuesOpen: search(query: "type:issue author:$username state:open", type: ISSUE) { issueCount }
+      issuesAssigned: search(query: "type:issue assignee:$username state:open", type: ISSUE) { issueCount }
     }
     """
 

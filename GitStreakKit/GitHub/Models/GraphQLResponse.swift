@@ -6,8 +6,16 @@ public struct GraphQLResponse: Codable, Sendable, Equatable {
     public let errors: [GraphQLError]?
 }
 
+public struct SearchResult: Codable, Sendable, Equatable {
+    public let issueCount: Int
+}
+
 public struct GraphQLData: Codable, Sendable, Equatable {
     public let user: GraphQLUser?
+    public let prAssigned: SearchResult?
+    public let prMentioned: SearchResult?
+    public let issuesOpen: SearchResult?
+    public let issuesAssigned: SearchResult?
 }
 
 public struct GraphQLError: Codable, Sendable, Equatable {
@@ -68,7 +76,14 @@ extension GraphQLResponse {
             issues: user.contributionsCollection.totalIssueContributions ?? 0,
             pullRequests: user.contributionsCollection.totalPullRequestContributions ?? 0,
             reviews: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
-            repositories: user.contributionsCollection.totalRepositoryContributions ?? 0
+            repositories: user.contributionsCollection.totalRepositoryContributions ?? 0,
+            prCreated: user.contributionsCollection.totalPullRequestContributions ?? 0,
+            prAssigned: data.prAssigned?.issueCount ?? 0,
+            prMentioned: data.prMentioned?.issueCount ?? 0,
+            prReviewRequested: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
+            issuesAllCreated: user.contributionsCollection.totalIssueContributions ?? 0,
+            issuesOpenCreated: data.issuesOpen?.issueCount ?? 0,
+            issuesAssigned: data.issuesAssigned?.issueCount ?? 0
         )
         let years = user.contributionsCollection.contributionYears ?? []
 

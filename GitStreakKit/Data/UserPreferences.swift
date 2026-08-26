@@ -11,6 +11,8 @@ public struct PreferencesModel: Codable, Sendable {
     public var hasCompletedOnboarding: Bool = false
     public var preferredAppearance: AppearanceMode = .system
     public var lastRefreshDate: Date?
+    public var prWidgetFilter: PRWidgetFilter = .created
+    public var issueWidgetFilter: IssueWidgetFilter = .allCreated
 
     public init() {}
 }
@@ -52,6 +54,8 @@ public final class UserPreferences: @unchecked Sendable {
 
         UserDefaults.standard.set(self.model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         Self.groupDefaults.set(self.model.selectedThemeID, forKey: "selectedThemeID")
+        Self.groupDefaults.set(self.model.prWidgetFilter.rawValue, forKey: "prWidgetFilter")
+        Self.groupDefaults.set(self.model.issueWidgetFilter.rawValue, forKey: "issueWidgetFilter")
     }
 
     private func saveModel() {
@@ -62,6 +66,8 @@ public final class UserPreferences: @unchecked Sendable {
         }
         UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         Self.groupDefaults.set(model.selectedThemeID, forKey: "selectedThemeID")
+        Self.groupDefaults.set(model.prWidgetFilter.rawValue, forKey: "prWidgetFilter")
+        Self.groupDefaults.set(model.issueWidgetFilter.rawValue, forKey: "issueWidgetFilter")
         Self.groupDefaults.synchronize()
         lock.unlock()
 
@@ -149,6 +155,36 @@ public final class UserPreferences: @unchecked Sendable {
         set {
             lock.lock()
             model.lastRefreshDate = newValue
+            lock.unlock()
+            saveModel()
+        }
+    }
+
+    public var prWidgetFilter: PRWidgetFilter {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return model.prWidgetFilter
+        }
+        set {
+            lock.lock()
+            model.prWidgetFilter = newValue
+            Self.groupDefaults.set(newValue.rawValue, forKey: "prWidgetFilter")
+            lock.unlock()
+            saveModel()
+        }
+    }
+
+    public var issueWidgetFilter: IssueWidgetFilter {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return model.issueWidgetFilter
+        }
+        set {
+            lock.lock()
+            model.issueWidgetFilter = newValue
+            Self.groupDefaults.set(newValue.rawValue, forKey: "issueWidgetFilter")
             lock.unlock()
             saveModel()
         }
