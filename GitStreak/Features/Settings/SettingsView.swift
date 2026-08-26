@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var saveStatusMessage: String?
     @State private var isSavingPAT = false
     @State private var avatarURL: URL? = SharedDataStore.shared.getCachedData()?.user.avatarURL
+    @ObservedObject private var updaterViewModel = SparkleUpdaterViewModel.shared
 
     var body: some View {
         Group {
@@ -192,11 +193,26 @@ struct SettingsView: View {
 
             Spacer()
 
+            if let updateStatus = updaterViewModel.lastStatusMessage {
+                Text(updateStatus)
+                    .font(.caption)
+                    .foregroundColor(updateStatus.contains("failed") ? .red : .secondary)
+            }
+
             HStack(spacing: 12) {
-                Button("Check for Updates...") {
-                    SparkleUpdaterViewModel.shared.checkForUpdates()
+                Button(action: {
+                    updaterViewModel.checkForUpdates()
+                }) {
+                    HStack(spacing: 4) {
+                        if updaterViewModel.isCheckingForUpdates {
+                            ProgressView()
+                                .controlSize(.small)
+                        }
+                        Text("Check for Updates...")
+                    }
                 }
                 .buttonStyle(ModernSecondaryButtonStyle())
+                .disabled(updaterViewModel.isCheckingForUpdates)
 
                 Spacer()
 

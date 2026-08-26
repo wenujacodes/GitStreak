@@ -40,6 +40,12 @@ targets:
         product: Sparkle
     info:
       path: GitStreak/Info.plist
+      properties:
+        SUFeedURL: "https://raw.githubusercontent.com/wenujacodes/GitStreak/main/appcast.xml"
+        SUPublicEDKey: "hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934="
+        SUEnableAutomaticChecks: true
+        SUAllowsAutomaticUpdates: true
+        CFBundleShortVersionString: "1.0.0"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak

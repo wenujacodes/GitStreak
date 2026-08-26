@@ -12,6 +12,8 @@
             <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.0.0/GitStreak.zip"
                        sparkle:version="1"
                        sparkle:shortVersionString="1.0.0"
+                       sparkle:edSignature="QM4NLasJhuZsw1GJx1vadLOrkILRQ/gXP4WVwxuSIw1T9PTPmNLRaiunBkScdc/6u1dA/kmH6Yq6mYzGikqCDg=="
+                       length="5317238"
                        type="application/octet-stream" />
         </item>
     </channel>

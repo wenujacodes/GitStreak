@@ -15,8 +15,16 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>SUAllowsAutomaticUpdates</key>
+	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/wenujacodes/GitStreak/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934=</string>
 </dict>
 </plist>

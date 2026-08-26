@@ -9,6 +9,9 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
 
     public private(set) var updaterController: SPUStandardUpdaterController!
 
+    @Published public var isCheckingForUpdates: Bool = false
+    @Published public var lastStatusMessage: String?
+
     override private init() {
         super.init()
         self.updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
@@ -19,11 +22,43 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
     }
 
     public func checkForUpdates() {
+        lastStatusMessage = nil
+        isCheckingForUpdates = true
         updaterController.checkForUpdates(nil)
+    }
+
+    public var canCheckForUpdates: Bool {
+        updaterController.updater.canCheckForUpdates
     }
 
     public var automaticallyChecksForUpdates: Bool {
         get { updaterController.updater.automaticallyChecksForUpdates }
         set { updaterController.updater.automaticallyChecksForUpdates = newValue }
+    }
+
+    // MARK: - SPUUpdaterDelegate
+
+    public func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
+        isCheckingForUpdates = false
+        lastStatusMessage = "Update check failed: \(error.localizedDescription)"
+        #if DEBUG
+        print("[SparkleUpdater] Update check failed with error: \(error)")
+        #endif
+    }
+
+    public func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
+        isCheckingForUpdates = false
+        lastStatusMessage = "GitStreak is up to date."
+        #if DEBUG
+        print("[SparkleUpdater] No updates available.")
+        #endif
+    }
+
+    public func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
+        isCheckingForUpdates = false
+        lastStatusMessage = "Found update: Version \(item.displayVersionString)"
+        #if DEBUG
+        print("[SparkleUpdater] Found valid update version \(item.displayVersionString)")
+        #endif
     }
 }
