@@ -57,6 +57,7 @@
 		B5014DA45E10A0E82506E4EF /* ContributionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD8C04B25E9DC475A118D2D /* ContributionData.swift */; };
 		BB84D3C9466C8B76B37A6373 /* ContributionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E9F223A53FEBAF3E765476 /* ContributionService.swift */; };
 		BC5F242510F8BF657A4592FC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB71291845827F4D5272854 /* SettingsView.swift */; };
+		C02C54CCE1D94F3F9CC65F8D /* TokenStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B61D25347980934205C9C /* TokenStorageTests.swift */; };
 		C1AF0CDC1DE01A2A87203939 /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF0A99043E3A84A7660560 /* TokenStorage.swift */; };
 		C4EE2A1FABD76290F991CD12 /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895253AC45BD069C98F9893B /* OAuthService.swift */; };
 		C7C645D327471228D06CC12D /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB7BF840D9C24DF14E89F6B /* SparkleUpdater.swift */; };
@@ -151,6 +152,7 @@
 
 /* Begin PBXFileReference section */
 		0AADFAFD41C6B51213D0F4B9 /* StreakBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakBadgeView.swift; sourceTree = "<group>"; };
+		0B6B61D25347980934205C9C /* TokenStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorageTests.swift; sourceTree = "<group>"; };
 		1EB71291845827F4D5272854 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		211C067B83F888A480DFD7D3 /* GitStreak.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitStreak.entitlements; sourceTree = "<group>"; };
 		27ECD56B6A894FFAD3518DD4 /* GitStreakWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GitStreakWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -331,6 +333,7 @@
 				9FC2B3844154C1566A00CB2B /* MockContributionsTests.swift */,
 				BF59F1F372611A5BDA3CEE47 /* StreakCalculatorTests.swift */,
 				EDA947BEDE6D85670B8A6D83 /* ThemeRegistryTests.swift */,
+				0B6B61D25347980934205C9C /* TokenStorageTests.swift */,
 				949E985D556D6FDCC7D5EFB6 /* UserActivityStatsTests.swift */,
 			);
 			path = GitStreakTests;
@@ -650,6 +653,7 @@
 				AC3921266C4553180614B7A9 /* MockContributionsTests.swift in Sources */,
 				8B5549E78631989288A0C478 /* StreakCalculatorTests.swift in Sources */,
 				DF166655EF9BECD81F78BEA4 /* ThemeRegistryTests.swift in Sources */,
+				C02C54CCE1D94F3F9CC65F8D /* TokenStorageTests.swift in Sources */,
 				7CC1C8C2386B113A319143FC /* UserActivityStatsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

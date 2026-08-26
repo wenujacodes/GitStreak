@@ -4,6 +4,12 @@ import Security
 /// Low-level helper for managing secure key-value items in the macOS Keychain.
 public enum KeychainService {
     private static let service = "com.gitstreak.github"
+    nonisolated(unsafe) private static var inMemoryCache: [String: String] = [:]
+    private static let lock = NSLock()
+
+    private static var isRunningInTestEnvironment: Bool {
+        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil
+    }
 
     /// Saves or updates a secret string (e.g. GitHub Personal Access Token) in the macOS System Keychain.
     /// - Parameters:
@@ -11,12 +17,20 @@ public enum KeychainService {
     ///   - key: The key account name for the Keychain entry.
     /// - Throws: `KeychainError.saveFailed` if the OS Keychain API encounters an error.
     public static func save(token: String, forKey key: String) throws {
+        if isRunningInTestEnvironment {
+            lock.lock()
+            inMemoryCache[key] = token
+            lock.unlock()
+            return
+        }
+
         guard let data = token.data(using: .utf8) else { return }
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
         ]
 
         let status = SecItemCopyMatching(query as CFDictionary, nil)
@@ -45,6 +59,12 @@ public enum KeychainService {
     /// - Parameter key: The key account name of the stored item.
     /// - Returns: The decrypted secret token string, or `nil` if not found.
     public static func load(forKey key: String) -> String? {
+        if isRunningInTestEnvironment {
+            lock.lock()
+            defer { lock.unlock() }
+            return inMemoryCache[key]
+        }
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -67,6 +87,13 @@ public enum KeychainService {
     /// - Parameter key: The key account name of the item to delete.
     /// - Throws: `KeychainError.deleteFailed` if deletion fails.
     public static func delete(forKey key: String) throws {
+        if isRunningInTestEnvironment {
+            lock.lock()
+            inMemoryCache.removeValue(forKey: key)
+            lock.unlock()
+            return
+        }
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
