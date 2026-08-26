@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 import GitStreakKit
 
 public struct ThemePickerView: View {
@@ -23,7 +24,9 @@ public struct ThemePickerView: View {
                 )
                 .onTapGesture {
                     selectedThemeID = theme.id
+                    UserPreferences.shared.selectedThemeID = theme.id
                     onThemeChanged(theme.id)
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
             }
         }

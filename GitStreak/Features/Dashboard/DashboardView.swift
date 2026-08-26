@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import WidgetKit
 import GitStreakKit
 
 struct DashboardView: View {
@@ -344,6 +345,7 @@ struct DashboardView: View {
 
                         ThemePickerView(selectedThemeID: $selectedThemeID) { newThemeID in
                             UserPreferences.shared.selectedThemeID = newThemeID
+                            WidgetCenter.shared.reloadAllTimelines()
                         }
                     }
                     .padding(16)

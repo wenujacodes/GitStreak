@@ -65,7 +65,7 @@ public final class UserPreferences: @unchecked Sendable {
         lock.unlock()
 
         NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
-        WidgetCenter.shared.reloadTimelines(ofKind: "GitStreakWidget")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     public var username: String? {
