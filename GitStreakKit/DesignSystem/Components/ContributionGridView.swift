@@ -130,9 +130,9 @@ private struct ContributionWeekColumnView: View {
                     let day = week.contributionDays[dayIndex]
                     let cellColor = theme.color(for: day.level, colorScheme: colorScheme, isWidget: isWidget)
                     let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
-                    let strokeColor = colorScheme == .dark
-                        ? Color.white.opacity(0.07)
-                        : Color.black.opacity(0.08)
+                    let strokeColor = isWidget
+                        ? Color.clear
+                        : (colorScheme == .dark ? Color.white.opacity(0.07) : Color.black.opacity(0.08))
 
                     ContributionGridCellView(
                         day: day,
@@ -143,7 +143,8 @@ private struct ContributionWeekColumnView: View {
                         radius: radius,
                         strokeColor: strokeColor,
                         cellSize: cellSize,
-                        showTooltips: showTooltips
+                        showTooltips: showTooltips,
+                        isWidget: isWidget
                     )
                 } else {
                     Color.clear
@@ -169,6 +170,7 @@ private struct ContributionGridCellView: View {
     let strokeColor: Color
     let cellSize: CGFloat
     let showTooltips: Bool
+    let isWidget: Bool
 
     @State private var isHovered = false
 
@@ -190,8 +192,12 @@ private struct ContributionGridCellView: View {
         RoundedRectangle(cornerRadius: radius)
             .fill(cellColor)
             .overlay(
-                RoundedRectangle(cornerRadius: radius)
-                    .stroke(isHovered ? Color.white.opacity(0.85) : strokeColor, lineWidth: isHovered ? 1.2 : 0.5)
+                Group {
+                    if !isWidget {
+                        RoundedRectangle(cornerRadius: radius)
+                            .stroke(isHovered ? Color.white.opacity(0.85) : strokeColor, lineWidth: isHovered ? 1.2 : 0.5)
+                    }
+                }
             )
             .scaleEffect(isHovered ? 1.3 : 1.0)
             .shadow(color: isHovered ? Color.black.opacity(0.4) : Color.clear, radius: 4, x: 0, y: 2)
