@@ -2,17 +2,9 @@ import Foundation
 
 /// High-level credential manager coordinating token persistence across UserPreferences, macOS Keychain, and shared container storage.
 public enum TokenStorage {
-    private static let tokenFileURL: URL = {
-        let home: String
-        if let pw = getpwuid(getuid()) {
-            home = String(cString: pw.pointee.pw_dir)
-        } else {
-            home = NSHomeDirectory()
-        }
-        let dir = URL(fileURLWithPath: home).appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent(".token_auth")
-    }()
+    private static var tokenFileURL: URL {
+        return SharedContainer.url.appendingPathComponent(".token_auth")
+    }
 
     /// Saves the GitHub access token to UserPreferences, System Keychain, and the shared container file.
     /// - Parameter token: The GitHub Personal Access Token or OAuth token.

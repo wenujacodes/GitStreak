@@ -1,20 +1,37 @@
 import Foundation
 
-public final class CacheManager: Sendable {
-    private static let fileName = "contribution_cache.json"
-    private static let staleDuration: TimeInterval = 60
+internal enum SharedContainer {
+    static var url: URL {
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.gitstreak") {
+            let dir = groupURL.appendingPathComponent("com.gitstreak.shared", isDirectory: true)
+            do {
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
+                return dir
+            } catch {
+                // Fall back if Group Container is not writable (e.g. in unit test harness)
+            }
+        }
 
-    private static let sharedFileURL: URL = {
         let home: String
         if let pw = getpwuid(getuid()) {
             home = String(cString: pw.pointee.pw_dir)
         } else {
             home = NSHomeDirectory()
         }
-        let dir = URL(fileURLWithPath: home).appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent(fileName)
-    }()
+        let fallbackDir = URL(fileURLWithPath: home)
+            .appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
+        try? FileManager.default.createDirectory(at: fallbackDir, withIntermediateDirectories: true, attributes: nil)
+        return fallbackDir
+    }
+}
+
+public final class CacheManager: Sendable {
+    private static let fileName = "contribution_cache.json"
+    private static let staleDuration: TimeInterval = 60
+
+    private static var sharedFileURL: URL {
+        return SharedContainer.url.appendingPathComponent(fileName)
+    }
 
     public init() {}
 

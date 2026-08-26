@@ -29,7 +29,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
             if colorScheme == .light {
                 return Color(hex: "#EFF2F5")
             } else {
-                return isWidget ? Color(hex: "#1A1A1A") : Color(hex: "#2C2C2C")
+                return Color(hex: "#2C2C2C")
             }
         }
 
@@ -38,7 +38,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
         case 2: return Color(hex: mediumHex)
         case 3: return Color(hex: highHex)
         case 4: return Color(hex: veryHighHex)
-        default: return colorScheme == .light ? Color(hex: "#EFF2F5") : (isWidget ? Color(hex: "#1A1A1A") : Color(hex: "#2C2C2C"))
+        default: return colorScheme == .light ? Color(hex: "#EFF2F5") : Color(hex: "#2C2C2C")
         }
     }
 
@@ -51,7 +51,7 @@ public struct ThemeColors: Codable, Sendable, Equatable {
     }
 
     public func allColors(for colorScheme: ColorScheme, isWidget: Bool = false) -> [Color] {
-        let empty = colorScheme == .light ? Color(hex: "#EFF2F5") : (isWidget ? Color(hex: "#1A1A1A") : Color(hex: "#2C2C2C"))
+        let empty = colorScheme == .light ? Color(hex: "#EFF2F5") : Color(hex: "#2C2C2C")
         return [empty, Color(hex: lowHex), Color(hex: mediumHex), Color(hex: highHex), Color(hex: veryHighHex)]
     }
 }
@@ -141,6 +141,8 @@ private struct ModernPrimaryButtonView: View {
         configuration.label
             .font(.system(size: 13, weight: .semibold))
             .foregroundColor(isProminent ? .white : .primary)
+            .colorScheme(isProminent ? .dark : colorScheme)
+            .tint(isProminent ? .white : .primary)
             .padding(.horizontal, 18)
             .padding(.vertical, 9)
             .background(

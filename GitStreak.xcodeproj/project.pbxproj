@@ -57,7 +57,6 @@
 		B5014DA45E10A0E82506E4EF /* ContributionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD8C04B25E9DC475A118D2D /* ContributionData.swift */; };
 		BB84D3C9466C8B76B37A6373 /* ContributionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E9F223A53FEBAF3E765476 /* ContributionService.swift */; };
 		BC5F242510F8BF657A4592FC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB71291845827F4D5272854 /* SettingsView.swift */; };
-		BE4B6E95492CFF76127F291C /* LargeWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE9BACAC7FF1D583CCEE171B /* LargeWidgetView.swift */; };
 		C1AF0CDC1DE01A2A87203939 /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF0A99043E3A84A7660560 /* TokenStorage.swift */; };
 		C4EE2A1FABD76290F991CD12 /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895253AC45BD069C98F9893B /* OAuthService.swift */; };
 		C7C645D327471228D06CC12D /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB7BF840D9C24DF14E89F6B /* SparkleUpdater.swift */; };
@@ -212,7 +211,6 @@
 		F9DA4848671B6DB6B657181C /* StatCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCardView.swift; sourceTree = "<group>"; };
 		FB3BA3994A68BA6B2FDC0D95 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		FE98F6D1CAD6827480E1FA04 /* ContributionWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionWeek.swift; sourceTree = "<group>"; };
-		FE9BACAC7FF1D583CCEE171B /* LargeWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeWidgetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,7 +274,6 @@
 			isa = PBXGroup;
 			children = (
 				700B42FC2424EDA3950955F1 /* IssuesSmallWidgetView.swift */,
-				FE9BACAC7FF1D583CCEE171B /* LargeWidgetView.swift */,
 				4B10A56901D0ABFBADAF8CFB /* MediumWidgetView.swift */,
 				D2CCA3620251F312A34874B4 /* PullRequestsSmallWidgetView.swift */,
 				5BE1654DB63243B5FDD739B9 /* RadarComboMediumWidgetView.swift */,
@@ -695,7 +692,6 @@
 				DA0623758389ADA17360767A /* GitStreakWidgetBundle.swift in Sources */,
 				528DD1A9F5CAAC0C6B84DEA0 /* IssuesSmallWidgetView.swift in Sources */,
 				6B63B4005F1B083BD4016A47 /* IssuesWidget.swift in Sources */,
-				BE4B6E95492CFF76127F291C /* LargeWidgetView.swift in Sources */,
 				0FFF40B6C6585743323A0395 /* MediumWidgetView.swift in Sources */,
 				2673289C71E5B3F956496684 /* PullRequestsSmallWidgetView.swift in Sources */,
 				6273EBE35E5470EAA88C2683 /* PullRequestsWidget.swift in Sources */,

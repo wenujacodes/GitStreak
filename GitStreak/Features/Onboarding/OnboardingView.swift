@@ -181,6 +181,8 @@ struct OnboardingView: View {
                         if isLoading {
                             ProgressView()
                                 .controlSize(.small)
+                                .colorScheme(.dark)
+                                .tint(.white)
                         } else {
                             Image(systemName: "key.fill")
                         }
@@ -258,6 +260,7 @@ struct OnboardingView: View {
                                         selectedThemeID = theme.id
                                     }
                                     UserPreferences.shared.selectedThemeID = theme.id
+                                    SharedDataStore.shared.notifyWidgetToRefresh()
                                 }
                         }
                     }

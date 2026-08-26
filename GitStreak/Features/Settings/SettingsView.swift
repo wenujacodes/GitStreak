@@ -36,22 +36,11 @@ struct SettingsView: View {
                 .frame(width: 540, height: 300)
                 .padding()
             } else {
-                VStack(spacing: 12) {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 32))
-                        .foregroundColor(.secondary)
-
-                    Text("Setup Required")
-                        .font(.headline)
-                        .fontWeight(.bold)
-
-                    Text("Please complete the onboarding setup before accessing Settings.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(width: 380, height: 180)
-                .padding()
+                Color.clear
+                    .frame(width: 0, height: 0)
+                    .onAppear {
+                        NSApp.keyWindow?.close()
+                    }
             }
         }
         .background(Color(NSColor.windowBackgroundColor))

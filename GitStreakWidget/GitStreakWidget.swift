@@ -11,7 +11,7 @@ struct GitStreakWidget: Widget {
         }
         .configurationDisplayName("GitStreak")
         .description("Your GitHub contribution streak at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium])
         .contentMarginsDisabled()
         .containerBackgroundRemovable(false)
     }
@@ -27,8 +27,6 @@ struct GitStreakWidgetEntryView: View {
             SmallWidgetView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
-        case .systemLarge:
-            LargeWidgetView(entry: entry)
         @unknown default:
             SmallWidgetView(entry: entry)
         }

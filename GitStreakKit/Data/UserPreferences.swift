@@ -23,17 +23,13 @@ public final class UserPreferences: @unchecked Sendable {
     private var model = PreferencesModel()
     private let lock = NSLock()
 
-    private static let sharedFileURL: URL = {
-        let home: String
-        if let pw = getpwuid(getuid()) {
-            home = String(cString: pw.pointee.pw_dir)
-        } else {
-            home = NSHomeDirectory()
-        }
-        let dir = URL(fileURLWithPath: home).appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent(fileName)
-    }()
+    private static var groupDefaults: UserDefaults {
+        UserDefaults(suiteName: "group.com.gitstreak") ?? .standard
+    }
+
+    private static var sharedFileURL: URL {
+        return SharedContainer.url.appendingPathComponent(fileName)
+    }
 
     private init() {
         loadModel()
@@ -51,8 +47,12 @@ public final class UserPreferences: @unchecked Sendable {
         if let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode(PreferencesModel.self, from: data) {
             self.model = decoded
-            UserDefaults.standard.set(decoded.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        } else if let themeID = Self.groupDefaults.string(forKey: "selectedThemeID"), !themeID.isEmpty {
+            self.model.selectedThemeID = themeID
         }
+
+        UserDefaults.standard.set(self.model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        Self.groupDefaults.set(self.model.selectedThemeID, forKey: "selectedThemeID")
     }
 
     private func saveModel() {
@@ -62,6 +62,8 @@ public final class UserPreferences: @unchecked Sendable {
             try? data.write(to: url, options: .atomic)
         }
         UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        Self.groupDefaults.set(model.selectedThemeID, forKey: "selectedThemeID")
+        Self.groupDefaults.synchronize()
         lock.unlock()
 
         NotificationCenter.default.post(name: .userPreferencesDidChange, object: nil)
