@@ -6,6 +6,26 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.1</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.1</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.1 Release Notes</h2>
+                <h3>🐞 Bug Fixes & Auto-Update Improvements</h3>
+                <ul>
+                    <li><b>Dynamic Version Display</b>: Settings → About tab now dynamically displays your exact running GitStreak version string.</li>
+                    <li><b>Sparkle Auto-Update Authorization</b>: Resolved installer launch error by adjusting sandboxing privileges so in-app updates replace and restart GitStreak cleanly.</li>
+                    <li><b>Up-To-Date Verification</b>: Users on the latest release receive clear confirmation when checking for updates.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 27 Aug 2026 00:37:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.1/GitStreak-v1.1.1.dmg"
+                       sparkle:version="3"
+                       sparkle:shortVersionString="1.1.1"
+                       sparkle:edSignature="kqMUs0+7po7dYazMp255xbB6guNQV0++5MjIWtoSCyUI0pJPjVTPqGwEPNPUTiXZHnhi5tBnSN3g+qDGS6jGBw=="
+                       length="2383758"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.0</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.0</sparkle:releaseNotesLink>
             <description><![CDATA[
