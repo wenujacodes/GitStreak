@@ -29,7 +29,7 @@ public struct RadarComboMediumWidgetView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 10) {
                             HStack(alignment: .firstTextBaseline, spacing: 3) {
                                 Text(formatStatNumber(data.totalContributions))
-                                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                                    .font(.system(size: 20, weight: .bold))
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
@@ -40,7 +40,7 @@ public struct RadarComboMediumWidgetView: View {
 
                             HStack(alignment: .firstTextBaseline, spacing: 3) {
                                 Text(formatStatNumber(data.longestStreak))
-                                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                                    .font(.system(size: 20, weight: .bold))
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)

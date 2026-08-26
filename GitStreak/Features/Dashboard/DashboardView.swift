@@ -78,8 +78,8 @@ struct DashboardView: View {
                             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                         }
                     }) {
-                        Text("CONFIG")
-                            .font(GSTypography.monoBadge)
+                        Text("Config")
+                            .font(GSTypography.body)
                             .foregroundColor(.primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -94,8 +94,8 @@ struct DashboardView: View {
                                     .controlSize(.small)
                                     .frame(width: 50)
                             } else {
-                                Text("REFRESH")
-                                    .font(GSTypography.monoBadge)
+                                Text("Refresh")
+                                    .font(GSTypography.body)
                                     .foregroundColor(.primary)
                             }
                         }
@@ -118,12 +118,12 @@ struct DashboardView: View {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
                             Text(error)
-                                .font(GSTypography.monoCaption)
+                                .font(GSTypography.caption)
                                 .foregroundColor(.primary)
                             Spacer()
                             Button("Dismiss") { errorMessage = nil }
                                 .buttonStyle(.plain)
-                                .font(GSTypography.monoCaption)
+                                .font(GSTypography.caption)
                                 .foregroundColor(.secondary)
                         }
                         .padding(12)
@@ -143,18 +143,17 @@ struct DashboardView: View {
                                     Image(systemName: "flame.fill")
                                         .font(.system(size: 16))
                                         .foregroundColor(.orange)
-                                    Text("CURRENT STREAK")
-                                        .font(GSTypography.monoCaption)
+                                    Text("Current Streak")
+                                        .font(GSTypography.caption)
                                         .foregroundColor(.secondary)
-                                        .tracking(1)
                                 }
 
                                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                                     Text("\(data.currentStreak)")
-                                        .font(GSTypography.monoLarge)
+                                        .font(GSTypography.largeTitle)
                                         .foregroundColor(.primary)
-                                    Text("DAYS")
-                                        .font(GSTypography.monoCaption)
+                                    Text("days")
+                                        .font(GSTypography.caption)
                                         .foregroundColor(.secondary)
                                 }
                             }
@@ -162,12 +161,11 @@ struct DashboardView: View {
                             Spacer()
 
                             VStack(alignment: .trailing, spacing: 4) {
-                                Text("PERSONAL BEST")
-                                    .font(GSTypography.monoBadge)
+                                Text("Personal Best")
+                                    .font(GSTypography.caption)
                                     .foregroundColor(.secondary)
-                                    .tracking(0.5)
-                                Text("\(data.longestStreak) DAYS")
-                                    .font(GSTypography.monoTitle)
+                                Text("\(data.longestStreak) days")
+                                    .font(GSTypography.title)
                                     .foregroundColor(.primary)
                             }
                         }
@@ -189,19 +187,18 @@ struct DashboardView: View {
 
                         VStack(alignment: .leading, spacing: 12) {
                             HStack(spacing: 6) {
-                                Text("ACTIVITY TIMELINE")
-                                    .font(GSTypography.monoCaption)
+                                Text("Activity Timeline")
+                                    .font(GSTypography.caption)
                                     .foregroundColor(.secondary)
-                                    .tracking(0.8)
 
                                 if let yr = selectedYear {
                                     Text("(\(String(yr)))")
-                                        .font(GSTypography.monoCaption)
+                                        .font(GSTypography.caption)
                                         .foregroundColor(.orange)
                                         .bold()
                                 } else {
-                                    Text("(PAST YEAR)")
-                                        .font(GSTypography.monoCaption)
+                                    Text("(Past Year)")
+                                        .font(GSTypography.caption)
                                         .foregroundColor(.secondary)
                                 }
 
@@ -336,10 +333,9 @@ struct DashboardView: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("WIDGET THEME")
-                                .font(GSTypography.monoCaption)
+                            Text("Widget Theme")
+                                .font(GSTypography.caption)
                                 .foregroundColor(.secondary)
-                                .tracking(0.8)
                             Spacer()
                         }
 

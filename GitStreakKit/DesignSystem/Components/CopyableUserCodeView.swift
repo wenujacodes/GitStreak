@@ -27,7 +27,7 @@ public struct CopyableUserCodeView: View {
     public var body: some View {
         HStack(spacing: 10) {
             Text(userCode)
-                .font(.system(size: fontSize, weight: .bold, design: .monospaced))
+                .font(.system(size: fontSize, weight: .bold))
                 .foregroundColor(.primary)
 
             Button(action: copyToClipboard) {

@@ -29,16 +29,15 @@ public struct StatCardView: View {
                         .foregroundColor(iconColor)
                         .font(.system(size: 13, weight: .semibold))
                 }
-                Text(title.uppercased())
-                    .font(GSTypography.monoCaption)
+                Text(title)
+                    .font(GSTypography.caption)
                     .foregroundColor(.secondary)
-                    .tracking(0.5)
 
                 Spacer()
             }
 
             Text(value)
-                .font(GSTypography.monoTitle)
+                .font(GSTypography.title)
                 .foregroundColor(.primary)
 
             if let subtitle = subtitle {

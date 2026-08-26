@@ -35,7 +35,7 @@ public struct IssuesSmallWidgetView: View {
                         Spacer()
 
                         Text("\(count)")
-                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .font(.system(size: 42, weight: .bold))
                             .foregroundColor(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)

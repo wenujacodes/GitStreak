@@ -129,7 +129,7 @@ public struct ActivityRadarChartView: View {
                     let level = levels[idx]
                     let yOffset = -maxRadius * level.scale + 5.5
                     Text(level.label)
-                        .font(.system(size: 5.5, weight: .semibold, design: .monospaced))
+                        .font(.system(size: 5.5, weight: .semibold))
                         .foregroundColor(scaleLabelColor)
                         .position(x: center.x, y: center.y + yOffset)
                 }
