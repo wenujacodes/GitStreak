@@ -36,7 +36,14 @@ public actor ContributionService {
             issues: activityStats.issues,
             pullRequests: activityStats.pullRequests,
             reviews: activityStats.reviews,
-            repositories: activityStats.repositories
+            repositories: activityStats.repositories,
+            prCreated: activityStats.prCreated,
+            prAssigned: activityStats.prAssigned,
+            prMentioned: activityStats.prMentioned,
+            prReviewRequested: activityStats.prReviewRequested,
+            issuesAllCreated: activityStats.issuesAllCreated,
+            issuesOpenCreated: activityStats.issuesOpenCreated,
+            issuesAssigned: activityStats.issuesAssigned
         )
 
         let yearsList = contributionYears.isEmpty ? (cached?.availableYears ?? [2026, 2025, 2024, 2023, 2022]) : contributionYears
