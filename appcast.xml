@@ -6,6 +6,25 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.6</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.6</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.6 Release Notes</h2>
+                <h3>🛠️ Build System Packaging & Version Alignment Fix</h3>
+                <ul>
+                    <li><b>XcodeGen Packaging Automation</b>: Updated `package_release.sh` script to run `xcodegen generate` and pass `MARKETING_VERSION` (`1.1.6`) directly into `xcodebuild`.</li>
+                    <li><b>App Bundle Version Verification</b>: Guaranteed compiled `.app` inside `.dmg` and `.zip` reports exact Version 1.1.6 (Build 8), completely eliminating the repeating Sparkle update prompt.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 27 Aug 2026 18:20:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.6/GitStreak-v1.1.6.dmg"
+                       sparkle:version="8"
+                       sparkle:shortVersionString="1.1.6"
+                       sparkle:edSignature="258VT+A1HNNQaaBnqBsaMGssNDujYXMobREDorQ2cZb7ONnAL27i7/B9w9Bd1fS7Z4qdhs4ytFo+0JD/1dg4Cg=="
+                       length="7269759"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.5</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.5</sparkle:releaseNotesLink>
             <description><![CDATA[
