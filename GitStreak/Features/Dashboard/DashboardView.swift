@@ -472,34 +472,47 @@ struct YearPillButton: View {
     let action: () -> Void
     @State private var isHovered = false
 
+    private var textColor: Color {
+        if isSelected { return .orange }
+        return isHovered ? .primary : .secondary
+    }
+
+    private var fillColor: Color {
+        if isSelected { return Color.orange.opacity(0.12) }
+        if isHovered {
+            return colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.04)
+        }
+        return Color.clear
+    }
+
+    private var strokeColor: Color {
+        if isSelected { return Color.orange.opacity(0.8) }
+        if colorScheme == .dark {
+            return Color.white.opacity(isHovered ? 0.15 : 0.0)
+        } else {
+            return Color.black.opacity(isHovered ? 0.12 : 0.0)
+        }
+    }
+
+    private var strokeLineWidth: CGFloat {
+        isSelected ? 1.5 : 1.0
+    }
+
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 13, weight: isSelected ? .bold : .medium))
-                .foregroundColor(
-                    isSelected
-                    ? .orange
-                    : (isHovered ? .primary : .secondary)
-                )
+                .foregroundColor(textColor)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
                 .background(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(
-                            isSelected
-                            ? Color.orange.opacity(0.12)
-                            : (isHovered ? (colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.04)) : Color.clear)
-                        )
+                        .fill(fillColor)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(
-                            isSelected
-                            ? Color.orange.opacity(0.8)
-                            : (colorScheme == .dark ? Color.white.opacity(isHovered ? 0.15 : 0.0) : Color.black.opacity(isHovered ? 0.12 : 0.0)),
-                            lineWidth: isSelected ? 1.5 : 1
-                        )
+                        .stroke(strokeColor, lineWidth: strokeLineWidth)
                 )
         }
         .buttonStyle(.plain)
