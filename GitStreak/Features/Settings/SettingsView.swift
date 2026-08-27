@@ -64,8 +64,8 @@ struct SettingsView: View {
     }
 
     private var generalTab: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            // Connected Account Section
+        VStack(alignment: .leading, spacing: 14) {
+            // Connected Account Card
             HStack(spacing: 16) {
                 HStack(spacing: 12) {
                     if !username.isEmpty {
@@ -109,10 +109,17 @@ struct SettingsView: View {
                     .buttonStyle(ModernSecondaryButtonStyle())
                 }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
-            Divider()
-
-            // Personal Access Token Section
+            // Personal Access Token Card
             VStack(alignment: .leading, spacing: 8) {
                 Text("GitHub Personal Access Token")
                     .font(.subheadline)
@@ -148,18 +155,25 @@ struct SettingsView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
+
+                if let msg = saveStatusMessage {
+                    let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundColor(isError ? .red : .green)
+                }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
-            if let msg = saveStatusMessage {
-                let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
-                Text(msg)
-                    .font(.caption)
-                    .foregroundColor(isError ? .red : .green)
-            }
-
-            Divider()
-
-            // Widget Filter Options Section
+            // Widget Filter Options Card
             VStack(alignment: .leading, spacing: 12) {
                 Text("Widget Filter Options")
                     .font(.subheadline)
@@ -205,6 +219,15 @@ struct SettingsView: View {
                     }
                 }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
             Spacer()
         }
