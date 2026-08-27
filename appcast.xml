@@ -6,6 +6,28 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.9</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.9</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.9 Release Notes</h2>
+                <h3>🎨 UI Polish, Pure White Light Mode & Token Storage Persistence</h3>
+                <ul>
+                    <li><b>Pure White Light Mode</b>: Updated general app background in Light mode to pure white (`#FFFFFF`).</li>
+                    <li><b>Dark Metric Cards Styling</b>: Aligned all metric summary card backgrounds to dark `#1A1A1A` in Dark mode.</li>
+                    <li><b>Token Persistence Self-Healing Sync</b>: Fixed token reset/reversion issue by guaranteeing `TokenStorage` updates all 3 persistence layers atomically.</li>
+                    <li><b>Settings Window Polish</b>: Restored clean section dividers and solid titlebar header background.</li>
+                    <li><b>Sparkle Build Alignment</b>: Fully aligned build numbers (`1.1.9 (11)`) for instant zero-loop automatic updates.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Fri, 28 Aug 2026 00:20:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.9/GitStreak-v1.1.9.zip"
+                       sparkle:version="11"
+                       sparkle:shortVersionString="1.1.9"
+                       sparkle:edSignature="G+plSIoyn3Xw2IDX7bRcIdI97hQltIcvF0cBt+qeSV1uzNzU3BAoiH173RZuac9hRxF/oUswssVubpyghGMsDA=="
+                       length="10375794"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.8</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.8</sparkle:releaseNotesLink>
             <description><![CDATA[

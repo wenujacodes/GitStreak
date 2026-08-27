@@ -55,7 +55,7 @@ jobs:
             -configuration Release \
             -derivedDataPath ./build \
             MARKETING_VERSION=${{ steps.vars.outputs.version }} \
-            CURRENT_PROJECT_VERSION=10 \
+            CURRENT_PROJECT_VERSION=11 \
             build
 
       - name: Package Release Artifacts (ZIP and DMG)

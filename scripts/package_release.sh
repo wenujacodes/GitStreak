@@ -7,8 +7,8 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
-VERSION="${1:-1.1.8}"
-BUILD_NUMBER="${2:-10}"
+VERSION="${1:-1.1.9}"
+BUILD_NUMBER="${2:-11}"
 BUILD_DIR="./build"
 RELEASE_DIR="$BUILD_DIR/Build/Products/Release"
 APP_PATH="$RELEASE_DIR/GitStreak.app"
