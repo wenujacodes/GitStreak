@@ -15,8 +15,8 @@ settings:
     CODE_SIGNING_REQUIRED: "NO"
     CODE_SIGNING_ALLOWED: "YES"
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "1.1.1"
-    CURRENT_PROJECT_VERSION: 3
+    MARKETING_VERSION: "1.1.2"
+    CURRENT_PROJECT_VERSION: 4
 
 packages:
   Sparkle:
@@ -46,14 +46,14 @@ targets:
         SUPublicEDKey: "hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934="
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
-        CFBundleShortVersionString: "1.1.1"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "1.1.2"
+        CFBundleVersion: "4"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak
         CODE_SIGN_ENTITLEMENTS: GitStreak/GitStreak.entitlements
-        CURRENT_PROJECT_VERSION: 3
-        MARKETING_VERSION: "1.1.1"
+        CURRENT_PROJECT_VERSION: 4
+        MARKETING_VERSION: "1.1.2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   GitStreakWidgetExtension:
@@ -80,8 +80,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak.Widget
         CODE_SIGN_ENTITLEMENTS: GitStreakWidget/GitStreakWidget.entitlements
         GENERATE_INFOPLIST_FILE: "YES"
-        CURRENT_PROJECT_VERSION: 3
-        MARKETING_VERSION: "1.1.1"
+        CURRENT_PROJECT_VERSION: 4
+        MARKETING_VERSION: "1.1.2"
         PRODUCT_NAME: GitStreakWidgetExtension
 
   GitStreakKit:
@@ -95,8 +95,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreakKit
         GENERATE_INFOPLIST_FILE: "YES"
-        CURRENT_PROJECT_VERSION: 3
-        MARKETING_VERSION: "1.1.1"
+        CURRENT_PROJECT_VERSION: 4
+        MARKETING_VERSION: "1.1.2"
         DEFINES_MODULE: "YES"
         PRODUCT_MODULE_NAME: GitStreakKit
 

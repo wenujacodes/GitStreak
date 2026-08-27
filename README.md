@@ -15,7 +15,7 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 <br/>
 
-[**🚀 Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.1.dmg) &nbsp;•&nbsp; [**✨ Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**🔥 Features**](#-key-features) &nbsp;•&nbsp; [**🗺️ Roadmap**](#-development-roadmap)
+[**🚀 Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**✨ Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**🔥 Features**](#-key-features) &nbsp;•&nbsp; [**🗺️ Roadmap**](#-development-roadmap)
 
 > ⭐ **If you find GitStreak helpful, please star the repository to support development and help others discover it!** ⭐
 
@@ -42,11 +42,9 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 ## 🔥 Key Features
 
 ### 🖥️ Native Desktop Wallpaper Widgets
-* **Small Matrix Widget**: Terminal header (`~/username`), bold streak counter (`11 day streak`), and 11-week activity heatmap.
 * **Medium Widgets**: Pure 17-column contribution grid or detailed developer identity card.
 * **Pull Requests Widget**: Real-time tracker for PRs created, assigned, mentioned, or review requested.
 * **Issues Widget**: Live metrics for open and assigned GitHub issues with custom filters.
-* **Large Widget**: Full 53-week contribution matrix with weekday indicators (`M`, `W`, `F`) and complete stats row.
 
 ### 🎛️ Customization & Filtering
 * **Widget Metrics Filter**: Pick between PR categories (*Created*, *Assigned*, *Mentioned*, *Review Requests*) and Issue categories (*All Open*, *Assigned to Me*).
@@ -82,8 +80,8 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ### Option 1: Direct Download (Recommended)
 
-1. Download the latest release disk image: [**GitStreak-v1.1.1.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.1.dmg)
-2. Open `GitStreak-v1.1.1.dmg` and drag **GitStreak** into your `/Applications` folder.
+1. Download the latest release disk image: [**GitStreak-v1.1.2.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg)
+2. Open `GitStreak-v1.1.2.dmg` and drag **GitStreak** into your `/Applications` folder.
 3. Launch **GitStreak**, enter your GitHub Personal Access Token, and configure your desktop widgets!
 
 ### Option 2: Build from Source

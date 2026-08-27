@@ -6,6 +6,26 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.2</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.2</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.2 Release Notes</h2>
+                <h3>🔐 Token Persistence & Developer Documentation</h3>
+                <ul>
+                    <li><b>Triple-Layer Self-Healing Credential Storage</b>: GitHub tokens are now backed up across System Keychain, App Group storage, and persistent container files. Prevents token resetting/clearing across app updates and binary replacements.</li>
+                    <li><b>Redesigned Developer README & Public Roadmap</b>: Visual showcase grids, feature breakdowns, and a live development roadmap matrix.</li>
+                    <li><b>CI/CD Build Stability</b>: Updated GitHub Actions workflow with Xcode 16 compatibility.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 27 Aug 2026 11:17:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.2/GitStreak-v1.1.2.dmg"
+                       sparkle:version="4"
+                       sparkle:shortVersionString="1.1.2"
+                       sparkle:edSignature="c86zZzPZ+DZqhZW01mZfxcejhB33Jc6LOpuQFKrMq77hNtdJExijQgSi2/gjfwHQzWt5oWz1OoRIlLDTX4k2BQ=="
+                       length="2385357"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.1</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.1</sparkle:releaseNotesLink>
             <description><![CDATA[
