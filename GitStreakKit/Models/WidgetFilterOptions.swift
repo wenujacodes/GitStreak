@@ -27,6 +27,10 @@ public enum PRWidgetFilter: String, Codable, CaseIterable, Sendable {
         case .reviewRequested: return "Review Requests"
         }
     }
+
+    public static var selectableCases: [PRWidgetFilter] {
+        [.allCreated, .openCreated, .assigned, .mentioned, .reviewRequested]
+    }
 }
 
 public enum IssueWidgetFilter: String, Codable, CaseIterable, Sendable {

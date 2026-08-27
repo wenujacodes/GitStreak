@@ -51,11 +51,15 @@ struct SettingsView: View {
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
             self.patInput = TokenStorage.loadToken() ?? ""
+            self.prWidgetFilter = UserPreferences.shared.prWidgetFilter
+            self.issueWidgetFilter = UserPreferences.shared.issueWidgetFilter
         }
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
             self.patInput = TokenStorage.loadToken() ?? ""
+            self.prWidgetFilter = UserPreferences.shared.prWidgetFilter
+            self.issueWidgetFilter = UserPreferences.shared.issueWidgetFilter
         }
     }
 
@@ -174,7 +178,7 @@ struct SettingsView: View {
                                 UserPreferences.shared.prWidgetFilter = newFilter
                             }
                         )) {
-                            ForEach(PRWidgetFilter.allCases, id: \.self) { filter in
+                            ForEach(PRWidgetFilter.selectableCases, id: \.self) { filter in
                                 Text(filter.displayName).tag(filter)
                             }
                         }
