@@ -25,14 +25,14 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ## 📸 Visual Showcase
 
-### Desktop Application
+### Application
 | Dark Mode Aesthetic | Light Mode Aesthetic |
 | :---: | :---: |
 | ![GitStreak App Dark Mode](images/app-dark-mode.png) | ![GitStreak App Light Mode](images/app-light-mode.png) |
 
 <br/>
 
-### Native Desktop Wallpaper Widgets (WidgetKit)
+### Widgets
 | Dark Mode Widgets | Light Mode Widgets |
 | :---: | :---: |
 | ![GitStreak Widgets Dark Mode](images/dark-mode.png) | ![GitStreak Widgets Light Mode](images/light-mode.png) |
