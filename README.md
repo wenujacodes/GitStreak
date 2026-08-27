@@ -16,9 +16,15 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 <br/>
 
-[**Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**Features**](#key-features) &nbsp;•&nbsp; [**Roadmap**](#development-roadmap)
+[**Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**Features**](#key-features) &nbsp;•&nbsp; [**Report an Issue**](https://github.com/wenujacodes/GitStreak/issues)
 
 > ⭐ **If you find GitStreak helpful, please star the repository to support development and help others discover it!** ⭐
+
+> [!IMPORTANT]
+> **Active Early Development (Beta Notice)**
+> * 🐛 **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) — we fix issues quickly!
+> * 🔄 **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
+> * 🤝 **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
 
 </div>
 
@@ -56,24 +62,6 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 * **Smart Local Cache**: Multi-year switching with instant cache-first rendering and 15-minute background refresh.
 * **100% Serverless & Private**: Credentials stored in macOS Keychain with triple-layer self-healing persistence across app updates.
 * **Sparkle 2 Auto-Updater**: Direct in-app update checks with 1-click installer authorization.
-
----
-
-## 🗺️ Development Roadmap
-
-> [!NOTE]
-> GitStreak is under active development! Below is the feature roadmap for upcoming releases:
-
-| Feature | Status |
-| :--- | :---: |
-| **Dynamic & Custom Theme Creator** | `Planned` |
-| **Dedicated Current Streak Widget** | `Planned` |
-| **Multiple GitHub Profiles Support** | `Planned` |
-| **Detailed Developer Analytics** | `Planned` |
-| **Custom Widget Backgrounds** | `Planned` |
-| **Smart Commit Reminders** | `Planned` |
-| **Dynamic Adaptive Widgets** | `Planned` |
-| **Expanded Theme Library** | `Planned` |
 
 ---
 
