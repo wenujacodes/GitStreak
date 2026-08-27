@@ -5,15 +5,6 @@
 ### **Make your coding habit visible on your macOS desktop.**
 
 A native macOS application & WidgetKit engine bringing your GitHub contribution matrix, active streaks, pull requests, and open issues directly to your desktop wallpaper.
-
-[![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/wenujacodes/GitStreak)
-[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-F05138?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
-[![WidgetKit](https://img.shields.io/badge/WidgetKit-Native-007AFF?style=flat-square&logo=apple&logoColor=white)](https://developer.apple.com/widgets/)
-[![Sparkle Auto-Update](https://img.shields.io/badge/Sparkle-Auto--Updates-2B88D8?style=flat-square&logo=github&logoColor=white)](https://github.com/wenujacodes/GitStreak/releases)
-[![GitHub Stars](https://img.shields.io/github/stars/wenujacodes/GitStreak?style=flat-square&color=E3B341&logo=github)](https://github.com/wenujacodes/GitStreak/stargazers)
-[![Latest Release](https://img.shields.io/github/v/release/wenujacodes/GitStreak?style=flat-square&color=238636&label=release)](https://github.com/wenujacodes/GitStreak/releases/latest)
-[![License: BSL 1.1](https://img.shields.io/badge/license-BSL%201.1-8A2BE2?style=flat-square)](LICENSE)
-
 <br/>
 <br/>
 
@@ -21,19 +12,8 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 
 <br/>
-<br/>
-
-
-
-> **Active Early Development**
-> * **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) - we fix issues quickly!
-> * **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
-> * **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
-
 </div>
 
-<br/>
----
 <br/>
 
 ## 📸 Visual Showcase
@@ -126,6 +106,14 @@ make run
 * **Frameworks**: SwiftUI, WidgetKit, Security (Keychain), Sparkle 2.6
 * **API**: GitHub GraphQL API v4
 * **Tooling**: XcodeGen, XCTest, Make, `create-dmg`
+
+---
+
+> [!IMPORTANT]
+> **Active Early Development**
+> * **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) - we fix issues quickly!
+> * **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
+> * **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
 
 ---
 
