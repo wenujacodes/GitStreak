@@ -46,33 +46,33 @@ struct SettingsView: View {
                     }
             }
         }
-        .background(
-            VisualEffectView(material: .sidebar, blendingMode: .behindWindow)
-                .ignoresSafeArea()
-        )
+        .background(Color(NSColor.windowBackgroundColor))
+        .onAppear {
+            self.username = UserPreferences.shared.username ?? ""
+            self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
+            self.patInput = TokenStorage.loadToken() ?? ""
+        }
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
-            if self.patInput.isEmpty {
-                self.patInput = TokenStorage.loadToken() ?? ""
-            }
+            self.patInput = TokenStorage.loadToken() ?? ""
         }
     }
 
     private var generalTab: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // Connected Account Card
+        VStack(alignment: .leading, spacing: 18) {
+            // Connected Account Section
             HStack(spacing: 16) {
                 HStack(spacing: 12) {
                     if !username.isEmpty {
-                        AvatarView(avatarURL: avatarURL, size: 40)
+                        AvatarView(avatarURL: avatarURL, size: 38)
                     } else {
                         Circle()
-                            .fill(Color.gray.opacity(0.25))
-                            .frame(width: 40, height: 40)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 38, height: 38)
                             .overlay(
                                 Image(systemName: "person.fill")
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.white)
                             )
                     }
 
@@ -84,7 +84,7 @@ struct SettingsView: View {
                         if !username.isEmpty {
                             Text("@\(username)")
                                 .font(GSTypography.monoCaption)
-                                .foregroundColor(.orange)
+                                .foregroundColor(.secondary)
                         } else {
                             Text("No account connected")
                                 .font(.caption)
@@ -105,18 +105,11 @@ struct SettingsView: View {
                     .buttonStyle(ModernSecondaryButtonStyle())
                 }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
-            // Personal Access Token Card
-            VStack(alignment: .leading, spacing: 10) {
+            Divider()
+
+            // Personal Access Token Section
+            VStack(alignment: .leading, spacing: 8) {
                 Text("GitHub Personal Access Token")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -151,26 +144,19 @@ struct SettingsView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
-
-                if let msg = saveStatusMessage {
-                    let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
-                    Text(msg)
-                        .font(.caption)
-                        .foregroundColor(isError ? .red : .green)
-                }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
-            // Widget Filter Options Card
-            VStack(alignment: .leading, spacing: 10) {
+            if let msg = saveStatusMessage {
+                let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
+                Text(msg)
+                    .font(.caption)
+                    .foregroundColor(isError ? .red : .green)
+            }
+
+            Divider()
+
+            // Widget Filter Options Section
+            VStack(alignment: .leading, spacing: 12) {
                 Text("Widget Filter Options")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -215,15 +201,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
             Spacer()
         }
@@ -234,7 +211,7 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             Spacer()
 
-            VStack(spacing: 16) {
+            VStack(spacing: 18) {
                 ZStack {
                     Circle()
                         .fill(Color.orange.opacity(0.12))
@@ -252,21 +229,10 @@ struct SettingsView: View {
                         .font(.title)
                         .fontWeight(.bold)
 
-                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1.2")")
+                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1.3")")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-
-                Text("GitStreak keeps all your data strictly on your Mac. We never send your tokens or contributions to any third-party server.")
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color(NSColor.controlBackgroundColor).opacity(0.6))
-                    )
 
                 Button(action: {
                     if let url = URL(string: "https://github.com/wenujacodes/GitStreak") {
