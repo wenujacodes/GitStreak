@@ -1,39 +1,43 @@
 import Foundation
 
 public struct GitHubGraphQL {
-    public static let query = """
-    query($username: String!, $from: DateTime!, $to: DateTime!) {
-      user(login: $username) {
-        login
-        name
-        avatarUrl(size: 200)
-        bio
-        contributionsCollection(from: $from, to: $to) {
-          contributionYears
-          totalCommitContributions
-          totalIssueContributions
-          totalPullRequestContributions
-          totalPullRequestReviewContributions
-          totalRepositoryContributions
-          contributionCalendar {
-            totalContributions
-            weeks {
-              contributionDays {
-                date
-                contributionCount
-                contributionLevel
-                weekday
+    public static func buildQuery(username: String) -> String {
+        let cleanUsername = username.replacingOccurrences(of: "\"", with: "")
+        return """
+        query($username: String!, $from: DateTime!, $to: DateTime!) {
+          user(login: $username) {
+            login
+            name
+            avatarUrl(size: 200)
+            bio
+            contributionsCollection(from: $from, to: $to) {
+              contributionYears
+              totalCommitContributions
+              totalIssueContributions
+              totalPullRequestContributions
+              totalPullRequestReviewContributions
+              totalRepositoryContributions
+              contributionCalendar {
+                totalContributions
+                weeks {
+                  contributionDays {
+                    date
+                    contributionCount
+                    contributionLevel
+                    weekday
+                  }
+                }
               }
             }
           }
+          prAssigned: search(query: "type:pr assignee:\(cleanUsername) is:open", type: ISSUE) { issueCount }
+          prMentioned: search(query: "type:pr mentions:\(cleanUsername) is:open", type: ISSUE) { issueCount }
+          issuesAllCreated: search(query: "type:issue author:\(cleanUsername)", type: ISSUE) { issueCount }
+          issuesOpen: search(query: "type:issue author:\(cleanUsername) is:open", type: ISSUE) { issueCount }
+          issuesAssigned: search(query: "type:issue assignee:\(cleanUsername) is:open", type: ISSUE) { issueCount }
         }
-      }
-      prAssigned: search(query: "type:pr assignee:$username is:open", type: ISSUE) { issueCount }
-      prMentioned: search(query: "type:pr mentions:$username is:open", type: ISSUE) { issueCount }
-      issuesOpen: search(query: "type:issue author:$username state:open", type: ISSUE) { issueCount }
-      issuesAssigned: search(query: "type:issue assignee:$username state:open", type: ISSUE) { issueCount }
+        """
     }
-    """
 
     public static func makeRequestBody(username: String, year: Int? = nil) -> Data {
         let formatter = ISO8601DateFormatter()
@@ -69,7 +73,7 @@ public struct GitHubGraphQL {
         }
 
         let payload: [String: Any] = [
-            "query": query,
+            "query": buildQuery(username: username),
             "variables": [
                 "username": username,
                 "from": formatter.string(from: fromDate),

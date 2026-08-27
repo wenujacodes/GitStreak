@@ -14,6 +14,7 @@ public struct GraphQLData: Codable, Sendable, Equatable {
     public let user: GraphQLUser?
     public let prAssigned: SearchResult?
     public let prMentioned: SearchResult?
+    public let issuesAllCreated: SearchResult?
     public let issuesOpen: SearchResult?
     public let issuesAssigned: SearchResult?
 }
@@ -81,7 +82,7 @@ extension GraphQLResponse {
             prAssigned: data.prAssigned?.issueCount ?? 0,
             prMentioned: data.prMentioned?.issueCount ?? 0,
             prReviewRequested: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
-            issuesAllCreated: user.contributionsCollection.totalIssueContributions ?? 0,
+            issuesAllCreated: data.issuesAllCreated?.issueCount ?? (user.contributionsCollection.totalIssueContributions ?? 0),
             issuesOpenCreated: data.issuesOpen?.issueCount ?? 0,
             issuesAssigned: data.issuesAssigned?.issueCount ?? 0
         )
