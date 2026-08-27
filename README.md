@@ -15,20 +15,26 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 [![License: BSL 1.1](https://img.shields.io/badge/license-BSL%201.1-8A2BE2?style=flat-square)](LICENSE)
 
 <br/>
-
-[**Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**Features**](#key-features) &nbsp;•&nbsp; [**Report an Issue**](https://github.com/wenujacodes/GitStreak/issues)
+<br/>
 
 > ⭐ **If you find GitStreak helpful, please star the repository to support development and help others discover it!** ⭐
 
-> [!IMPORTANT]
-> **Active Early Development (Beta Notice)**
-> * 🐛 **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) — we fix issues quickly!
-> * 🔄 **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
-> * 🤝 **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
+
+<br/>
+<br/>
+
+
+
+> **Active Early Development**
+> * **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) - we fix issues quickly!
+> * **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
+> * **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
 
 </div>
 
+<br/>
 ---
+<br/>
 
 ## 📸 Visual Showcase
 
@@ -49,25 +55,23 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 ## 🔥 Key Features
 
 ### 🖥️ Native Desktop Wallpaper Widgets
-* **Medium Widgets**: Pure 17-column contribution grid or detailed developer identity card.
 * **Pull Requests Widget**: Real-time tracker for PRs created, assigned, mentioned, or review requested.
 * **Issues Widget**: Live metrics for open and assigned GitHub issues with custom filters.
 
 ### 🎛️ Customization & Filtering
 * **Widget Metrics Filter**: Pick between PR categories (*Created*, *Assigned*, *Mentioned*, *Review Requests*) and Issue categories (*All Open*, *Assigned to Me*).
-* **6 Theme Color Palettes**: *GitHub Classic*, *Ocean*, *Monochrome*, *Sunset*, *Forest*, and *Nord*.
+* **6 Theme Color Palettes**:
 
 ### ⚡ Performance & Security
 * **Single GraphQL Call**: Fetches contributions, PRs, and Issues in a single GraphQL query at zero extra rate-limit cost.
 * **Smart Local Cache**: Multi-year switching with instant cache-first rendering and 15-minute background refresh.
 * **100% Serverless & Private**: Credentials stored in macOS Keychain with triple-layer self-healing persistence across app updates.
-* **Sparkle 2 Auto-Updater**: Direct in-app update checks with 1-click installer authorization.
 
 ---
 
 ## 📥 Installation
 
-### Option 1: Direct Download (Recommended)
+### Option 1: Direct Download
 
 1. Download the latest release disk image: [**GitStreak-v1.1.2.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg)
 2. Open `GitStreak-v1.1.2.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
