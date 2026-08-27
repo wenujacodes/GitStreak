@@ -47,6 +47,7 @@ targets:
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
         CFBundleShortVersionString: "1.1.1"
+        CFBundleVersion: "3"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak
