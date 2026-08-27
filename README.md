@@ -81,18 +81,21 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 ### Option 1: Direct Download (Recommended)
 
 1. Download the latest release disk image: [**GitStreak-v1.1.2.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg)
-2. Open `GitStreak-v1.1.2.dmg` and drag **GitStreak** into your `/Applications` folder.
-3. Launch **GitStreak**, enter your GitHub Personal Access Token, and configure your desktop widgets!
+2. Open `GitStreak-v1.1.2.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
+3. Launch **GitStreak** from your `/Applications` folder!
 
 > [!IMPORTANT]
-> **First-Time macOS Gatekeeper Security Notice**
-> Because GitStreak is distributed open-source directly via GitHub Releases, macOS Gatekeeper may prompt: *"GitStreak cannot be opened because it is from an unidentified developer"*.
->
-> **To allow GitStreak on your Mac (First Launch Only)**:
-> 1. Open **System Settings** → **Privacy & Security**.
-> 2. Scroll down to the **Security** section.
-> 3. Click **"Open Anyway"** next to GitStreak.
-> *(Alternatively: Right-click `GitStreak.app` in `/Applications` → select **Open** → click **Open**).*
+> **macOS Gatekeeper Installation Notes**
+> 
+> - **Avoid `"Could not install / This Mac could not verify the app"` error**:
+>   Do **not** double-click `GitStreak.app` while it is still inside the `.dmg` window. **Drag `GitStreak.app` into `/Applications` first**, then launch it from your `/Applications` folder!
+> 
+> - **Bypass `"Unidentified Developer"` Prompt (First Launch Only)**:
+>   Because GitStreak is distributed open-source via GitHub Releases:
+>   1. Open **System Settings** → **Privacy & Security**.
+>   2. Scroll down to the **Security** section.
+>   3. Click **"Open Anyway"** next to GitStreak.
+>   *(Or right-click `GitStreak.app` in `/Applications` → select **Open** → click **Open**).*
 
 ### Option 2: Build from Source
 
