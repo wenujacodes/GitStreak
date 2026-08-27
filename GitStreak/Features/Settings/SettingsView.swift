@@ -64,8 +64,8 @@ struct SettingsView: View {
     }
 
     private var generalTab: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // Connected Account Card
+        VStack(alignment: .leading, spacing: 18) {
+            // Connected Account Section
             HStack(spacing: 16) {
                 HStack(spacing: 12) {
                     if !username.isEmpty {
@@ -109,17 +109,10 @@ struct SettingsView: View {
                     .buttonStyle(ModernSecondaryButtonStyle())
                 }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
-            // Personal Access Token Card
+            Divider()
+
+            // Personal Access Token Section
             VStack(alignment: .leading, spacing: 8) {
                 Text("GitHub Personal Access Token")
                     .font(.subheadline)
@@ -163,17 +156,10 @@ struct SettingsView: View {
                         .foregroundColor(isError ? .red : .green)
                 }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
-            // Widget Filter Options Card
+            Divider()
+
+            // Widget Filter Options Section
             VStack(alignment: .leading, spacing: 12) {
                 Text("Widget Filter Options")
                     .font(.subheadline)
@@ -219,15 +205,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
-            )
 
             Spacer()
         }
