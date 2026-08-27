@@ -46,7 +46,14 @@ struct SettingsView: View {
                     }
             }
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(
+            WindowAccessor { window in
+                window.isOpaque = true
+                window.backgroundColor = NSColor.windowBackgroundColor
+                window.titlebarAppearsTransparent = true
+            }
+        )
+        .background(Color(NSColor.windowBackgroundColor).ignoresSafeArea())
         .onAppear {
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
@@ -375,4 +382,20 @@ struct VisualEffectView: NSViewRepresentable {
         nsView.blendingMode = blendingMode
         nsView.state = state
     }
+}
+
+private struct WindowAccessor: NSViewRepresentable {
+    let callback: (NSWindow) -> Void
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async {
+            if let window = view.window {
+                callback(window)
+            }
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }
