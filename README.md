@@ -61,7 +61,7 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 ## 🗺️ Development Roadmap
 
 > [!NOTE]
-> GitStreak is under active, rapid development! Below is the feature roadmap for upcoming releases:
+> GitStreak is under active development! Below is the feature roadmap for upcoming releases:
 
 | Feature | Scope | Status |
 | :--- | :--- | :---: |
