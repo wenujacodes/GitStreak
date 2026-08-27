@@ -26,7 +26,7 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 ## 📸 Visual Showcase
 
 ### Application
-| Dark Mode Aesthetic | Light Mode Aesthetic |
+| Dark Mode | Light Mode|
 | :---: | :---: |
 | ![GitStreak App Dark Mode](images/app-dark-mode.png) | ![GitStreak App Light Mode](images/app-light-mode.png) |
 
