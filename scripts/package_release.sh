@@ -7,23 +7,25 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
-VERSION="${1:-1.0.0}"
+VERSION="${1:-1.1.8}"
+BUILD_NUMBER="${2:-10}"
 BUILD_DIR="./build"
 RELEASE_DIR="$BUILD_DIR/Build/Products/Release"
 APP_PATH="$RELEASE_DIR/GitStreak.app"
 ZIP_PATH="$BUILD_DIR/GitStreak-v${VERSION}.zip"
 DMG_PATH="$BUILD_DIR/GitStreak-v${VERSION}.dmg"
 
-echo "==> Regenerating Xcode Project for Version ${VERSION}..."
+echo "==> Regenerating Xcode Project for Version ${VERSION} (Build ${BUILD_NUMBER})..."
 xcodegen generate
 
-echo "==> Building GitStreak for Release (Version ${VERSION})..."
+echo "==> Building GitStreak for Release (Version ${VERSION}, Build ${BUILD_NUMBER})..."
 xcodebuild build \
   -project GitStreak.xcodeproj \
   -scheme GitStreak \
   -configuration Release \
   -derivedDataPath "$BUILD_DIR" \
   MARKETING_VERSION="${VERSION}" \
+  CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
   CODE_SIGN_IDENTITY="-" \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGNING_ALLOWED=YES
