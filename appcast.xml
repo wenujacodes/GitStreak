@@ -6,6 +6,27 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.7</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.7</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.7 Release Notes</h2>
+                <h3>🐛 GraphQL Search Query & Metric Alignment Bug Fixes</h3>
+                <ul>
+                    <li><b>GraphQL Variable Interpolation Fix</b>: Resolved critical bug where open/assigned issue and PR counts returned 0 due to GraphQL query string literal formatting.</li>
+                    <li><b>All-Time Issues & PRs Metrics</b>: Added dedicated search queries for all-time created issues and PRs (e.g., 100 issues, 106 PRs) matching GitHub dashboard counts.</li>
+                    <li><b>Review Requests & Involves Alignment</b>: Fixed review request counts to track open requests (instead of submitted reviews) and updated "Involves me" PR filtering and label.</li>
+                    <li><b>Service State Persistence</b>: Fixed state reset bug in `ContributionService` that inadvertently cleared search metrics before saving to local cache.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 27 Aug 2026 21:35:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.7/GitStreak-v1.1.7.dmg"
+                       sparkle:version="9"
+                       sparkle:shortVersionString="1.1.7"
+                       sparkle:edSignature="uLoCC57lEV+aszAMsvbjUmDf2WSNEZao6FeJsMeHGr6FFwdePLten3UpTBLD7ohJF5R3I9NpFG22ACYOc3X7BQ=="
+                       length="10359937"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.6</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.6</sparkle:releaseNotesLink>
             <description><![CDATA[
