@@ -49,11 +49,11 @@ struct SettingsView: View {
         .background(
             WindowAccessor { window in
                 window.isOpaque = true
-                window.backgroundColor = NSColor.windowBackgroundColor
+                window.backgroundColor = colorScheme == .dark ? NSColor.windowBackgroundColor : .white
                 window.titlebarAppearsTransparent = true
             }
         )
-        .background(Color(NSColor.windowBackgroundColor).ignoresSafeArea())
+        .background((colorScheme == .dark ? Color(NSColor.windowBackgroundColor) : Color.white).ignoresSafeArea())
         .onAppear {
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL

@@ -14,7 +14,7 @@ struct DashboardView: View {
     private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#131313") : Color.white
     }
 
     private var cardBgColor: Color {

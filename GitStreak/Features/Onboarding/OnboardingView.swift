@@ -19,7 +19,7 @@ struct OnboardingView: View {
     @State private var patInput: String = TokenStorage.loadToken() ?? ""
 
     private var appBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#131313") : Color(nsColor: .windowBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#131313") : Color.white
     }
 
     private func advanceStep() {

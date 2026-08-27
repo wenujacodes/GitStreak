@@ -77,10 +77,8 @@ public enum TokenStorage {
             try? KeychainService.save(token: token, forKey: tokenKey)
             groupDefaults.set(token, forKey: tokenKey)
             groupDefaults.synchronize()
-            if !FileManager.default.fileExists(atPath: tokenFileURL.path) {
-                if let data = token.data(using: .utf8) {
-                    try? data.write(to: tokenFileURL, options: .atomic)
-                }
+            if let data = token.data(using: .utf8) {
+                try? data.write(to: tokenFileURL, options: .atomic)
             }
         }
 

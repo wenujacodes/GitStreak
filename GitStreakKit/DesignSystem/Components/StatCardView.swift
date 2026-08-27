@@ -21,6 +21,8 @@ public struct StatCardView: View {
         self.subtitle = subtitle
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
@@ -49,11 +51,11 @@ public struct StatCardView: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(nsColor: .windowBackgroundColor).opacity(0.6))
+                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(nsColor: .controlBackgroundColor))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
         )
     }
 }
