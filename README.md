@@ -6,16 +6,17 @@
 
 A native macOS application & WidgetKit engine bringing your GitHub contribution matrix, active streaks, pull requests, and open issues directly to your desktop wallpaper.
 
-[![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/wenujacodes/GitStreak)
-[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
-[![Sparkle Auto-Update](https://img.shields.io/badge/Sparkle-Auto--Updates-blue?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wenujacodes/GitStreak/releases)
-[![GitHub Stars](https://img.shields.io/github/stars/wenujacodes/GitStreak?style=for-the-badge&color=gold&logo=github)](https://github.com/wenujacodes/GitStreak/stargazers)
-[![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-green?style=for-the-badge)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/wenujacodes/GitStreak?style=for-the-badge&color=orange)](https://github.com/wenujacodes/GitStreak/releases/latest)
+[![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/wenujacodes/GitStreak)
+[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-F05138?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
+[![WidgetKit](https://img.shields.io/badge/WidgetKit-Native-007AFF?style=flat-square&logo=apple&logoColor=white)](https://developer.apple.com/widgets/)
+[![Sparkle Auto-Update](https://img.shields.io/badge/Sparkle-Auto--Updates-2B88D8?style=flat-square&logo=github&logoColor=white)](https://github.com/wenujacodes/GitStreak/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/wenujacodes/GitStreak?style=flat-square&color=E3B341&logo=github)](https://github.com/wenujacodes/GitStreak/stargazers)
+[![Latest Release](https://img.shields.io/github/v/release/wenujacodes/GitStreak?style=flat-square&color=238636&label=release)](https://github.com/wenujacodes/GitStreak/releases/latest)
+[![License: BSL 1.1](https://img.shields.io/badge/license-BSL%201.1-8A2BE2?style=flat-square)](LICENSE)
 
 <br/>
 
-[**🚀 Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**✨ Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**🔥 Features**](#-key-features) &nbsp;•&nbsp; [**🗺️ Roadmap**](#-development-roadmap)
+[**Download GitStreak for macOS (.dmg)**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.2.dmg) &nbsp;•&nbsp; [**Release Notes**](https://github.com/wenujacodes/GitStreak/releases) &nbsp;•&nbsp; [**Features**](#key-features) &nbsp;•&nbsp; [**Roadmap**](#development-roadmap)
 
 > ⭐ **If you find GitStreak helpful, please star the repository to support development and help others discover it!** ⭐
 
@@ -63,16 +64,16 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 > [!NOTE]
 > GitStreak is under active development! Below is the feature roadmap for upcoming releases:
 
-| Feature | Scope | Status |
-| :--- | :--- | :---: |
-| **Dynamic & Custom Theme Creator** | Build, save, and export your own custom color palettes | `Planned` |
-| **Dedicated Current Streak Widget** | Ultra-compact wallpaper widget highlighting active streak & daily goal | `Planned` |
-| **Multiple GitHub Profiles Support** | Seamlessly switch between personal, work, and client accounts | `Planned` |
-| **Detailed Developer Analytics** | Developer metrics: language breakdown, weekly averages, and PR velocity | `Planned` |
-| **Custom Widget Backgrounds** | Glassmorphism translucency, opacity sliders, and custom styles | `Planned` |
-| **Smart Commit Reminders** | Native macOS notifications alerting before midnight if streak is at risk | `Planned` |
-| **Dynamic Adaptive Widgets** | Visual alerts & state changes when today has zero commits | `Planned` |
-| **Expanded Theme Library** | Curated color palettes inspired by popular IDE themes | `Planned` |
+| Feature | Status |
+| :--- | :---: |
+| **Dynamic & Custom Theme Creator** | `Planned` |
+| **Dedicated Current Streak Widget** | `Planned` |
+| **Multiple GitHub Profiles Support** | `Planned` |
+| **Detailed Developer Analytics** | `Planned` |
+| **Custom Widget Backgrounds** | `Planned` |
+| **Smart Commit Reminders** | `Planned` |
+| **Dynamic Adaptive Widgets** | `Planned` |
+| **Expanded Theme Library** | `Planned` |
 
 ---
 
