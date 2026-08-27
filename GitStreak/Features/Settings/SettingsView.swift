@@ -202,89 +202,105 @@ struct SettingsView: View {
     }
 
     private var aboutTab: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "flame.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 44, height: 44)
-                .foregroundColor(.orange)
-
-            VStack(spacing: 2) {
-                Text("GitStreak")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1.0")")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            Text("GitStreak keeps all your data strictly on your Mac. We never send your tokens or contributions to any third-party server.")
-                .font(.caption)
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 16)
-
-            Button(action: {
-                if let url = URL(string: "https://github.com/wenujacodes/GitStreak") {
-                    NSWorkspace.shared.open(url)
-                }
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "chevron.left.forwardslash.chevron.right")
-                        .font(.system(size: 11, weight: .bold))
-                    Text("github.com/wenujacodes/GitStreak")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                }
-            }
-            .buttonStyle(ModernSecondaryButtonStyle())
-
-            Text("© 2026 Wenuja Liyanamana (BSL 1.1 License)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
+        VStack(spacing: 0) {
             Spacer()
 
-            if let updateStatus = updaterViewModel.lastStatusMessage {
-                Text(updateStatus)
-                    .font(.caption)
-                    .foregroundColor(updateStatus.contains("up to date") ? .green : (updateStatus.contains("failed") ? .red : .secondary))
-            }
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.12))
+                        .frame(width: 64, height: 64)
 
-            HStack(spacing: 12) {
+                    Image(systemName: "flame.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                        .foregroundColor(.orange)
+                }
+
+                VStack(spacing: 4) {
+                    Text("GitStreak")
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1.2")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                Text("GitStreak keeps all your data strictly on your Mac. We never send your tokens or contributions to any third-party server.")
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color(NSColor.controlBackgroundColor).opacity(0.6))
+                    )
+
                 Button(action: {
-                    updaterViewModel.checkForUpdates()
+                    if let url = URL(string: "https://github.com/wenujacodes/GitStreak") {
+                        NSWorkspace.shared.open(url)
+                    }
                 }) {
-                    HStack(spacing: 4) {
-                        if updaterViewModel.isCheckingForUpdates {
-                            ProgressView()
-                                .controlSize(.small)
-                        }
-                        Text("Check for Updates...")
+                    HStack(spacing: 6) {
+                        Image(systemName: "chevron.left.forwardslash.chevron.right")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("github.com/wenujacodes/GitStreak")
+                            .font(.caption)
+                            .fontWeight(.medium)
                     }
                 }
                 .buttonStyle(ModernSecondaryButtonStyle())
-                .disabled(updaterViewModel.isCheckingForUpdates)
 
-                Spacer()
-
-                Button("Reset & Clear All Data") {
-                    showingClearConfirmation = true
-                }
-                .buttonStyle(DestructiveButtonStyle())
+                Text("© 2026 Wenuja Liyanamana (BSL 1.1 License)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
-            .confirmationDialog("Are you sure you want to clear all data?", isPresented: $showingClearConfirmation) {
-                Button("Clear Everything", role: .destructive) {
-                    clearData()
+
+            Spacer()
+
+            VStack(spacing: 10) {
+                if let updateStatus = updaterViewModel.lastStatusMessage {
+                    Text(updateStatus)
+                        .font(.caption)
+                        .foregroundColor(updateStatus.contains("up to date") ? .green : (updateStatus.contains("failed") ? .red : .secondary))
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This will remove your cached contribution history, stored GitHub credentials, and reset the app.")
+
+                HStack(spacing: 12) {
+                    Button(action: {
+                        updaterViewModel.checkForUpdates()
+                    }) {
+                        HStack(spacing: 6) {
+                            if updaterViewModel.isCheckingForUpdates {
+                                ProgressView()
+                                    .controlSize(.small)
+                            }
+                            Text("Check for Updates...")
+                        }
+                    }
+                    .buttonStyle(ModernSecondaryButtonStyle())
+                    .disabled(updaterViewModel.isCheckingForUpdates)
+
+                    Spacer()
+
+                    Button("Reset & Clear All Data") {
+                        showingClearConfirmation = true
+                    }
+                    .buttonStyle(DestructiveButtonStyle())
+                }
             }
         }
-        .padding(16)
+        .padding(20)
+        .confirmationDialog("Are you sure you want to clear all data?", isPresented: $showingClearConfirmation) {
+            Button("Clear Everything", role: .destructive) {
+                clearData()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will remove your cached contribution history, stored GitHub credentials, and reset the app.")
+        }
     }
 
     private func openCreateTokenURL() {
