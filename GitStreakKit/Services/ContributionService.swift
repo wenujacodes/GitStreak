@@ -37,6 +37,8 @@ public actor ContributionService {
             pullRequests: activityStats.pullRequests,
             reviews: activityStats.reviews,
             repositories: activityStats.repositories,
+            prAllCreated: activityStats.prAllCreated,
+            prOpenCreated: activityStats.prOpenCreated,
             prCreated: activityStats.prCreated,
             prAssigned: activityStats.prAssigned,
             prMentioned: activityStats.prMentioned,

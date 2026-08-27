@@ -1,6 +1,8 @@
 import Foundation
 
 public enum PRWidgetFilter: String, Codable, CaseIterable, Sendable {
+    case allCreated = "all_created"
+    case openCreated = "open_created"
     case created = "created"
     case assigned = "assigned"
     case mentioned = "mentioned"
@@ -8,18 +10,20 @@ public enum PRWidgetFilter: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .created: return "Created by You"
+        case .allCreated, .created: return "All Authored by You"
+        case .openCreated: return "Currently Open Authored by You"
         case .assigned: return "Assigned to You"
-        case .mentioned: return "Mentioned In"
+        case .mentioned: return "Involves You"
         case .reviewRequested: return "Review Requested"
         }
     }
 
     public var shortLabel: String {
         switch self {
-        case .created: return "Created PRs"
+        case .allCreated, .created: return "All PRs"
+        case .openCreated: return "Open PRs"
         case .assigned: return "Assigned PRs"
-        case .mentioned: return "Mentioned PRs"
+        case .mentioned: return "Involved PRs"
         case .reviewRequested: return "Review Requests"
         }
     }

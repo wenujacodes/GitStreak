@@ -80,8 +80,11 @@ final class GraphQLResponseTests: XCTestCase {
                 }
               }
             },
+            "prAllCreated": { "issueCount": 106 },
+            "prOpenCreated": { "issueCount": 1 },
             "prAssigned": { "issueCount": 2 },
             "prMentioned": { "issueCount": 4 },
+            "prReviewRequested": { "issueCount": 0 },
             "issuesAllCreated": { "issueCount": 100 },
             "issuesOpen": { "issueCount": 9 },
             "issuesAssigned": { "issueCount": 3 }
@@ -93,8 +96,11 @@ final class GraphQLResponseTests: XCTestCase {
         let response = try decoder.decode(GraphQLResponse.self, from: json)
         let (_, _, _, stats, _) = try response.toDomainModel()
 
+        XCTAssertEqual(stats.prAllCreated, 106)
+        XCTAssertEqual(stats.prOpenCreated, 1)
         XCTAssertEqual(stats.prAssigned, 2)
         XCTAssertEqual(stats.prMentioned, 4)
+        XCTAssertEqual(stats.prReviewRequested, 0)
         XCTAssertEqual(stats.issuesAllCreated, 100)
         XCTAssertEqual(stats.issuesOpenCreated, 9)
         XCTAssertEqual(stats.issuesAssigned, 3)
@@ -104,6 +110,8 @@ final class GraphQLResponseTests: XCTestCase {
         let query = GitHubGraphQL.buildQuery(username: "octocat")
         XCTAssertTrue(query.contains("author:octocat"))
         XCTAssertTrue(query.contains("assignee:octocat"))
+        XCTAssertTrue(query.contains("involves:octocat"))
+        XCTAssertTrue(query.contains("review-requested:octocat"))
         XCTAssertFalse(query.contains("$username state:open"))
     }
 

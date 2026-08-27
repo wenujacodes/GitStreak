@@ -7,6 +7,8 @@ public struct UserActivityStats: Codable, Sendable, Equatable {
     public let reviews: Int
     public let repositories: Int
 
+    public let prAllCreated: Int
+    public let prOpenCreated: Int
     public let prCreated: Int
     public let prAssigned: Int
     public let prMentioned: Int
@@ -22,6 +24,8 @@ public struct UserActivityStats: Codable, Sendable, Equatable {
         pullRequests: Int = 0,
         reviews: Int = 0,
         repositories: Int = 0,
+        prAllCreated: Int? = nil,
+        prOpenCreated: Int = 0,
         prCreated: Int? = nil,
         prAssigned: Int = 0,
         prMentioned: Int = 0,
@@ -36,10 +40,13 @@ public struct UserActivityStats: Codable, Sendable, Equatable {
         self.reviews = max(0, reviews)
         self.repositories = max(0, repositories)
 
-        self.prCreated = max(0, prCreated ?? pullRequests)
+        let allPRs = prAllCreated ?? prCreated ?? pullRequests
+        self.prAllCreated = max(0, allPRs)
+        self.prOpenCreated = max(0, prOpenCreated)
+        self.prCreated = max(0, allPRs)
         self.prAssigned = max(0, prAssigned)
         self.prMentioned = max(0, prMentioned)
-        self.prReviewRequested = max(0, prReviewRequested ?? reviews)
+        self.prReviewRequested = max(0, prReviewRequested ?? 0)
 
         self.issuesAllCreated = max(0, issuesAllCreated ?? issues)
         self.issuesOpenCreated = max(0, issuesOpenCreated)
@@ -48,7 +55,8 @@ public struct UserActivityStats: Codable, Sendable, Equatable {
 
     public func count(for filter: PRWidgetFilter) -> Int {
         switch filter {
-        case .created: return prCreated
+        case .allCreated, .created: return prAllCreated
+        case .openCreated: return prOpenCreated
         case .assigned: return prAssigned
         case .mentioned: return prMentioned
         case .reviewRequested: return prReviewRequested

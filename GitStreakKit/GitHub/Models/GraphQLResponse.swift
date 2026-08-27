@@ -12,8 +12,11 @@ public struct SearchResult: Codable, Sendable, Equatable {
 
 public struct GraphQLData: Codable, Sendable, Equatable {
     public let user: GraphQLUser?
+    public let prAllCreated: SearchResult?
+    public let prOpenCreated: SearchResult?
     public let prAssigned: SearchResult?
     public let prMentioned: SearchResult?
+    public let prReviewRequested: SearchResult?
     public let issuesAllCreated: SearchResult?
     public let issuesOpen: SearchResult?
     public let issuesAssigned: SearchResult?
@@ -78,10 +81,12 @@ extension GraphQLResponse {
             pullRequests: user.contributionsCollection.totalPullRequestContributions ?? 0,
             reviews: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
             repositories: user.contributionsCollection.totalRepositoryContributions ?? 0,
-            prCreated: user.contributionsCollection.totalPullRequestContributions ?? 0,
+            prAllCreated: data.prAllCreated?.issueCount ?? (user.contributionsCollection.totalPullRequestContributions ?? 0),
+            prOpenCreated: data.prOpenCreated?.issueCount ?? 0,
+            prCreated: data.prAllCreated?.issueCount ?? (user.contributionsCollection.totalPullRequestContributions ?? 0),
             prAssigned: data.prAssigned?.issueCount ?? 0,
             prMentioned: data.prMentioned?.issueCount ?? 0,
-            prReviewRequested: user.contributionsCollection.totalPullRequestReviewContributions ?? 0,
+            prReviewRequested: data.prReviewRequested?.issueCount ?? 0,
             issuesAllCreated: data.issuesAllCreated?.issueCount ?? (user.contributionsCollection.totalIssueContributions ?? 0),
             issuesOpenCreated: data.issuesOpen?.issueCount ?? 0,
             issuesAssigned: data.issuesAssigned?.issueCount ?? 0

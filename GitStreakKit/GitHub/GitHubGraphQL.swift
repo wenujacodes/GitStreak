@@ -30,8 +30,11 @@ public struct GitHubGraphQL {
               }
             }
           }
+          prAllCreated: search(query: "type:pr author:\(cleanUsername)", type: ISSUE) { issueCount }
+          prOpenCreated: search(query: "type:pr author:\(cleanUsername) is:open", type: ISSUE) { issueCount }
           prAssigned: search(query: "type:pr assignee:\(cleanUsername) is:open", type: ISSUE) { issueCount }
-          prMentioned: search(query: "type:pr mentions:\(cleanUsername) is:open", type: ISSUE) { issueCount }
+          prMentioned: search(query: "type:pr involves:\(cleanUsername) is:open", type: ISSUE) { issueCount }
+          prReviewRequested: search(query: "type:pr review-requested:\(cleanUsername) is:open", type: ISSUE) { issueCount }
           issuesAllCreated: search(query: "type:issue author:\(cleanUsername)", type: ISSUE) { issueCount }
           issuesOpen: search(query: "type:issue author:\(cleanUsername) is:open", type: ISSUE) { issueCount }
           issuesAssigned: search(query: "type:issue assignee:\(cleanUsername) is:open", type: ISSUE) { issueCount }
