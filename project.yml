@@ -46,8 +46,8 @@ targets:
         SUPublicEDKey: "hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934="
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
-        CFBundleShortVersionString: "1.1.4"
-        CFBundleVersion: "6"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.gitstreak.GitStreak
