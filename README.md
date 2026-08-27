@@ -84,6 +84,16 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 2. Open `GitStreak-v1.1.2.dmg` and drag **GitStreak** into your `/Applications` folder.
 3. Launch **GitStreak**, enter your GitHub Personal Access Token, and configure your desktop widgets!
 
+> [!IMPORTANT]
+> **First-Time macOS Gatekeeper Security Notice**
+> Because GitStreak is distributed open-source directly via GitHub Releases, macOS Gatekeeper may prompt: *"GitStreak cannot be opened because it is from an unidentified developer"*.
+>
+> **To allow GitStreak on your Mac (First Launch Only)**:
+> 1. Open **System Settings** → **Privacy & Security**.
+> 2. Scroll down to the **Security** section.
+> 3. Click **"Open Anyway"** next to GitStreak.
+> *(Alternatively: Right-click `GitStreak.app` in `/Applications` → select **Open** → click **Open**).*
+
 ### Option 2: Build from Source
 
 ```bash
