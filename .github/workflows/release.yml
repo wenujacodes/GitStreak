@@ -75,7 +75,19 @@ jobs:
             "release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.dmg" \
             "build/Build/Products/Release/GitStreak.app" || true
 
+      - name: Check If Release Already Exists
+        id: check_release
+        run: |
+          if gh release view "${{ steps.vars.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create GitHub Release
+        if: steps.check_release.outputs.exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
