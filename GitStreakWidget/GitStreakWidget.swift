@@ -29,7 +29,7 @@ struct GitStreakWidgetEntryView: View {
             MediumWidgetView(entry: entry)
         case .systemLarge, .systemExtraLarge:
             MediumWidgetView(entry: entry)
-        #if compiler(>=6.0)
+        #if os(iOS)
         case .systemExtraLargePortrait:
             MediumWidgetView(entry: entry)
         #endif
