@@ -46,7 +46,10 @@ struct SettingsView: View {
                     }
             }
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(
+            VisualEffectView(material: .sidebar, blendingMode: .behindWindow)
+                .ignoresSafeArea()
+        )
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             self.username = UserPreferences.shared.username ?? ""
             self.avatarURL = SharedDataStore.shared.getCachedData()?.user.avatarURL
@@ -57,18 +60,19 @@ struct SettingsView: View {
     }
 
     private var generalTab: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 14) {
+            // Connected Account Card
             HStack(spacing: 16) {
                 HStack(spacing: 12) {
                     if !username.isEmpty {
-                        AvatarView(avatarURL: avatarURL, size: 38)
+                        AvatarView(avatarURL: avatarURL, size: 40)
                     } else {
                         Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 38, height: 38)
+                            .fill(Color.gray.opacity(0.25))
+                            .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: "person.fill")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.secondary)
                             )
                     }
 
@@ -80,7 +84,7 @@ struct SettingsView: View {
                         if !username.isEmpty {
                             Text("@\(username)")
                                 .font(GSTypography.monoCaption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.orange)
                         } else {
                             Text("No account connected")
                                 .font(.caption)
@@ -101,10 +105,18 @@ struct SettingsView: View {
                     .buttonStyle(ModernSecondaryButtonStyle())
                 }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
-            Divider()
-
-            VStack(alignment: .leading, spacing: 8) {
+            // Personal Access Token Card
+            VStack(alignment: .leading, spacing: 10) {
                 Text("GitHub Personal Access Token")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -139,18 +151,26 @@ struct SettingsView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
+
+                if let msg = saveStatusMessage {
+                    let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundColor(isError ? .red : .green)
+                }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
-            if let msg = saveStatusMessage {
-                let isError = msg.lowercased().contains("failed") || msg.lowercased().contains("error") || msg.lowercased().contains("invalid") || msg.lowercased().contains("exceeded")
-                Text(msg)
-                    .font(.caption)
-                    .foregroundColor(isError ? .red : .green)
-            }
-
-            Divider()
-
-            VStack(alignment: .leading, spacing: 12) {
+            // Widget Filter Options Card
+            VStack(alignment: .leading, spacing: 10) {
                 Text("Widget Filter Options")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -195,6 +215,15 @@ struct SettingsView: View {
                     }
                 }
             }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.06), lineWidth: 1)
+            )
 
             Spacer()
         }
@@ -355,5 +384,25 @@ struct SettingsView: View {
         avatarURL = nil
         patInput = ""
         saveStatusMessage = nil
+    }
+}
+
+struct VisualEffectView: NSViewRepresentable {
+    var material: NSVisualEffectView.Material = .hudWindow
+    var blendingMode: NSVisualEffectView.BlendingMode = .behindWindow
+    var state: NSVisualEffectView.State = .active
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let visualEffectView = NSVisualEffectView()
+        visualEffectView.material = material
+        visualEffectView.blendingMode = blendingMode
+        visualEffectView.state = state
+        return visualEffectView
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
+        nsView.state = state
     }
 }

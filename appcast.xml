@@ -6,6 +6,25 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.3</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.3</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.3 Release Notes</h2>
+                <h3>💧 Liquid Glass UI & Widget Extension AppIcon Fix</h3>
+                <ul>
+                    <li><b>Widget Gallery Icon Fix</b>: Configured AppIcon asset catalog for WidgetKit Extension target — official GitStreak flame icon now renders correctly in macOS Widget Gallery sidebar and menu bar.</li>
+                    <li><b>Liquid Glass Translucent Settings UI</b>: Replaced flat opaque grey background with dynamic macOS Liquid Glass backdrop blur (`NSVisualEffectView`) and frosted glass cards.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 27 Aug 2026 16:22:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.3/GitStreak-v1.1.3.dmg"
+                       sparkle:version="5"
+                       sparkle:shortVersionString="1.1.3"
+                       sparkle:edSignature="MAoIxYfTr+DdTOm8bxhqxT1wUbcYmPUE6k3SmB4y6zc7pyC7lxnrT5xoFE06jmjYeaeDKLdBnoF5F32zUjQ6Bg=="
+                       length="7284234"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.2</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.2</sparkle:releaseNotesLink>
             <description><![CDATA[
