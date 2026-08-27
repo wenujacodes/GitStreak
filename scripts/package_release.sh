@@ -14,12 +14,16 @@ APP_PATH="$RELEASE_DIR/GitStreak.app"
 ZIP_PATH="$BUILD_DIR/GitStreak-v${VERSION}.zip"
 DMG_PATH="$BUILD_DIR/GitStreak-v${VERSION}.dmg"
 
+echo "==> Regenerating Xcode Project for Version ${VERSION}..."
+xcodegen generate
+
 echo "==> Building GitStreak for Release (Version ${VERSION})..."
 xcodebuild build \
   -project GitStreak.xcodeproj \
   -scheme GitStreak \
   -configuration Release \
   -derivedDataPath "$BUILD_DIR" \
+  MARKETING_VERSION="${VERSION}" \
   CODE_SIGN_IDENTITY="-" \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGNING_ALLOWED=YES
