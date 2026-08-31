@@ -19,7 +19,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
-        nonisolated(unsafe) let safeCompletion = completion
+        nonisolated(unsafe) let completionHandler = completion
         Task {
             let prefs = UserPreferences.shared
             prefs.reloadFromDisk()
@@ -35,7 +35,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
                 }
             }
 
-            let entry = createEntry()
+            let entry = self.createEntry()
 
             let now = Date()
             let fiveMinutesLater = Calendar.current.date(byAdding: .minute, value: 5, to: now) ?? now.addingTimeInterval(300)
@@ -47,7 +47,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
 
             let nextUpdate = min(fiveMinutesLater, nextMidnight)
             let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-            safeCompletion(timeline)
+            completionHandler(timeline)
         }
     }
 
