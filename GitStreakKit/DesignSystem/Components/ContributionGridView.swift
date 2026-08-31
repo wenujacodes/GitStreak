@@ -118,11 +118,16 @@ private struct ContributionWeekColumnView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: rSpacing) {
             if showMonthHeaders {
-                Text(monthLabel ?? "")
-                    .font(.system(size: 9, weight: .medium))
-                    .foregroundColor(.secondary)
-                    .frame(height: 14, alignment: .leading)
-                    .fixedSize()
+                Color.clear
+                    .frame(width: cellSize, height: 14)
+                    .overlay(alignment: .leading) {
+                        if let label = monthLabel {
+                            Text(label)
+                                .font(.system(size: 9, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .fixedSize()
+                        }
+                    }
             }
 
             ForEach(0..<7, id: \.self) { dayIndex in
@@ -132,7 +137,7 @@ private struct ContributionWeekColumnView: View {
                     let radius = cornerRadius ?? max(1.0, cellSize * 0.2)
                     let strokeColor = isWidget
                         ? Color.clear
-                        : (colorScheme == .dark ? Color.white.opacity(0.07) : Color.black.opacity(0.08))
+                        : (colorScheme == .dark ? Color.white.opacity(0.07) : Color.black.opacity(0.14))
 
                     ContributionGridCellView(
                         day: day,
@@ -173,6 +178,7 @@ private struct ContributionGridCellView: View {
     let isWidget: Bool
 
     @State private var isHovered = false
+    @State private var hoverTask: Task<Void, Never>? = nil
 
     var body: some View {
         let isRightHalf = weekIndex >= (totalWeeks / 2)
@@ -195,12 +201,12 @@ private struct ContributionGridCellView: View {
                 Group {
                     if !isWidget {
                         RoundedRectangle(cornerRadius: radius)
-                            .stroke(isHovered ? Color.white.opacity(0.85) : strokeColor, lineWidth: isHovered ? 1.2 : 0.5)
+                            .stroke(isHovered ? (colorScheme == .dark ? Color.white.opacity(0.9) : Color.black.opacity(0.8)) : strokeColor, lineWidth: isHovered ? 1.2 : 0.5)
                     }
                 }
             )
-            .scaleEffect(isHovered ? 1.3 : 1.0)
-            .shadow(color: isHovered ? Color.black.opacity(0.4) : Color.clear, radius: 4, x: 0, y: 2)
+            .scaleEffect(isHovered ? 1.15 : 1.0)
+            .shadow(color: isHovered ? Color.black.opacity(0.15) : Color.clear, radius: 2, x: 0, y: 1)
             .overlay(alignment: tooltipAlignment) {
                 if isHovered && showTooltips {
                     VStack(spacing: 2) {
@@ -211,12 +217,16 @@ private struct ContributionGridCellView: View {
                             .font(.system(size: 9, weight: .medium))
                             .foregroundColor(Color.white.opacity(0.80))
                     }
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 5)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(hex: "#131313").opacity(0.85))
-                            .shadow(color: Color.black.opacity(0.5), radius: 6, x: 0, y: 3)
+                            .fill(Color(hex: "#1E1E1E"))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                            )
+                            .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 2)
                     )
                     .offset(x: xOffset, y: yOffset)
                     .fixedSize()
@@ -224,10 +234,26 @@ private struct ContributionGridCellView: View {
                 }
             }
             .zIndex(isHovered ? 9999 : 1)
-            .animation(.easeOut(duration: 0.1), value: isHovered)
             .frame(width: cellSize, height: cellSize)
             .onHover { hovering in
-                isHovered = hovering
+                guard showTooltips else { return }
+                hoverTask?.cancel()
+                if hovering {
+                    hoverTask = Task {
+                        try? await Task.sleep(nanoseconds: 350_000_000)
+                        if !Task.isCancelled {
+                            await MainActor.run {
+                                withAnimation(.easeOut(duration: 0.12)) {
+                                    isHovered = true
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    withAnimation(.easeOut(duration: 0.1)) {
+                        isHovered = false
+                    }
+                }
             }
     }
 }

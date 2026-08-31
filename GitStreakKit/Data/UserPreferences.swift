@@ -11,7 +11,7 @@ public struct PreferencesModel: Codable, Sendable {
     public var hasCompletedOnboarding: Bool = false
     public var preferredAppearance: AppearanceMode = .system
     public var lastRefreshDate: Date?
-    public var prWidgetFilter: PRWidgetFilter = .created
+    public var prWidgetFilter: PRWidgetFilter = .allCreated
     public var issueWidgetFilter: IssueWidgetFilter = .allCreated
 
     public init() {}
@@ -45,17 +45,30 @@ public final class UserPreferences: @unchecked Sendable {
         defer { lock.unlock() }
 
         let url = Self.sharedFileURL
+        var loadedFromJSON = false
         if let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode(PreferencesModel.self, from: data) {
             self.model = decoded
-        } else if let themeID = Self.groupDefaults.string(forKey: "selectedThemeID"), !themeID.isEmpty {
+            loadedFromJSON = true
+        }
+
+        if self.model.username == nil, let uname = Self.groupDefaults.string(forKey: "username"), !uname.isEmpty {
+            self.model.username = uname
+        }
+        if !loadedFromJSON, let themeID = Self.groupDefaults.string(forKey: "selectedThemeID"), !themeID.isEmpty {
             self.model.selectedThemeID = themeID
+        }
+        if !self.model.hasCompletedOnboarding {
+            self.model.hasCompletedOnboarding = Self.groupDefaults.bool(forKey: "hasCompletedOnboarding")
         }
 
         UserDefaults.standard.set(self.model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        Self.groupDefaults.set(self.model.username, forKey: "username")
+        Self.groupDefaults.set(self.model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         Self.groupDefaults.set(self.model.selectedThemeID, forKey: "selectedThemeID")
         Self.groupDefaults.set(self.model.prWidgetFilter.rawValue, forKey: "prWidgetFilter")
         Self.groupDefaults.set(self.model.issueWidgetFilter.rawValue, forKey: "issueWidgetFilter")
+        Self.groupDefaults.synchronize()
     }
 
     private func saveModel() {
@@ -65,6 +78,8 @@ public final class UserPreferences: @unchecked Sendable {
             try? data.write(to: url, options: .atomic)
         }
         UserDefaults.standard.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        Self.groupDefaults.set(model.username, forKey: "username")
+        Self.groupDefaults.set(model.hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
         Self.groupDefaults.set(model.selectedThemeID, forKey: "selectedThemeID")
         Self.groupDefaults.set(model.prWidgetFilter.rawValue, forKey: "prWidgetFilter")
         Self.groupDefaults.set(model.issueWidgetFilter.rawValue, forKey: "issueWidgetFilter")
@@ -164,12 +179,14 @@ public final class UserPreferences: @unchecked Sendable {
         get {
             lock.lock()
             defer { lock.unlock() }
-            return model.prWidgetFilter
+            let filter = model.prWidgetFilter
+            return filter == .created ? .allCreated : filter
         }
         set {
             lock.lock()
-            model.prWidgetFilter = newValue
-            Self.groupDefaults.set(newValue.rawValue, forKey: "prWidgetFilter")
+            let normalized = newValue == .created ? .allCreated : newValue
+            model.prWidgetFilter = normalized
+            Self.groupDefaults.set(normalized.rawValue, forKey: "prWidgetFilter")
             lock.unlock()
             saveModel()
         }

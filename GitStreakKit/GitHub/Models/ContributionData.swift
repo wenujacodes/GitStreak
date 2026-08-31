@@ -69,7 +69,8 @@ public struct ContributionData: Codable, Sendable, Equatable {
     }
 
     public var todayContributions: Int {
-        return allDays.last?.contributionCount ?? 0
+        let today = StreakCalculator.todayDateString()
+        return allDays.first(where: { $0.date == today })?.contributionCount ?? 0
     }
 
     public var bestDayContributions: Int {

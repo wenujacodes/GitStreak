@@ -151,16 +151,7 @@ private struct ModernPrimaryButtonView: View {
                         : (colorScheme == .dark
                            ? Color.white.opacity(isHovered ? 0.1 : 0.06)
                            : Color.black.opacity(isHovered ? 0.08 : 0.05))
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(
-                        colorScheme == .dark
-                        ? Color.white.opacity(isHovered ? 0.25 : 0.12)
-                        : Color.black.opacity(isHovered ? 0.2 : 0.12),
-                        lineWidth: 1
-                    )
+                     )
             )
             .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
             .animation(.easeInOut(duration: 0.15), value: isHovered)
@@ -194,10 +185,6 @@ private struct ModernSecondaryButtonView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(colorScheme == .dark ? Color.white.opacity(isHovered ? 0.09 : 0.04) : Color.black.opacity(isHovered ? 0.08 : 0.04))
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(isHovered ? 0.16 : 0.08) : Color.black.opacity(isHovered ? 0.16 : 0.08), lineWidth: 1)
-            )
             .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
             .animation(.easeInOut(duration: 0.15), value: isHovered)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
@@ -229,10 +216,6 @@ private struct DestructiveButtonView: View {
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(isHovered ? Color(hex: "#D32F2F") : (colorScheme == .dark ? Color.red.opacity(0.1) : Color.red.opacity(0.06)))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isHovered ? Color(hex: "#D32F2F") : Color.red.opacity(0.3), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
             .animation(.easeInOut(duration: 0.15), value: isHovered)

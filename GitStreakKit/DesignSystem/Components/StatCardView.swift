@@ -4,6 +4,7 @@ public struct StatCardView: View {
     public let title: String
     public let value: String
     public let icon: String?
+    public let customIconView: AnyView?
     public let iconColor: Color
     public let subtitle: String?
 
@@ -11,12 +12,14 @@ public struct StatCardView: View {
         title: String,
         value: String,
         icon: String? = nil,
+        customIconView: AnyView? = nil,
         iconColor: Color = .secondary,
         subtitle: String? = nil
     ) {
         self.title = title
         self.value = value
         self.icon = icon
+        self.customIconView = customIconView
         self.iconColor = iconColor
         self.subtitle = subtitle
     }
@@ -26,7 +29,10 @@ public struct StatCardView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                if let icon = icon {
+                if let customIconView = customIconView {
+                    customIconView
+                        .frame(width: 14, height: 14)
+                } else if let icon = icon {
                     Image(systemName: icon)
                         .foregroundColor(iconColor)
                         .font(.system(size: 13, weight: .semibold))
@@ -51,11 +57,7 @@ public struct StatCardView: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(nsColor: .controlBackgroundColor))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
+                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(hex: "#F5F5F7"))
         )
     }
 }

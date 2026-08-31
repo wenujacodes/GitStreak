@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/app-icon.png" width="128" height="128" alt="GitStreak Icon" />
+
 # GitStreak 🔥
 
 ### **Make your coding habit visible on your macOS desktop.**
@@ -53,8 +55,8 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ### Option 1: Direct Download
 
-1. Download the latest release disk image: [**GitStreak-v1.1.9.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.9.dmg)
-2. Open `GitStreak-v1.1.9.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
+1. Download the latest release disk image: [**GitStreak-v1.1.10.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.1.10.dmg)
+2. Open `GitStreak-v1.1.10.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
 3. Launch **GitStreak** from your `/Applications` folder!
 
 > [!IMPORTANT]

@@ -140,4 +140,47 @@ final class StreakCalculatorTests: XCTestCase {
         XCTAssertTrue(StreakCalculator.areConsecutiveDays("2025-08-31", "2025-09-01"))
         XCTAssertTrue(StreakCalculator.areConsecutiveDays("2025-12-31", "2026-01-01"))
     }
+
+    func testStreakWhenTodayNotInDatasetYet() {
+        // Cached data ends yesterday (2025-08-14) with active streak
+        let days = [
+            ContributionDay(date: "2025-08-13", contributionCount: 2, level: .firstQuartile, weekday: 3),
+            ContributionDay(date: "2025-08-14", contributionCount: 5, level: .secondQuartile, weekday: 4),
+        ]
+        // Today is 2025-08-15 (not in dataset yet because new day just started)
+        let result = StreakCalculator.currentStreak(days: days, referenceDate: "2025-08-15")
+        XCTAssertEqual(result, 2, "Streak should continue from yesterday if today is not in dataset yet")
+
+        // If reference date is 2 days later, streak should be broken
+        let brokenResult = StreakCalculator.currentStreak(days: days, referenceDate: "2025-08-16")
+        XCTAssertEqual(brokenResult, 0)
+    }
+
+    func testTodayDateStringWithTimezone() {
+        let utcDate = StreakCalculator.todayDateString(timeZone: TimeZone(identifier: "UTC")!)
+        XCTAssertFalse(utcDate.isEmpty)
+        XCTAssertEqual(utcDate.count, 10)
+    }
+
+    func testTodayContributionsOnlyMatchesToday() {
+        let today = StreakCalculator.todayDateString()
+        let yesterday = "2020-01-01"
+
+        let user = GitHubUser(username: "test", displayName: nil, avatarURL: nil, bio: nil)
+        let daysWithYesterday = [
+            ContributionDay(date: yesterday, contributionCount: 99, level: .fourthQuartile, weekday: 0)
+        ]
+        let week1 = ContributionWeek(contributionDays: daysWithYesterday)
+        let dataYesterday = ContributionData(user: user, weeks: [week1], totalContributions: 99, currentStreak: 1, longestStreak: 1)
+
+        XCTAssertEqual(dataYesterday.todayContributions, 0, "Should return 0 if dataset only has yesterday's commits")
+
+        let daysWithToday = [
+            ContributionDay(date: today, contributionCount: 7, level: .secondQuartile, weekday: 0)
+        ]
+        let week2 = ContributionWeek(contributionDays: daysWithToday)
+        let dataToday = ContributionData(user: user, weeks: [week2], totalContributions: 7, currentStreak: 1, longestStreak: 1)
+
+        XCTAssertEqual(dataToday.todayContributions, 7, "Should return exact count when today matches")
+    }
 }

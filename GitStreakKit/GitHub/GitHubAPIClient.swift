@@ -12,7 +12,7 @@ public enum GitHubAPIError: LocalizedError, Sendable {
     public var errorDescription: String? {
         switch self {
         case .unauthorized:
-            return "Unauthorized. Please check your GitHub token."
+            return "GitHub Personal Access Token is missing or invalid. Please configure it in Settings."
         case .userNotFound:
             return "User not found. Please check the username."
         case .networkError(let error):
@@ -46,15 +46,17 @@ public actor GitHubAPIClient {
     public init() {}
 
     public func fetchContributions(username: String, token: String, year: Int? = nil) async throws -> (GitHubUser, [ContributionWeek], Int, UserActivityStats, [Int]) {
+        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedToken.isEmpty else {
+            throw GitHubAPIError.unauthorized
+        }
+
         var request = URLRequest(url: endpoint, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         request.httpMethod = "POST"
-        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedToken.isEmpty {
-            if trimmedToken.hasPrefix("Bearer ") {
-                request.setValue(trimmedToken, forHTTPHeaderField: "Authorization")
-            } else {
-                request.setValue("Bearer \(trimmedToken)", forHTTPHeaderField: "Authorization")
-            }
+        if trimmedToken.hasPrefix("Bearer ") {
+            request.setValue(trimmedToken, forHTTPHeaderField: "Authorization")
+        } else {
+            request.setValue("Bearer \(trimmedToken)", forHTTPHeaderField: "Authorization")
         }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("GitStreak", forHTTPHeaderField: "User-Agent")

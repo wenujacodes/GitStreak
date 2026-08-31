@@ -9,20 +9,22 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedThemeID = UserPreferences.shared.selectedThemeID
+    @State private var prWidgetFilter = UserPreferences.shared.prWidgetFilter
+    @State private var issueWidgetFilter = UserPreferences.shared.issueWidgetFilter
     @State private var isFastPolling = false
     @State private var selectedYear: Int? = nil
-    private let autoRefreshTimer = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
+    private let autoRefreshTimer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
 
     private var appBgColor: Color {
         colorScheme == .dark ? Color(hex: "#131313") : Color.white
     }
 
     private var cardBgColor: Color {
-        colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(nsColor: .controlBackgroundColor)
+        colorScheme == .dark ? Color(hex: "#1A1A1A") : Color(hex: "#F5F5F7")
     }
 
     private var borderColor: Color {
-        colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
+        Color.clear
     }
 
     @Environment(\.openSettings) private var openSettings
@@ -172,17 +174,7 @@ struct DashboardView: View {
                         .padding(18)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.orange.opacity(0.08), colorScheme == .dark ? Color.white.opacity(0.02) : Color.orange.opacity(0.02)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.orange.opacity(0.25), lineWidth: 1)
+                                .fill(cardBgColor)
                         )
 
                         VStack(alignment: .leading, spacing: 12) {
@@ -266,58 +258,81 @@ struct DashboardView: View {
                                     .frame(height: 140)
                                     .opacity(0.15)
 
-                                VStack(alignment: .leading, spacing: 4) {
-                                    YearPillButton(
-                                        title: "Past Year",
-                                        isSelected: selectedYear == nil
-                                    ) {
-                                        selectYear(nil)
-                                    }
+                                let totalYearCount = 1 + data.availableYears.count
+                                if totalYearCount > 4 {
+                                    ScrollView(.vertical, showsIndicators: true) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            YearPillButton(
+                                                title: "Past Year",
+                                                isSelected: selectedYear == nil
+                                            ) {
+                                                selectYear(nil)
+                                            }
 
-                                    ForEach(data.availableYears, id: \.self) { yr in
+                                            ForEach(data.availableYears, id: \.self) { yr in
+                                                YearPillButton(
+                                                    title: String(yr),
+                                                    isSelected: selectedYear == yr
+                                                ) {
+                                                    selectYear(yr)
+                                                }
+                                            }
+                                        }
+                                        .padding(.trailing, 4)
+                                    }
+                                    .frame(width: 95, height: 140)
+                                } else {
+                                    VStack(alignment: .leading, spacing: 4) {
                                         YearPillButton(
-                                            title: String(yr),
-                                            isSelected: selectedYear == yr
+                                            title: "Past Year",
+                                            isSelected: selectedYear == nil
                                         ) {
-                                            selectYear(yr)
+                                            selectYear(nil)
+                                        }
+
+                                        ForEach(data.availableYears, id: \.self) { yr in
+                                            YearPillButton(
+                                                title: String(yr),
+                                                isSelected: selectedYear == yr
+                                            ) {
+                                                selectYear(yr)
+                                            }
                                         }
                                     }
+                                    .frame(width: 90, alignment: .topLeading)
                                 }
-                                .frame(width: 85, alignment: .topLeading)
                             }
                         }
                         .padding(16)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(cardBgColor)
+                                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color.clear)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(borderColor, lineWidth: 1)
+                                .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.10), lineWidth: 1)
                         )
 
                         HStack(spacing: 12) {
                             StatCardView(
-                                title: "Current Streak",
-                                value: "\(data.currentStreak)d",
-                                icon: "flame.fill",
-                                iconColor: .orange,
-                                subtitle: data.currentStreak > 0 ? "Active today" : "No commits yet"
+                                title: prWidgetFilter.shortLabel,
+                                value: "\(data.activityStats.count(for: prWidgetFilter))",
+                                customIconView: AnyView(PullRequestIconView().foregroundColor(.primary)),
+                                subtitle: prWidgetFilter.displayName
                             )
 
                             StatCardView(
-                                title: "Longest Streak",
-                                value: "\(data.longestStreak)d",
-                                icon: "trophy.fill",
-                                iconColor: .yellow,
-                                subtitle: "All-time streak"
+                                title: issueWidgetFilter.shortLabel,
+                                value: "\(data.activityStats.count(for: issueWidgetFilter))",
+                                customIconView: AnyView(IssueIconView().foregroundColor(.primary)),
+                                subtitle: issueWidgetFilter.displayName
                             )
 
                             StatCardView(
                                 title: "Contributions",
                                 value: "\(data.totalContributions)",
                                 icon: "square.grid.3x3.fill",
-                                iconColor: .green,
+                                iconColor: .primary,
                                 subtitle: "Total past year"
                             )
                         }
@@ -357,8 +372,9 @@ struct DashboardView: View {
                 .padding(20)
             }
         }
-        .frame(minWidth: 900, maxWidth: 900, minHeight: 700, maxHeight: 700)
+        .frame(minWidth: 900, maxWidth: 900, minHeight: 710, maxHeight: 710)
         .background(appBgColor)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .onAppear {
             loadInitialData()
         }
@@ -367,6 +383,11 @@ struct DashboardView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             checkAndAutoRefresh()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
+            self.selectedThemeID = UserPreferences.shared.selectedThemeID
+            self.prWidgetFilter = UserPreferences.shared.prWidgetFilter
+            self.issueWidgetFilter = UserPreferences.shared.issueWidgetFilter
         }
     }
 
@@ -457,10 +478,6 @@ struct DevHeaderButtonStyle: ButtonStyle {
                           ? Color.white.opacity(configuration.isPressed ? 0.12 : 0.06)
                           : Color.black.opacity(configuration.isPressed ? 0.12 : 0.05))
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08), lineWidth: 1)
-            )
             .contentShape(Rectangle())
     }
 }
@@ -473,12 +490,14 @@ struct YearPillButton: View {
     @State private var isHovered = false
 
     private var textColor: Color {
-        if isSelected { return .orange }
+        if isSelected { return .primary }
         return isHovered ? .primary : .secondary
     }
 
     private var fillColor: Color {
-        if isSelected { return Color.orange.opacity(0.12) }
+        if isSelected {
+            return colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.08)
+        }
         if isHovered {
             return colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.04)
         }
@@ -486,12 +505,7 @@ struct YearPillButton: View {
     }
 
     private var strokeColor: Color {
-        if isSelected { return Color.orange.opacity(0.8) }
-        if colorScheme == .dark {
-            return Color.white.opacity(isHovered ? 0.15 : 0.0)
-        } else {
-            return Color.black.opacity(isHovered ? 0.12 : 0.0)
-        }
+        Color.clear
     }
 
     private var strokeLineWidth: CGFloat {

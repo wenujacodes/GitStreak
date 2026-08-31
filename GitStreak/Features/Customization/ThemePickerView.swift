@@ -61,12 +61,6 @@ struct ThemeSwatchGridItem: View {
                     .foregroundColor(isSelected ? .primary : .secondary)
 
                 Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.orange)
-                        .font(.system(size: 11))
-                }
             }
             .padding(.horizontal, 4)
         }
@@ -77,7 +71,12 @@ struct ThemeSwatchGridItem: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.orange : Color.white.opacity(isHovered ? 0.15 : 0.06), lineWidth: isSelected ? 1.5 : 1)
+                .stroke(
+                    isSelected
+                    ? (colorScheme == .dark ? Color.white.opacity(0.5) : Color(hex: "#4A4A4A"))
+                    : (colorScheme == .dark ? Color.white.opacity(isHovered ? 0.15 : 0.06) : Color.black.opacity(isHovered ? 0.12 : 0.06)),
+                    lineWidth: isSelected ? 1.5 : 1
+                )
         )
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {

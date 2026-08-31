@@ -30,6 +30,7 @@
 		6273EBE35E5470EAA88C2683 /* PullRequestsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75C062E79A965DBD67B57F9 /* PullRequestsWidget.swift */; };
 		64CF16278CA604BEEF527774 /* StreakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D1853C3C4F970F2750EB4 /* StreakCalculator.swift */; };
 		64E57CF61072EF17E0F03AAF /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DA2A52D644638E758540C985 /* Sparkle */; };
+		683B650F633BDF9B297EFF9F /* Octicons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662557879CABF23AE7C51D04 /* Octicons.swift */; };
 		6AA560AD4FFE45F2112E2978 /* GitStreakKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A5CF76584D2ACD1625D318 /* GitStreakKit.framework */; };
 		6AE33BA8799AB37CD7252E27 /* ContributionWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE98F6D1CAD6827480E1FA04 /* ContributionWeek.swift */; };
 		6B63B4005F1B083BD4016A47 /* IssuesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E844FE9274D40CFF1E38D416 /* IssuesWidget.swift */; };
@@ -177,6 +178,7 @@
 		64764049799B71EC83B143ED /* TimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProvider.swift; sourceTree = "<group>"; };
 		65A5CF76584D2ACD1625D318 /* GitStreakKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GitStreakKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		660247658AE5FD2C25D4528D /* TodayCommitsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCommitsWidget.swift; sourceTree = "<group>"; };
+		662557879CABF23AE7C51D04 /* Octicons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Octicons.swift; sourceTree = "<group>"; };
 		6873A1FA19662F1729B8EAE2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		6D88F5612EC2D2C25EFC3B2E /* GitHubGraphQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubGraphQL.swift; sourceTree = "<group>"; };
 		6E0894261130670C38CB0A9A /* MockContributions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockContributions.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 				5CD859B7A2F6787E8EB36031 /* ContributionGridView.swift */,
 				C87E83C4ACF7F2CD99A27ABF /* CopyableUserCodeView.swift */,
 				1F051E49CE5DB8F8559FC5E5 /* GitCommitIcon.swift */,
+				662557879CABF23AE7C51D04 /* Octicons.swift */,
 				F9DA4848671B6DB6B657181C /* StatCardView.swift */,
 				0AADFAFD41C6B51213D0F4B9 /* StreakBadgeView.swift */,
 			);
@@ -694,6 +697,7 @@
 				9A99E905CEE941E0E5BA3B68 /* KeychainService.swift in Sources */,
 				432CDB749930AB5BB4B3F62E /* MockContributions.swift in Sources */,
 				C4EE2A1FABD76290F991CD12 /* OAuthService.swift in Sources */,
+				683B650F633BDF9B297EFF9F /* Octicons.swift in Sources */,
 				6F527981B7B9330D088CF61C /* SharedDataStore.swift in Sources */,
 				E07F9C08F26D308C59CAF512 /* Spacing.swift in Sources */,
 				E42F31C9517C81D6C5ABA39B /* StatCardView.swift in Sources */,
@@ -767,7 +771,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -778,7 +782,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreakKit;
 				PRODUCT_MODULE_NAME = GitStreakKit;
 				SDKROOT = macosx;
@@ -824,7 +828,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -837,7 +841,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.9;
+				MARKETING_VERSION = 1.1.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -854,7 +858,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -865,7 +869,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreakKit;
 				PRODUCT_MODULE_NAME = GitStreakKit;
 				SDKROOT = macosx;
@@ -897,7 +901,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GitStreakWidget/GitStreakWidget.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GitStreakWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -905,7 +909,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreak.Widget;
 				PRODUCT_NAME = GitStreakWidgetExtension;
 				SDKROOT = macosx;
@@ -918,13 +922,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GitStreak/GitStreak.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				INFOPLIST_FILE = GitStreak/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreak;
 				SDKROOT = macosx;
 			};
@@ -936,13 +940,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GitStreak/GitStreak.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				INFOPLIST_FILE = GitStreak/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreak;
 				SDKROOT = macosx;
 			};
@@ -1002,7 +1006,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1021,7 +1025,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.9;
+				MARKETING_VERSION = 1.1.10;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1040,7 +1044,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GitStreakWidget/GitStreakWidget.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GitStreakWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1048,7 +1052,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gitstreak.GitStreak.Widget;
 				PRODUCT_NAME = GitStreakWidgetExtension;
 				SDKROOT = macosx;

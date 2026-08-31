@@ -15,22 +15,22 @@ public struct GitCommitShape: Shape {
 
         var path = Path()
 
-        // Outer contour of git commit icon (16x16 coordinate space)
+        // Outer contour starting at (11.93, 8.5)
         path.move(to: p(11.93, 8.5))
 
-        // Arc around bottom of circle to left line join
+        // Bottom arc of outer circle
         path.addArc(
-            center: p(8.0, 8.5),
+            center: p(8.0, 7.75),
             radius: 4.002 * scale,
-            startAngle: .radians(0.198),
-            endAngle: .radians(.pi - 0.198),
+            startAngle: .radians(0.183),
+            endAngle: .radians(.pi - 0.183),
             clockwise: false
         )
 
         // Line to left cap
         path.addLine(to: p(0.75, 8.5))
 
-        // Left rounded end cap
+        // Left cap arc
         path.addArc(
             center: p(0.75, 7.75),
             radius: 0.75 * scale,
@@ -39,22 +39,22 @@ public struct GitCommitShape: Shape {
             clockwise: false
         )
 
-        // Line to top circle join
+        // Line to top of outer circle
         path.addLine(to: p(4.07, 7.0))
 
-        // Arc around top of circle to right line join
+        // Top arc of outer circle
         path.addArc(
-            center: p(8.0, 7.0),
+            center: p(8.0, 7.75),
             radius: 4.002 * scale,
-            startAngle: .radians(.pi - 0.198),
-            endAngle: .radians(0.198),
+            startAngle: .radians(.pi + 0.183),
+            endAngle: .radians(-0.183),
             clockwise: false
         )
 
         // Line to right cap
         path.addLine(to: p(15.25, 7.0))
 
-        // Right rounded end cap
+        // Right cap arc
         path.addArc(
             center: p(15.25, 7.75),
             radius: 0.75 * scale,
@@ -65,12 +65,13 @@ public struct GitCommitShape: Shape {
 
         path.closeSubpath()
 
-        // Inner cutout circle (radius 2.5 centered at 8.0, 7.75)
+        // Inner circle hole (center 8.0, 7.75, radius 2.5)
+        let innerR = 2.5 * scale
         path.addEllipse(in: CGRect(
-            x: offsetX + 5.5 * scale,
-            y: offsetY + 5.25 * scale,
-            width: 5.0 * scale,
-            height: 5.0 * scale
+            x: offsetX + (8.0 - 2.5) * scale,
+            y: offsetY + (7.75 - 2.5) * scale,
+            width: innerR * 2,
+            height: innerR * 2
         ))
 
         return path

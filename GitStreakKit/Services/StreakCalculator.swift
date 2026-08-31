@@ -7,31 +7,32 @@ public enum StreakCalculator {
         referenceDate: String = todayDateString()
     ) -> Int {
         let sortedDays = days.sorted { $0.date < $1.date }
-
-        guard let refIndex = sortedDays.firstIndex(where: { $0.date == referenceDate }) else {
-
-            guard let last = sortedDays.last else { return 0 }
-            if referenceDate > last.date {
-
-                return 0
-            }
-            return 0
-        }
+        guard !sortedDays.isEmpty else { return 0 }
 
         var streak = 0
-        var currentIndex = refIndex
+        var currentIndex: Int
 
-        if sortedDays[currentIndex].contributionCount == 0 {
-            if currentIndex > 0 {
-                let prevDay = sortedDays[currentIndex - 1]
-                if areConsecutiveDays(prevDay.date, referenceDate) {
-                    currentIndex -= 1
+        if let refIndex = sortedDays.firstIndex(where: { $0.date == referenceDate }) {
+            currentIndex = refIndex
+            if sortedDays[currentIndex].contributionCount == 0 {
+                if currentIndex > 0 {
+                    let prevDay = sortedDays[currentIndex - 1]
+                    if areConsecutiveDays(prevDay.date, referenceDate) {
+                        currentIndex -= 1
+                    } else {
+                        return 0
+                    }
                 } else {
                     return 0
                 }
-            } else {
+            }
+        } else {
+            guard let last = sortedDays.last,
+                  areConsecutiveDays(last.date, referenceDate),
+                  last.contributionCount > 0 else {
                 return 0
             }
+            currentIndex = sortedDays.count - 1
         }
 
         while currentIndex >= 0 {
@@ -84,10 +85,10 @@ public enum StreakCalculator {
         return maxStreak
     }
 
-    public static func todayDateString() -> String {
+    public static func todayDateString(timeZone: TimeZone = .current) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.timeZone = timeZone
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.string(from: Date())

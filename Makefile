@@ -35,7 +35,7 @@ test:
 		CODE_SIGNING_ALLOWED=YES
 
 # Register widget extension with macOS LaunchServices & PluginKit
-register-widget:
+register-widget: build
 	rm -rf /Applications/$(PROJECT_NAME).app
 	cp -R $(BUILD_DIR)/Build/Products/$(CONFIG)/$(PROJECT_NAME).app /Applications/
 	/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f -R -trusted /Applications/$(PROJECT_NAME).app

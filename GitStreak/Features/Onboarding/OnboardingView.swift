@@ -110,17 +110,30 @@ struct OnboardingView: View {
             .padding(.vertical, 18)
             .background(colorScheme == .dark ? Color(hex: "#0E0F12") : Color(NSColor.controlBackgroundColor))
         }
-        .frame(minWidth: 900, maxWidth: 900, minHeight: 700, maxHeight: 700)
+        .frame(minWidth: 900, maxWidth: 900, minHeight: 710, maxHeight: 710)
         .background(appBgColor)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var welcomeStep: some View {
         VStack(spacing: 24) {
-            Image(systemName: "flame.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 64, height: 64)
-                .foregroundColor(.orange)
+            if let icon = NSApp.applicationIconImage {
+                Image(nsImage: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 64, height: 64)
+            } else if let icon = NSImage(named: "AppIcon") {
+                Image(nsImage: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 64, height: 64)
+            } else {
+                Image(systemName: "flame.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 64, height: 64)
+                    .foregroundColor(.orange)
+            }
 
             VStack(spacing: 8) {
                 Text("GitStreak")
@@ -131,18 +144,12 @@ struct OnboardingView: View {
                     .font(.title3)
                     .foregroundColor(.secondary)
             }
-
-            Text("Track your GitHub contributions right on your desktop with a calm, beautiful widget.")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-                .font(.body)
-                .frame(maxWidth: 420)
         }
     }
 
     private var connectStep: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 8) {
+        VStack(spacing: 32) {
+            VStack(spacing: 10) {
                 Text("Connect GitHub Token")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
@@ -150,10 +157,11 @@ struct OnboardingView: View {
                 Text("Paste your GitHub Personal Access Token to display your contribution activity.")
                     .font(.callout)
                     .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
             }
 
-            VStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Personal Access Token (ghp_... or github_pat_...)")
                         .font(.caption)
                         .fontWeight(.semibold)
@@ -162,7 +170,7 @@ struct OnboardingView: View {
                     SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $patInput)
                         .textFieldStyle(.roundedBorder)
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Button(action: openCreateTokenURL) {
                             HStack(spacing: 4) {
                                 Image(systemName: "arrow.up.right.square")
@@ -177,6 +185,7 @@ struct OnboardingView: View {
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
+                    .padding(.top, 4)
                 }
 
                 Button(action: connectWithPAT) {
@@ -203,7 +212,7 @@ struct OnboardingView: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            .frame(maxWidth: 420)
+            .frame(maxWidth: 460)
         }
     }
 
@@ -239,7 +248,7 @@ struct OnboardingView: View {
                     ContributionGridView(
                         weeks: data.weeks,
                         theme: ThemeRegistry.theme(for: selectedThemeID),
-                        maxWeeks: 26,
+                        maxWeeks: 35,
                         cellSize: 12,
                         cellSpacing: 3
                     )
@@ -281,7 +290,7 @@ struct OnboardingView: View {
                 .foregroundColor(.orange)
 
             VStack(spacing: 8) {
-                Text("Widget Ready")
+                Text("Widgets Are Ready")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.primary)
 

@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag to release (e.g. v1.0.1)'
+        description: 'Version tag to release (e.g. v1.2.0)'
         required: true
-        default: 'v1.0.1'
+        default: 'v1.2.0'
 
 jobs:
   build-and-release:
@@ -22,8 +22,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
-      - name: Set Release Tag
+      - name: Set Release Tag & Build Number
         id: vars
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -32,8 +33,10 @@ jobs:
             TAG="${GITHUB_REF#refs/tags/}"
           fi
           VERSION="${TAG#v}"
+          BUILD_NUMBER=$(git rev-list --count HEAD)
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Select Xcode Version
         uses: maxim-lobanov/setup-xcode@v1
@@ -43,6 +46,11 @@ jobs:
       - name: Install Tools
         run: |
           brew install xcodegen create-dmg
+
+      - name: Download Sparkle Tools
+        run: |
+          mkdir -p sparkle_tools
+          curl -sL https://github.com/sparkle-project/Sparkle/releases/download/2.6.4/Sparkle-2.6.4.tar.xz | tar -xf - -C sparkle_tools
 
       - name: Generate Xcode Project
         run: |
@@ -55,7 +63,10 @@ jobs:
             -configuration Release \
             -derivedDataPath ./build \
             MARKETING_VERSION=${{ steps.vars.outputs.version }} \
-            CURRENT_PROJECT_VERSION=11 \
+            CURRENT_PROJECT_VERSION=${{ steps.vars.outputs.build_number }} \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES \
             build
 
       - name: Package Release Artifacts (ZIP and DMG)
@@ -75,6 +86,34 @@ jobs:
             --app-drop-link 425 190 \
             "release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.dmg" \
             "build/Build/Products/Release/GitStreak.app" || true
+
+      - name: Sign Archive & Update Appcast
+        id: appcast
+        env:
+          SPARKLE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          ZIP_FILE="release_artifacts/GitStreak-${{ steps.vars.outputs.tag }}.zip"
+          ZIP_SIZE=$(stat -f%z "$ZIP_FILE")
+          ZIP_URL="https://github.com/wenujacodes/GitStreak/releases/download/${{ steps.vars.outputs.tag }}/GitStreak-${{ steps.vars.outputs.tag }}.zip"
+          
+          SIGNATURE=""
+          if [ -n "$SPARKLE_KEY" ]; then
+            SIGNATURE=$(echo "$SPARKLE_KEY" | ./sparkle_tools/bin/sign_update -s - "$ZIP_FILE" | grep -o 'sparkle:edSignature="[^"]*"' | cut -d'"' -f2 || true)
+          fi
+
+          python3 scripts/update_appcast.py appcast.xml "${{ steps.vars.outputs.version }}" "${{ steps.vars.outputs.build_number }}" "$ZIP_URL" "$ZIP_SIZE" "$SIGNATURE"
+
+      - name: Commit & Push Updated Appcast
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add appcast.xml
+          if git diff --staged --quiet; then
+            echo "No changes to appcast.xml"
+          else
+            git commit -m "chore(release): update appcast.xml for ${{ steps.vars.outputs.tag }} [skip ci]"
+            git push origin main
+          fi
 
       - name: Check If Release Already Exists
         id: check_release

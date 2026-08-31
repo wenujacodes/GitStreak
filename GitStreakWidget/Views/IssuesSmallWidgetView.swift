@@ -102,36 +102,3 @@ public struct IssuesSmallWidgetView: View {
         }
     }
 }
-
-public struct IssueIconView: View {
-    public init() {}
-
-    public var body: some View {
-        Canvas { context, size in
-            let scale = min(size.width, size.height) / 16.0
-            let center = CGPoint(x: size.width / 2, y: size.height / 2)
-
-            // Outer Ring (r = 7.25 * scale, lineWidth = 1.5 * scale -> outer boundary r=8.0, inner boundary r=6.5)
-            var outerRing = Path()
-            let ringRadius = 7.25 * scale
-            outerRing.addEllipse(in: CGRect(
-                x: center.x - ringRadius,
-                y: center.y - ringRadius,
-                width: ringRadius * 2,
-                height: ringRadius * 2
-            ))
-            context.stroke(outerRing, with: .color(.primary), style: StrokeStyle(lineWidth: 1.5 * scale))
-
-            // Inner Dot (r = 1.5 * scale)
-            var innerDot = Path()
-            let dotRadius = 1.5 * scale
-            innerDot.addEllipse(in: CGRect(
-                x: center.x - dotRadius,
-                y: center.y - dotRadius,
-                width: dotRadius * 2,
-                height: dotRadius * 2
-            ))
-            context.fill(innerDot, with: .color(.primary))
-        }
-    }
-}

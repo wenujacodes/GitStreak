@@ -19,11 +19,36 @@ struct GitStreakTimelineProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
-        let entry = createEntry()
+        nonisolated(unsafe) let safeCompletion = completion
+        Task {
+            let prefs = UserPreferences.shared
+            prefs.reloadFromDisk()
+            let username = prefs.username
+            let token = TokenStorage.loadToken()
 
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+            if let username = username, !username.isEmpty, let token = token, !token.isEmpty {
+                let service = ContributionService()
+                do {
+                    _ = try await service.fetchContributions(username: username, token: token)
+                } catch {
+                    // Fall back gracefully to cached data if offline or rate-limited
+                }
+            }
+
+            let entry = createEntry()
+
+            let now = Date()
+            let fiveMinutesLater = Calendar.current.date(byAdding: .minute, value: 5, to: now) ?? now.addingTimeInterval(300)
+            let nextMidnight = Calendar.current.nextDate(
+                after: now,
+                matching: DateComponents(hour: 0, minute: 0, second: 1),
+                matchingPolicy: .nextTime
+            ) ?? fiveMinutesLater
+
+            let nextUpdate = min(fiveMinutesLater, nextMidnight)
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            safeCompletion(timeline)
+        }
     }
 
     private func createEntry() -> GitStreakEntry {

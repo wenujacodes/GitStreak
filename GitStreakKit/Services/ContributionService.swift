@@ -17,7 +17,15 @@ public actor ContributionService {
     ///   - year: Optional target calendar year filter.
     /// - Returns: Fully processed `ContributionData` domain object.
     public func fetchContributions(username: String, token: String, year: Int? = nil) async throws -> ContributionData {
-        let (user, weeks, totalContributions, activityStats, contributionYears) = try await apiClient.fetchContributions(username: username, token: token, year: year)
+        let (user, rawWeeks, totalContributions, activityStats, contributionYears) = try await apiClient.fetchContributions(username: username, token: token, year: year)
+
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let weeks: [ContributionWeek]
+        if year == nil || year == currentYear {
+            weeks = Self.ensureDaysUpToToday(weeks: rawWeeks)
+        } else {
+            weeks = rawWeeks
+        }
 
         let allDays = weeks.flatMap { $0.contributionDays }
         if allDays.isEmpty, let cached = cacheManager.load() {
@@ -68,9 +76,88 @@ public actor ContributionService {
         return data
     }
 
+    /// Ensures that the weeks array includes all days up to today's date in local time, adding empty cells for uncommitted days.
+    public static func ensureDaysUpToToday(weeks: [ContributionWeek], timeZone: TimeZone = .current) -> [ContributionWeek] {
+        guard !weeks.isEmpty else { return weeks }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = timeZone
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+
+        let todayString = formatter.string(from: Date())
+        let allDays = weeks.flatMap { $0.contributionDays }
+        guard let lastDay = allDays.last, lastDay.date < todayString else {
+            return weeks
+        }
+
+        let utcFormatter = DateFormatter()
+        utcFormatter.dateFormat = "yyyy-MM-dd"
+        utcFormatter.timeZone = TimeZone(identifier: "UTC")
+        utcFormatter.calendar = Calendar(identifier: .gregorian)
+        utcFormatter.locale = Locale(identifier: "en_US_POSIX")
+
+        guard var startDate = utcFormatter.date(from: lastDay.date),
+              let endDate = utcFormatter.date(from: todayString) else {
+            return weeks
+        }
+
+        var updatedWeeks = weeks
+        let calendar = Calendar(identifier: .gregorian)
+
+        while true {
+            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: startDate),
+                  nextDate <= endDate else {
+                break
+            }
+            startDate = nextDate
+            let dateString = utcFormatter.string(from: nextDate)
+
+            let weekdayComponent = calendar.component(.weekday, from: nextDate)
+            let weekday = weekdayComponent - 1
+
+            let newDay = ContributionDay(
+                date: dateString,
+                contributionCount: 0,
+                level: .none,
+                weekday: weekday
+            )
+
+            if var lastWeek = updatedWeeks.last, lastWeek.contributionDays.count < 7 && weekday != 0 {
+                var updatedDays = lastWeek.contributionDays
+                updatedDays.append(newDay)
+                updatedWeeks[updatedWeeks.count - 1] = ContributionWeek(contributionDays: updatedDays)
+            } else {
+                updatedWeeks.append(ContributionWeek(contributionDays: [newDay]))
+            }
+        }
+
+        return updatedWeeks
+    }
+
     /// Returns locally cached `ContributionData` synchronously without hitting the network.
     nonisolated public func getCachedData() -> ContributionData? {
-        return cacheManager.load()
+        guard let cached = cacheManager.load() else { return nil }
+        let currentYear = Calendar.current.component(.year, from: Date())
+        if cached.selectedYear == nil || cached.selectedYear == currentYear {
+            let updatedWeeks = Self.ensureDaysUpToToday(weeks: cached.weeks)
+            if updatedWeeks != cached.weeks {
+                let allDays = updatedWeeks.flatMap { $0.contributionDays }
+                return ContributionData(
+                    user: cached.user,
+                    weeks: updatedWeeks,
+                    totalContributions: cached.totalContributions,
+                    currentStreak: StreakCalculator.currentStreak(days: allDays),
+                    longestStreak: StreakCalculator.longestStreak(days: allDays),
+                    activityStats: cached.activityStats,
+                    availableYears: cached.availableYears,
+                    selectedYear: cached.selectedYear,
+                    fetchedAt: cached.fetchedAt
+                )
+            }
+        }
+        return cached
     }
 
     /// Checks if local cache is still fresh within expiration window.

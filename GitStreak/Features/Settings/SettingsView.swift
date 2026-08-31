@@ -27,13 +27,15 @@ struct SettingsView: View {
                     generalTab
                         .tag(SettingsTab.general)
                         .tabItem {
-                            Label("General", systemImage: "gearshape")
+                            Image(systemName: "gearshape")
+                            Text("General")
                         }
 
                     aboutTab
                         .tag(SettingsTab.about)
                         .tabItem {
-                            Label("About", systemImage: "info.circle")
+                            Image(systemName: "info.circle")
+                            Text("About")
                         }
                 }
                 .frame(width: 540, height: 420)
@@ -113,7 +115,7 @@ struct SettingsView: View {
                             Text("Sign Out")
                         }
                     }
-                    .buttonStyle(ModernSecondaryButtonStyle())
+                    .buttonStyle(SignOutButtonStyle())
                 }
             }
 
@@ -220,19 +222,29 @@ struct SettingsView: View {
 
     private var aboutTab: some View {
         VStack(spacing: 0) {
-            Spacer()
-
             VStack(spacing: 18) {
-                ZStack {
-                    Circle()
-                        .fill(Color.orange.opacity(0.12))
-                        .frame(width: 64, height: 64)
-
-                    Image(systemName: "flame.fill")
+                if let icon = NSApp.applicationIconImage {
+                    Image(nsImage: icon)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 36, height: 36)
-                        .foregroundColor(.orange)
+                        .frame(width: 64, height: 64)
+                } else if let icon = NSImage(named: "AppIcon") {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 64, height: 64)
+                } else {
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange.opacity(0.12))
+                            .frame(width: 64, height: 64)
+
+                        Image(systemName: "flame.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                            .foregroundColor(.orange)
+                    }
                 }
 
                 VStack(spacing: 4) {
@@ -361,6 +373,29 @@ struct SettingsView: View {
         avatarURL = nil
         patInput = ""
         saveStatusMessage = nil
+    }
+}
+
+struct SignOutButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isHovered = false
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(isHovered ? .white : Color(hex: "#FF4D4D"))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isHovered ? Color(hex: "#D32F2F") : (colorScheme == .dark ? Color.white.opacity(0.04) : Color.black.opacity(0.04)))
+            )
+            .scaleEffect(configuration.isPressed ? 0.97 : (isHovered ? 1.01 : 1.0))
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .onHover { hovering in
+                isHovered = hovering
+            }
     }
 }
 

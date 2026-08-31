@@ -12,13 +12,17 @@ internal enum SharedContainer {
             }
         }
 
-        let home: String
-        if let pw = getpwuid(getuid()) {
-            home = String(cString: pw.pointee.pw_dir)
+        let homeDir = NSHomeDirectory()
+        let realHome: String
+        if homeDir.contains("/Containers/") {
+            let parts = homeDir.components(separatedBy: "/Library/Containers/")
+            realHome = parts.first ?? homeDir
+        } else if let pw = getpwuid(getuid()) {
+            realHome = String(cString: pw.pointee.pw_dir)
         } else {
-            home = NSHomeDirectory()
+            realHome = homeDir
         }
-        let fallbackDir = URL(fileURLWithPath: home)
+        let fallbackDir = URL(fileURLWithPath: realHome)
             .appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
         try? FileManager.default.createDirectory(at: fallbackDir, withIntermediateDirectories: true, attributes: nil)
         return fallbackDir
