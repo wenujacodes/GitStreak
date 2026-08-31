@@ -2,6 +2,14 @@ import WidgetKit
 import SwiftUI
 import GitStreakKit
 
+private final class TimelineCompletionBox: @unchecked Sendable {
+    let completion: (Timeline<GitStreakEntry>) -> Void
+
+    init(_ completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
+        self.completion = completion
+    }
+}
+
 struct GitStreakTimelineProvider: TimelineProvider {
     typealias Entry = GitStreakEntry
 
@@ -19,6 +27,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
+        let completionBox = TimelineCompletionBox(completion)
         Task { @MainActor in
             let prefs = UserPreferences.shared
             prefs.reloadFromDisk()
@@ -45,7 +54,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
             ) ?? fiveMinutesLater
 
             let nextUpdate = min(fiveMinutesLater, nextMidnight)
-            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+            completionBox.completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
         }
     }
 
