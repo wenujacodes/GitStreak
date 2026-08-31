@@ -138,204 +138,9 @@ struct DashboardView: View {
                     }
 
                     if let data = contributionData {
-
-                        HStack(alignment: .center, spacing: 20) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "flame.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(.orange)
-                                    Text("Current Streak")
-                                        .font(GSTypography.caption)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                                    Text("\(data.currentStreak)")
-                                        .font(GSTypography.largeTitle)
-                                        .foregroundColor(.primary)
-                                    Text("days")
-                                        .font(GSTypography.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-
-                            Spacer()
-
-                            VStack(alignment: .trailing, spacing: 4) {
-                                Text("Personal Best")
-                                    .font(GSTypography.caption)
-                                    .foregroundColor(.secondary)
-                                Text("\(data.longestStreak) days")
-                                    .font(GSTypography.title)
-                                    .foregroundColor(.primary)
-                            }
-                        }
-                        .padding(18)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(cardBgColor)
-                        )
-
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(spacing: 6) {
-                                Text("Activity Timeline")
-                                    .font(GSTypography.caption)
-                                    .foregroundColor(.secondary)
-
-                                if let yr = selectedYear {
-                                    Text("(\(String(yr)))")
-                                        .font(GSTypography.caption)
-                                        .foregroundColor(.orange)
-                                        .bold()
-                                } else {
-                                    Text("(Past Year)")
-                                        .font(GSTypography.caption)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Spacer()
-                            }
-
-                            HStack(alignment: .top, spacing: 14) {
-                                VStack(alignment: .leading, spacing: 10) {
-                                    HStack(alignment: .top, spacing: 8) {
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Spacer().frame(height: 14)
-                                            Text(" ").font(.system(size: 8))
-                                            Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                            Text(" ").font(.system(size: 8))
-                                            Text("W").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                            Text(" ").font(.system(size: 8))
-                                            Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
-                                            Text(" ").font(.system(size: 8))
-                                        }
-
-                                        Spacer(minLength: 0)
-
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            ContributionGridView(
-                                                weeks: data.weeks,
-                                                theme: ThemeRegistry.theme(for: selectedThemeID),
-                                                maxWeeks: 53,
-                                                cellSize: 13.5,
-                                                columnSpacing: 3.5,
-                                                rowSpacing: 3.0,
-                                                cornerRadius: 1.5,
-                                                showMonthHeaders: true,
-                                                showTooltips: true
-                                            )
-                                            .padding(.vertical, 8)
-                                        }
-                                        .defaultScrollAnchor(.trailing)
-                                    }
-
-                                    HStack {
-                                        Spacer()
-
-                                        HStack(spacing: 5) {
-                                            Text("Less")
-                                                .font(GSTypography.monoBadge)
-                                                .foregroundColor(.secondary)
-
-                                            let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
-                                            let colors = currentTheme.allColors(for: colorScheme)
-                                            ForEach(colors.indices, id: \.self) { idx in
-                                                RoundedRectangle(cornerRadius: 2)
-                                                    .fill(colors[idx])
-                                                    .frame(width: 10, height: 10)
-                                            }
-
-                                            Text("More")
-                                                .font(GSTypography.monoBadge)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        .padding(.horizontal, 4)
-                                    }
-                                }
-
-                                Divider()
-                                    .frame(height: 140)
-                                    .opacity(0.15)
-
-                                let totalYearCount = 1 + data.availableYears.count
-                                if totalYearCount > 4 {
-                                    ScrollView(.vertical, showsIndicators: true) {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            YearPillButton(
-                                                title: "Past Year",
-                                                isSelected: selectedYear == nil
-                                            ) {
-                                                selectYear(nil)
-                                            }
-
-                                            ForEach(data.availableYears, id: \.self) { yr in
-                                                YearPillButton(
-                                                    title: String(yr),
-                                                    isSelected: selectedYear == yr
-                                                ) {
-                                                    selectYear(yr)
-                                                }
-                                            }
-                                        }
-                                        .padding(.trailing, 4)
-                                    }
-                                    .frame(width: 95, height: 140)
-                                } else {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        YearPillButton(
-                                            title: "Past Year",
-                                            isSelected: selectedYear == nil
-                                        ) {
-                                            selectYear(nil)
-                                        }
-
-                                        ForEach(data.availableYears, id: \.self) { yr in
-                                            YearPillButton(
-                                                title: String(yr),
-                                                isSelected: selectedYear == yr
-                                            ) {
-                                                selectYear(yr)
-                                            }
-                                        }
-                                    }
-                                    .frame(width: 90, alignment: .topLeading)
-                                }
-                            }
-                        }
-                        .padding(16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color.clear)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.10), lineWidth: 1)
-                        )
-
-                        HStack(spacing: 12) {
-                            StatCardView(
-                                title: prWidgetFilter.shortLabel,
-                                value: "\(data.activityStats.count(for: prWidgetFilter))",
-                                customIconView: AnyView(PullRequestIconView().foregroundColor(.primary)),
-                                subtitle: prWidgetFilter.displayName
-                            )
-
-                            StatCardView(
-                                title: issueWidgetFilter.shortLabel,
-                                value: "\(data.activityStats.count(for: issueWidgetFilter))",
-                                customIconView: AnyView(IssueIconView().foregroundColor(.primary)),
-                                subtitle: issueWidgetFilter.displayName
-                            )
-
-                            StatCardView(
-                                title: "Contributions",
-                                value: "\(data.totalContributions)",
-                                icon: "square.grid.3x3.fill",
-                                iconColor: .primary,
-                                subtitle: "Total past year"
-                            )
-                        }
+                        contributionSummary(for: data)
+                        activityTimeline(for: data)
+                        statsCards(for: data)
                     } else if isLoading {
                         VStack(spacing: 12) {
                             ProgressView()
@@ -388,6 +193,213 @@ struct DashboardView: View {
             self.selectedThemeID = UserPreferences.shared.selectedThemeID
             self.prWidgetFilter = UserPreferences.shared.prWidgetFilter
             self.issueWidgetFilter = UserPreferences.shared.issueWidgetFilter
+        }
+    }
+
+    @ViewBuilder
+    private func contributionSummary(for data: ContributionData) -> some View {
+        HStack(alignment: .center, spacing: 20) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                    Text("Current Streak")
+                        .font(GSTypography.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("\(data.currentStreak)")
+                        .font(GSTypography.largeTitle)
+                        .foregroundColor(.primary)
+                    Text("days")
+                        .font(GSTypography.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("Personal Best")
+                    .font(GSTypography.caption)
+                    .foregroundColor(.secondary)
+                Text("\(data.longestStreak) days")
+                    .font(GSTypography.title)
+                    .foregroundColor(.primary)
+            }
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(cardBgColor)
+        )
+    }
+
+    @ViewBuilder
+    private func activityTimeline(for data: ContributionData) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Text("Activity Timeline")
+                    .font(GSTypography.caption)
+                    .foregroundColor(.secondary)
+
+                if let yr = selectedYear {
+                    Text("(\(String(yr)))")
+                        .font(GSTypography.caption)
+                        .foregroundColor(.orange)
+                        .bold()
+                } else {
+                    Text("(Past Year)")
+                        .font(GSTypography.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+            }
+
+            HStack(alignment: .top, spacing: 14) {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Spacer().frame(height: 14)
+                            Text(" ").font(.system(size: 8))
+                            Text("M").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 8))
+                            Text("W").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 8))
+                            Text("F").font(GSTypography.monoBadge).foregroundColor(.secondary)
+                            Text(" ").font(.system(size: 8))
+                        }
+
+                        Spacer(minLength: 0)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            ContributionGridView(
+                                weeks: data.weeks,
+                                theme: ThemeRegistry.theme(for: selectedThemeID),
+                                maxWeeks: 53,
+                                cellSize: 13.5,
+                                columnSpacing: 3.5,
+                                rowSpacing: 3.0,
+                                cornerRadius: 1.5,
+                                showMonthHeaders: true,
+                                showTooltips: true
+                            )
+                            .padding(.vertical, 8)
+                        }
+                        .defaultScrollAnchor(.trailing)
+                    }
+
+                    HStack {
+                        Spacer()
+
+                        HStack(spacing: 5) {
+                            Text("Less")
+                                .font(GSTypography.monoBadge)
+                                .foregroundColor(.secondary)
+
+                            let currentTheme = ThemeRegistry.theme(for: selectedThemeID)
+                            let colors = currentTheme.allColors(for: colorScheme)
+                            ForEach(colors.indices, id: \.self) { idx in
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(colors[idx])
+                                    .frame(width: 10, height: 10)
+                            }
+
+                            Text("More")
+                                .font(GSTypography.monoBadge)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 4)
+                    }
+                }
+
+                Divider()
+                    .frame(height: 140)
+                    .opacity(0.15)
+
+                let totalYearCount = 1 + data.availableYears.count
+                if totalYearCount > 4 {
+                    ScrollView(.vertical, showsIndicators: true) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            YearPillButton(
+                                title: "Past Year",
+                                isSelected: selectedYear == nil
+                            ) {
+                                selectYear(nil)
+                            }
+
+                            ForEach(data.availableYears, id: \.self) { yr in
+                                YearPillButton(
+                                    title: String(yr),
+                                    isSelected: selectedYear == yr
+                                ) {
+                                    selectYear(yr)
+                                }
+                            }
+                        }
+                        .padding(.trailing, 4)
+                    }
+                    .frame(width: 95, height: 140)
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        YearPillButton(
+                            title: "Past Year",
+                            isSelected: selectedYear == nil
+                        ) {
+                            selectYear(nil)
+                        }
+
+                        ForEach(data.availableYears, id: \.self) { yr in
+                            YearPillButton(
+                                title: String(yr),
+                                isSelected: selectedYear == yr
+                            ) {
+                                selectYear(yr)
+                            }
+                        }
+                    }
+                    .frame(width: 90, alignment: .topLeading)
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(colorScheme == .dark ? Color(hex: "#1A1A1A") : Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.10), lineWidth: 1)
+        )
+    }
+
+    @ViewBuilder
+    private func statsCards(for data: ContributionData) -> some View {
+        HStack(spacing: 12) {
+            StatCardView(
+                title: prWidgetFilter.shortLabel,
+                value: "\(data.activityStats.count(for: prWidgetFilter))",
+                customIconView: AnyView(PullRequestIconView().foregroundColor(.primary)),
+                subtitle: prWidgetFilter.displayName
+            )
+
+            StatCardView(
+                title: issueWidgetFilter.shortLabel,
+                value: "\(data.activityStats.count(for: issueWidgetFilter))",
+                customIconView: AnyView(IssueIconView().foregroundColor(.primary)),
+                subtitle: issueWidgetFilter.displayName
+            )
+
+            StatCardView(
+                title: "Contributions",
+                value: "\(data.totalContributions)",
+                icon: "square.grid.3x3.fill",
+                iconColor: .primary,
+                subtitle: "Total past year"
+            )
         }
     }
 
