@@ -70,7 +70,16 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 >   3. Click **"Open Anyway"** next to GitStreak.
 >   *(Or right-click `GitStreak.app` in `/Applications` → select **Open** → click **Open**).*
 
-### Option 2: Build from Source
+### Option 2: Homebrew
+
+```bash
+brew tap wenujacodes/gitstreak https://github.com/wenujacodes/GitStreak
+brew install --cask gitstreak
+```
+
+The Gatekeeper notes above apply to the first launch. Upgrade later with `brew upgrade --cask gitstreak`.
+
+### Option 3: Build from Source
 
 ```bash
 # 1. Clone the repository
