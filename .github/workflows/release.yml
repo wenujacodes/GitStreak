@@ -61,6 +61,7 @@ jobs:
           xcodebuild -project GitStreak.xcodeproj \
             -scheme GitStreak \
             -configuration Release \
+            -destination 'generic/platform=macOS' \
             -derivedDataPath ./build \
             MARKETING_VERSION=${{ steps.vars.outputs.version }} \
             CURRENT_PROJECT_VERSION=${{ steps.vars.outputs.build_number }} \
