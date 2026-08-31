@@ -87,7 +87,6 @@ targets:
         CURRENT_PROJECT_VERSION: 12
         MARKETING_VERSION: "1.1.10"
         PRODUCT_NAME: GitStreakWidgetExtension
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   GitStreakKit:
     type: framework
