@@ -6,6 +6,31 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.1.10</title>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.10</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>Version 1.1.10 Release Notes</h2>
+                <h3>🎨 UI Polish, Smooth Hover Interactions & Widget Theme Fixes</h3>
+                <ul>
+                    <li><b>Desktop-Class Grid Hovering</b>: Instant cell highlight scaling with a smart 400ms dwell delay and live sticky tooltip session.</li>
+                    <li><b>Activity Timeline Styling</b>: Transparent card background in Light mode with subtle light grey border outline.</li>
+                    <li><b>Dynamic Filter Metrics</b>: PR & Issue cards dynamically update labels and counts based on Settings filters.</li>
+                    <li><b>App Icon Alignment</b>: Full macOS WidgetKit AppIcon support in Edit Widgets picker and GitHub README header.</li>
+                    <li><b>September 1 Midnight Grid Fix</b>: Automatically appends today's date empty cell across local midnight timezone gaps.</li>
+                    <li><b>Widget Theme Sync</b>: Fixed preferences cache persistence so widgets update colors instantly when switching themes.</li>
+                    <li><b>Header Button Symbols</b>: Added gear & clockwise arrow SF Symbols to Config and Refresh buttons.</li>
+                    <li><b>Main Window Height</b>: Adjusted window height to 710px for ideal proportion.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Tue, 01 Sep 2026 01:55:00 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.10/GitStreak-v1.1.10.zip"
+                       sparkle:version="12"
+                       sparkle:shortVersionString="1.1.10"
+                       sparkle:edSignature="TLhOwIYG+mgOUcCjnOP6iuBsrgOgqLCVh38/EDQW2y+KtC5z7JCZZmDWjQyaf4cRPaPRXSQUSyv9YFUkm7oYBw=="
+                       length="10458037"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.9</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.9</sparkle:releaseNotesLink>
             <description><![CDATA[

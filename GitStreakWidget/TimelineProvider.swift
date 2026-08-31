@@ -43,7 +43,7 @@ struct GitStreakTimelineProvider: TimelineProvider {
                 }
             }
 
-            let entry = self.createEntry()
+            let entry = createEntry()
 
             let now = Date()
             let fiveMinutesLater = Calendar.current.date(byAdding: .minute, value: 5, to: now) ?? now.addingTimeInterval(300)
