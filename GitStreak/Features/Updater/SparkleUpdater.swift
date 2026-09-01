@@ -27,6 +27,10 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
         updaterController.checkForUpdates(nil)
     }
 
+    public func checkForUpdatesInBackground() {
+        updaterController.updater.checkForUpdatesInBackground()
+    }
+
     public var canCheckForUpdates: Bool {
         updaterController.updater.canCheckForUpdates
     }

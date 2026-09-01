@@ -46,6 +46,7 @@ targets:
         SUPublicEDKey: "hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934="
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
+        SUScheduledCheckInterval: 3600
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         CFBundleIconName: "AppIcon"

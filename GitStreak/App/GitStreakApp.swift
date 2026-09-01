@@ -3,6 +3,12 @@ import AppKit
 import GitStreakKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Task { @MainActor in
+            SparkleUpdaterViewModel.shared.checkForUpdatesInBackground()
+        }
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }

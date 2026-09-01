@@ -8,6 +8,9 @@
         <item>
             <title>Version 1.1.10</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.10</sparkle:releaseNotesLink>
+            <sparkle:tags>
+                <sparkle:criticalUpdate />
+            </sparkle:tags>
             <description><![CDATA[
                 <h2>Version 1.1.10 Release Notes</h2>
                 <h3>Overall Bug Fixes & Refinements</h3>
