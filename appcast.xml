@@ -10,16 +10,27 @@
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.10</sparkle:releaseNotesLink>
             <description><![CDATA[
                 <h2>Version 1.1.10 Release Notes</h2>
-                <h3>🎨 UI Polish, Smooth Hover Interactions & Widget Theme Fixes</h3>
+                <h3>Overall Bug Fixes & Refinements</h3>
                 <ul>
-                    <li><b>Desktop-Class Grid Hovering</b>: Instant cell highlight scaling with a smart 400ms dwell delay and live sticky tooltip session.</li>
-                    <li><b>Activity Timeline Styling</b>: Transparent card background in Light mode with subtle light grey border outline.</li>
-                    <li><b>Dynamic Filter Metrics</b>: PR & Issue cards dynamically update labels and counts based on Settings filters.</li>
-                    <li><b>App Icon Alignment</b>: Full macOS WidgetKit AppIcon support in Edit Widgets picker and GitHub README header.</li>
-                    <li><b>September 1 Midnight Grid Fix</b>: Automatically appends today's date empty cell across local midnight timezone gaps.</li>
-                    <li><b>Widget Theme Sync</b>: Fixed preferences cache persistence so widgets update colors instantly when switching themes.</li>
-                    <li><b>Header Button Symbols</b>: Added gear & clockwise arrow SF Symbols to Config and Refresh buttons.</li>
-                    <li><b>Main Window Height</b>: Adjusted window height to 710px for ideal proportion.</li>
+                    <li><b>Timezone Midnight Offset</b>: Fixed issue where today's cell was missing due to UTC API offset; grid now guarantees an empty block for the local current date.</li>
+                    <li><b>Preferences Cache Persistence</b>: Fixed JSON preference loading so saved configuration state is preserved reliably across app restarts.</li>
+                </ul>
+
+                <h3>App Fixes & Features</h3>
+                <ul>
+                    <li><b>Desktop Grid Hover & Tooltip Session</b>: Instant square highlight scaling (1.15x) with a 400ms dwell delay requirement and live sticky tooltip navigation.</li>
+                    <li><b>Dashboard Profile Header Layout</b>: Reordered header to display Full Name and Last Updated time on top line, username on bottom line.</li>
+                    <li><b>Activity Timeline Styling</b>: Transparent card background in Light mode with light grey border outline and aligned month headers.</li>
+                    <li><b>Theme Picker Selection Border</b>: Updated selected theme border outline in Light mode to dark grey (#4A4A4A).</li>
+                    <li><b>Header Navigation Icons</b>: Added gearshape and arrow.clockwise SF Symbols to dashboard header buttons.</li>
+                    <li><b>Onboarding Flow Polish</b>: De-compacted Step 2 layout, expanded Step 3 contribution preview (35 weeks), and renamed Step 4 title to "Widgets Are Ready".</li>
+                    <li><b>Application Window Size</b>: Adjusted main window dimensions to 900 x 710 px.</li>
+                </ul>
+
+                <h3>Widget Fixes & Features</h3>
+                <ul>
+                    <li><b>Desktop Widget Color Theme Sync</b>: Desktop widgets immediately update their color schemes when changing themes in app settings.</li>
+                    <li><b>Widget Gallery App Icon</b>: Fixed generic wireframe icon in macOS "Edit Widgets" menu by registering AppIcon property keys.</li>
                 </ul>
             ]]></description>
             <pubDate>Tue, 01 Sep 2026 01:55:00 +0000</pubDate>
