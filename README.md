@@ -8,11 +8,8 @@
 
 A native macOS application & WidgetKit engine bringing your GitHub contribution matrix, active streaks, pull requests, and open issues directly to your desktop wallpaper.
 <br/>
-<br/>
 
-<br/>
 </div>
-
 <br/>
 
 ## 📸 Visual Showcase
