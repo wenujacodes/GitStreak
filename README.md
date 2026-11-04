@@ -28,17 +28,17 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ---
 
-## 🔥 Key Features
+## Key Features
 
-### 🖥️ Native Desktop Wallpaper Widgets
+### Native Desktop Wallpaper Widgets
 * **Pull Requests Widget**: Real-time tracker for PRs created, assigned, mentioned, or review requested.
 * **Issues Widget**: Live metrics for open and assigned GitHub issues with custom filters.
 
-### 🎛️ Customization & Filtering
+### Customization & Filtering
 * **Widget Metrics Filter**: Pick between PR categories (*Created*, *Assigned*, *Mentioned*, *Review Requests*) and Issue categories (*All Open*, *Assigned to Me*).
 * **6 Theme Color Palettes**:
 
-### ⚡ Performance & Security
+### Performance & Security
 * **Single GraphQL Call**: Fetches contributions, PRs, and Issues in one GraphQL request every 5 minutes, well within GitHub's rate limit.
 * **Smart Local Cache**: Multi-year switching with instant cache-first rendering and a background refresh every 5 minutes.
 * **Runs Quietly in the Background**: After you close the window, GitStreak keeps running (no Dock or menu bar icon) so your widgets stay up to date. It launches at login by default.
@@ -114,15 +114,6 @@ GitStreak needs a **classic Personal Access Token** with the `repo` and `read:us
 * **Frameworks**: SwiftUI, WidgetKit, Security (Keychain), Sparkle 2.6
 * **API**: GitHub GraphQL API v4
 * **Tooling**: XcodeGen, XCTest, Make, `create-dmg`
-
----
-
-> [!IMPORTANT]
-> **Active Early Development**
-> * **Found a bug or issue?** Please [open a GitHub Issue](https://github.com/wenujacodes/GitStreak/issues) - we fix issues quickly!
-> * **Updates**: Automatic in-app update checks are enabled via Sparkle. If an update notice is delayed, check back on this repository for the latest release downloads.
-> * **Contributors & Community**: Contributions, bug reports, and feature suggestions are warmly welcomed! Feel free to submit Pull Requests or open issues.
-
 ---
 
 ## 📄 License
