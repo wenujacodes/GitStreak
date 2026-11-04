@@ -36,6 +36,10 @@ make check-widget
 ## Data flow
 The app fetches GitHub data (in the background every 5 min, `BackgroundController`) → `CacheManager` writes `contribution_cache.json` into `SharedContainer.url` (`~/Library/Application Support/com.gitstreak.shared/`) → the app reloads widget timelines → widgets only read the cache. **The widget never calls GitHub or touches the token.**
 
+## API usage
+- Only the app calls GitHub: **one GraphQL request every 5 min** (`GitHubGraphQL.buildQuery`), containing the contributions collection plus 8 `search` counts for PRs and issues. The widget never calls GitHub.
+- A 403 with `x-ratelimit-remaining: 0` (or a "rate limit" message) becomes `GitHubAPIError.rateLimited` (`GitHubAPIClient`).
+
 ## Token storage
 - The token lives in the **login Keychain** only (`KeychainService`, service `com.gitstreak.github`). The data protection Keychain is not an option: without a Team ID it fails with -34018.
 - Without a Team ID, macOS ties Keychain access to each build, so **after every update the user sees one "GitStreak wants to access key…" dialog**. A self-signed certificate does not avoid this (tested). This is expected.
@@ -43,22 +47,22 @@ The app fetches GitHub data (in the background every 5 min, `BackgroundControlle
 - Plain-text copies from ≤1.1.10 (`group.com.gitstreak` defaults, `.token_auth` file) are migrated into the Keychain and deleted only after the Keychain save succeeds.
 
 ## Known issues to tackle (in order)
-Release target: fix everything below, then ship **1.1.11** (not released yet).
+Items 1–5 shipped in **1.2.0** (PR #31), released with a new Sparkle key, so 1.1.10 users must update manually once.
 
 1. ~~Widgets not working on macOS 15~~ **Done (PR #26).** Cause: no App Group entitlement and no Team ID, so the app and the sandboxed widget used different folders. Fixed with the shared Application Support folder, hidden background mode + launch at login, and a widget that only reads the cache.
-2. ~~Token stored in plaintext~~ **Done (branch `fix/token-keychain`).** Keychain saves had been failing silently (-34018). See "Token storage". Reported by a user on GitHub; reply once released.
-3. ~~Excessive API usage~~ **Mostly done** with #1: one fetch by the app every 5 min. Remaining: README still says 15 min.
+2. ~~Token stored in plaintext~~ **Done (branch `fix/token-keychain`).** Keychain saves had been failing silently (-34018). See "Token storage". Reported by a user on GitHub; released in 1.2.0, so reply to them.
+3. ~~Excessive API usage~~ **Done** with #1: one fetch by the app every 5 min. See "API usage".
 4. ~~Username interpolated into GraphQL search strings~~ **Done:** low risk (the username comes from GitHub itself), so instead of a rewrite, `GitHubGraphQL.isValidUsername` rejects anything but letters, numbers and hyphens before a request is built.
 5. ~~PAT link requests the `repo` scope~~ **Decided: keep classic `repo,read:user`** (`OAuthService.createTokenURL`, used by Settings and Onboarding). A fine-grained read-only token was tested and misses organization work (68 vs 120 PRs, 835 vs 1365 contributions); GitHub has no read-only token covering private org repos. The UI explains why `repo` is needed and suggests "No expiration". The OAuth device flow in `OAuthService` is currently unused.
 6. Housekeeping:
-   - Committed binary `UserPreferences.o` should be removed and added to `.gitignore`.
-   - Version numbers disagree across `Makefile`, `package_release.sh` and `project.yml`.
-   - Hard-coded year fallback in `ContributionService.swift`.
+   - ~~Committed binary `UserPreferences.o`~~ **Done (PR #30):** removed; `*.o` ignored.
+   - ~~Version numbers disagree~~ **Done (PR #30):** `MARKETING_VERSION` in `project.yml` is the single source of truth.
+   - ~~Hard-coded year fallback~~ **Done (PR #30):** computed from the current year.
+   - ~~README docs~~ **Done (PR #30):** background mode, launch at login, Keychain dialog, token scopes.
    - `EntitlementManager` always Pro.
    - Main app unsandboxed; ad-hoc signing.
    - No CI.
    - Little test coverage outside streak logic.
-   - README: document background mode, launch at login and the one-time Keychain dialog after updates.
 7. Ideas (optional): widget hint when data is stale (e.g. app not running or token denied).
 
 ## Commits
