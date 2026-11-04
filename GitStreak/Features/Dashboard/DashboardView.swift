@@ -453,7 +453,12 @@ struct DashboardView: View {
             self.errorMessage = nil
             self.isLoading = false
         } catch {
-            if !silent {
+            // Always surface a denied Keychain: the user has to act on it.
+            var mustShow = false
+            if case .keychainAccessDenied? = error as? GitHubAPIError {
+                mustShow = true
+            }
+            if !silent || mustShow {
                 self.errorMessage = error.localizedDescription
             }
             self.isLoading = false

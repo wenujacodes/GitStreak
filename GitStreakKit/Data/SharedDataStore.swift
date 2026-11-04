@@ -20,6 +20,9 @@ public final class SharedDataStore: @unchecked Sendable {
         }
 
         let token = TokenStorage.loadToken() ?? ""
+        if token.isEmpty && TokenStorage.keychainAccessDenied {
+            throw GitHubAPIError.keychainAccessDenied
+        }
 
         let data: ContributionData
         if force || year != nil {

@@ -29,6 +29,14 @@ final class TokenStorageTests: XCTestCase {
         XCTAssertNil(UserPreferences.shared.accessToken)
     }
 
+    func testKeychainReadDistinguishesFoundAndNotFound() throws {
+        XCTAssertEqual(KeychainService.read(forKey: "github_pat"), .notFound)
+
+        TokenStorage.saveToken("ghp_readResultToken")
+        XCTAssertEqual(KeychainService.read(forKey: "github_pat"), .found("ghp_readResultToken"))
+        XCTAssertFalse(TokenStorage.keychainAccessDenied)
+    }
+
     func testTokenIsNeverSavedInUnencryptedPreferencesJSON() throws {
         let testToken = "ghp_secureTokenInKeychainOnly"
         TokenStorage.saveToken(testToken)

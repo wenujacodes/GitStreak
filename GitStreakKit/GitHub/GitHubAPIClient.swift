@@ -2,6 +2,7 @@ import Foundation
 
 public enum GitHubAPIError: LocalizedError, Sendable {
     case unauthorized
+    case keychainAccessDenied
     case userNotFound
     case networkError(Error)
     case rateLimited
@@ -13,6 +14,8 @@ public enum GitHubAPIError: LocalizedError, Sendable {
         switch self {
         case .unauthorized:
             return "GitHub Personal Access Token is missing or invalid. Please configure it in Settings."
+        case .keychainAccessDenied:
+            return "GitStreak couldn't read your GitHub token from the Keychain because access was denied. Open Settings and save your token again."
         case .userNotFound:
             return "User not found. Please check the username."
         case .networkError(let error):
@@ -31,6 +34,7 @@ public enum GitHubAPIError: LocalizedError, Sendable {
     public static func == (lhs: GitHubAPIError, rhs: GitHubAPIError) -> Bool {
         switch (lhs, rhs) {
         case (.unauthorized, .unauthorized): return true
+        case (.keychainAccessDenied, .keychainAccessDenied): return true
         case (.userNotFound, .userNotFound): return true
         case (.rateLimited, .rateLimited): return true
         case (.unknown, .unknown): return true
