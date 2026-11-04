@@ -11,6 +11,12 @@ public struct ContributionData: Codable, Sendable, Equatable {
     public let selectedYear: Int?
     public let fetchedAt: Date
 
+    /// Fallback year list when GitHub returns none: the current year and the 4 before it.
+    public static var defaultYears: [Int] {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        return Array((currentYear - 4)...currentYear).reversed()
+    }
+
     public init(
         user: GitHubUser,
         weeks: [ContributionWeek],
@@ -18,7 +24,7 @@ public struct ContributionData: Codable, Sendable, Equatable {
         currentStreak: Int,
         longestStreak: Int,
         activityStats: UserActivityStats = UserActivityStats(),
-        availableYears: [Int] = [2026, 2025, 2024, 2023, 2022],
+        availableYears: [Int] = ContributionData.defaultYears,
         selectedYear: Int? = nil,
         fetchedAt: Date = Date()
     ) {
@@ -28,7 +34,7 @@ public struct ContributionData: Codable, Sendable, Equatable {
         self.currentStreak = currentStreak
         self.longestStreak = longestStreak
         self.activityStats = activityStats
-        self.availableYears = availableYears.isEmpty ? [2026, 2025, 2024, 2023, 2022] : availableYears
+        self.availableYears = availableYears.isEmpty ? Self.defaultYears : availableYears
         self.selectedYear = selectedYear
         self.fetchedAt = fetchedAt
     }
@@ -45,8 +51,7 @@ public struct ContributionData: Codable, Sendable, Equatable {
         self.currentStreak = try container.decode(Int.self, forKey: .currentStreak)
         self.longestStreak = try container.decode(Int.self, forKey: .longestStreak)
         self.activityStats = try container.decodeIfPresent(UserActivityStats.self, forKey: .activityStats) ?? UserActivityStats(commits: self.totalContributions)
-        let defaultYears = Array((2020...Calendar.current.component(.year, from: Date())).reversed())
-        self.availableYears = try container.decodeIfPresent([Int].self, forKey: .availableYears) ?? defaultYears
+        self.availableYears = try container.decodeIfPresent([Int].self, forKey: .availableYears) ?? Self.defaultYears
         self.selectedYear = try container.decodeIfPresent(Int.self, forKey: .selectedYear)
         self.fetchedAt = try container.decodeIfPresent(Date.self, forKey: .fetchedAt) ?? Date()
     }

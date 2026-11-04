@@ -7,8 +7,16 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
-VERSION="${1:-1.1.9}"
-BUILD_NUMBER="${2:-11}"
+# Version and build number come from project.yml (single source of truth).
+# Pass them as arguments only to override: ./scripts/package_release.sh 1.2.0 14
+YML_VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\(.*\)"/\1/p' project.yml | head -1)
+YML_BUILD=$(sed -n 's/^ *CURRENT_PROJECT_VERSION: *\([0-9]*\)/\1/p' project.yml | head -1)
+VERSION="${1:-$YML_VERSION}"
+BUILD_NUMBER="${2:-$YML_BUILD}"
+if [[ -z "$VERSION" || -z "$BUILD_NUMBER" ]]; then
+  echo "Error: could not read MARKETING_VERSION / CURRENT_PROJECT_VERSION from project.yml." >&2
+  exit 1
+fi
 BUILD_DIR="./build"
 RELEASE_DIR="$BUILD_DIR/Build/Products/Release"
 APP_PATH="$RELEASE_DIR/GitStreak.app"

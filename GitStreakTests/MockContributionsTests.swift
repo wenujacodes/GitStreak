@@ -3,6 +3,12 @@ import XCTest
 
 final class MockContributionsTests: XCTestCase {
 
+    func testDefaultYearsFollowCurrentYear() {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        XCTAssertEqual(ContributionData.defaultYears, [currentYear, currentYear - 1, currentYear - 2, currentYear - 3, currentYear - 4])
+        XCTAssertEqual(MockContributions.highActivity.availableYears.first, MockContributions.highActivity.availableYears.max())
+    }
+
     func testEmptyMockData() {
         let empty = MockContributions.empty
         XCTAssertEqual(empty.totalContributions, 0)

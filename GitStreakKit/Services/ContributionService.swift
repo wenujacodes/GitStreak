@@ -56,7 +56,7 @@ public actor ContributionService {
             issuesAssigned: activityStats.issuesAssigned
         )
 
-        let yearsList = contributionYears.isEmpty ? (cached?.availableYears ?? [2026, 2025, 2024, 2023, 2022]) : contributionYears
+        let yearsList = contributionYears.isEmpty ? (cached?.availableYears ?? ContributionData.defaultYears) : contributionYears
 
         let data = ContributionData(
             user: user,

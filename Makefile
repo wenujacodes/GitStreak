@@ -53,7 +53,7 @@ check-widget:
 
 # Package DMG installer and Sparkle ZIP release artifacts
 release:
-	./scripts/package_release.sh 1.0.0
+	./scripts/package_release.sh
 
 dmg: release
 
