@@ -115,6 +115,22 @@ final class GraphQLResponseTests: XCTestCase {
         XCTAssertFalse(query.contains("$username state:open"))
     }
 
+    func testUsernameValidation() {
+        XCTAssertTrue(GitHubGraphQL.isValidUsername("octocat"))
+        XCTAssertTrue(GitHubGraphQL.isValidUsername("wenuja-codes"))
+        XCTAssertTrue(GitHubGraphQL.isValidUsername("A1-b2"))
+
+        XCTAssertFalse(GitHubGraphQL.isValidUsername(""))
+        XCTAssertFalse(GitHubGraphQL.isValidUsername("octocat is:private"))
+        XCTAssertFalse(GitHubGraphQL.isValidUsername("octo\"cat"))
+        XCTAssertFalse(GitHubGraphQL.isValidUsername(String(repeating: "a", count: 40)))
+    }
+
+    func testRequestBodyRejectsInvalidUsername() {
+        XCTAssertThrowsError(try GitHubGraphQL.makeRequestBody(username: "octocat is:private"))
+        XCTAssertNoThrow(try GitHubGraphQL.makeRequestBody(username: "octocat"))
+    }
+
     func testDecodeGraphQLErrorPayload() throws {
         let json = """
         {
