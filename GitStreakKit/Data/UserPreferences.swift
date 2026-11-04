@@ -58,6 +58,16 @@ public final class UserPreferences: @unchecked Sendable {
         if !loadedFromJSON, let themeID = Self.groupDefaults.string(forKey: "selectedThemeID"), !themeID.isEmpty {
             self.model.selectedThemeID = themeID
         }
+        if !loadedFromJSON,
+           let raw = Self.groupDefaults.string(forKey: "prWidgetFilter"),
+           let filter = PRWidgetFilter(rawValue: raw) {
+            self.model.prWidgetFilter = filter
+        }
+        if !loadedFromJSON,
+           let raw = Self.groupDefaults.string(forKey: "issueWidgetFilter"),
+           let filter = IssueWidgetFilter(rawValue: raw) {
+            self.model.issueWidgetFilter = filter
+        }
         if !self.model.hasCompletedOnboarding {
             self.model.hasCompletedOnboarding = Self.groupDefaults.bool(forKey: "hasCompletedOnboarding")
         }

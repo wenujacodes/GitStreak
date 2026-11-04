@@ -1,32 +1,57 @@
 import Foundation
 
+/// The folder shared by the app and the widget: `~/Library/Application Support/com.gitstreak.shared/`.
+///
+/// Both targets are entitled to this exact path (`temporary-exception.files.home-relative-path`),
+/// so the unsandboxed app and the sandboxed widget always resolve the same folder.
+/// We don't use an App Group container: that needs a Team ID, which ad-hoc signed builds
+/// don't have, and macOS 15 blocks the widget from reading it.
 internal enum SharedContainer {
     static var url: URL {
-        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.gitstreak") {
-            let dir = groupURL.appendingPathComponent("com.gitstreak.shared", isDirectory: true)
-            do {
-                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
-                return dir
-            } catch {
-                // Fall back if Group Container is not writable (e.g. in unit test harness)
+        _ = migrateFromGroupContainer
+        return sharedDirectory
+    }
+
+    private static var sharedDirectory: URL {
+        let dir = realHomeDirectory
+            .appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
+        return dir
+    }
+
+    /// The user's real home folder, even inside the widget sandbox (where NSHomeDirectory() points into the container).
+    private static var realHomeDirectory: URL {
+        if let pw = getpwuid(getuid()), let dir = pw.pointee.pw_dir {
+            return URL(fileURLWithPath: String(cString: dir), isDirectory: true)
+        }
+        let homeDir = NSHomeDirectory()
+        if homeDir.contains("/Library/Containers/") {
+            let realHome = homeDir.components(separatedBy: "/Library/Containers/").first ?? homeDir
+            return URL(fileURLWithPath: realHome, isDirectory: true)
+        }
+        return URL(fileURLWithPath: homeDir, isDirectory: true)
+    }
+
+    /// One-time copy of preferences and cache from the old App Group location (used up to v1.1.10),
+    /// so existing users keep their settings. Runs only in the app, never in the widget.
+    /// The old files are left in place.
+    private static let migrateFromGroupContainer: Void = {
+        guard Bundle.main.bundleURL.pathExtension != "appex",
+              let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.gitstreak") else {
+            return
+        }
+        let oldDir = groupURL.appendingPathComponent("com.gitstreak.shared", isDirectory: true)
+        let newDir = sharedDirectory
+        let fm = FileManager.default
+
+        for name in ["user_preferences.json", "contribution_cache.json"] {
+            let oldFile = oldDir.appendingPathComponent(name)
+            let newFile = newDir.appendingPathComponent(name)
+            if fm.fileExists(atPath: oldFile.path), !fm.fileExists(atPath: newFile.path) {
+                try? fm.copyItem(at: oldFile, to: newFile)
             }
         }
-
-        let homeDir = NSHomeDirectory()
-        let realHome: String
-        if homeDir.contains("/Containers/") {
-            let parts = homeDir.components(separatedBy: "/Library/Containers/")
-            realHome = parts.first ?? homeDir
-        } else if let pw = getpwuid(getuid()) {
-            realHome = String(cString: pw.pointee.pw_dir)
-        } else {
-            realHome = homeDir
-        }
-        let fallbackDir = URL(fileURLWithPath: realHome)
-            .appendingPathComponent("Library/Application Support/com.gitstreak.shared", isDirectory: true)
-        try? FileManager.default.createDirectory(at: fallbackDir, withIntermediateDirectories: true, attributes: nil)
-        return fallbackDir
-    }
+    }()
 }
 
 public final class CacheManager: Sendable {

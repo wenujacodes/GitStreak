@@ -3,14 +3,36 @@ import AppKit
 import GitStreakKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var launchedAtLogin = false
+
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // The launch event is only readable at this point.
+        launchedAtLogin = BackgroundController.wasLaunchedAtLogin()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         Task { @MainActor in
             SparkleUpdaterViewModel.shared.checkForUpdatesInBackground()
         }
+
+        let background = BackgroundController.shared
+        background.start()
+        background.setUpLaunchAtLoginIfNeeded()
+        if launchedAtLogin && UserPreferences.shared.hasCompletedOnboarding {
+            background.startHidden()
+        }
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+    /// The user opened GitStreak again while it was running in the background.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        BackgroundController.shared.showApp()
         return true
+    }
+
+    /// Keep running after the window closes so widgets stay fresh,
+    /// unless onboarding isn't finished yet (nothing to refresh).
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return !UserPreferences.shared.hasCompletedOnboarding
     }
 }
 

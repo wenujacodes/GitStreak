@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 import GitStreakKit
 
 enum SettingsTab: Hashable {
@@ -19,6 +20,8 @@ struct SettingsView: View {
     @State private var prWidgetFilter: PRWidgetFilter = UserPreferences.shared.prWidgetFilter
     @State private var issueWidgetFilter: IssueWidgetFilter = UserPreferences.shared.issueWidgetFilter
     @ObservedObject private var updaterViewModel = SparkleUpdaterViewModel.shared
+    @State private var launchAtLoginEnabled = false
+    @State private var launchAtLoginNeedsApproval = false
 
     var body: some View {
         Group {
@@ -38,7 +41,7 @@ struct SettingsView: View {
                             Text("About")
                         }
                 }
-                .frame(width: 540, height: 420)
+                .frame(width: 540, height: 500)
                 .padding()
             } else {
                 Color.clear
@@ -215,9 +218,59 @@ struct SettingsView: View {
                 }
             }
 
+            Divider()
+
+            // Background Section
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Background")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+
+                Text("GitStreak keeps running in the background after you close its window, so your widgets stay up to date.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack {
+                    Toggle("Launch at login", isOn: Binding(
+                        get: { launchAtLoginEnabled },
+                        set: { setLaunchAtLogin($0) }
+                    ))
+                    .toggleStyle(.switch)
+                    .controlSize(.small)
+
+                    Spacer()
+
+                    Button("Quit GitStreak Completely") {
+                        NSApp.terminate(nil)
+                    }
+                    .buttonStyle(ModernSecondaryButtonStyle())
+                }
+
+                if launchAtLoginNeedsApproval {
+                    Button("Allow GitStreak in Login Items settings…") {
+                        SMAppService.openSystemSettingsLoginItems()
+                    }
+                    .buttonStyle(.link)
+                    .font(.caption)
+                }
+            }
+
             Spacer()
         }
         .padding(16)
+        .onAppear(perform: refreshLaunchAtLoginStatus)
+    }
+
+    private func refreshLaunchAtLoginStatus() {
+        let status = BackgroundController.shared.launchAtLoginStatus
+        launchAtLoginEnabled = status == .enabled || status == .requiresApproval
+        launchAtLoginNeedsApproval = status == .requiresApproval
+    }
+
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        try? BackgroundController.shared.setLaunchAtLogin(enabled)
+        refreshLaunchAtLoginStatus()
     }
 
     private var aboutTab: some View {
