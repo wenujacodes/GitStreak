@@ -39,7 +39,7 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 * **6 Theme Color Palettes**:
 
 ### ⚡ Performance & Security
-* **Single GraphQL Call**: Fetches contributions, PRs, and Issues in a single GraphQL query at zero extra rate-limit cost.
+* **Single GraphQL Call**: Fetches contributions, PRs, and Issues in one GraphQL request every 5 minutes, well within GitHub's rate limit.
 * **Smart Local Cache**: Multi-year switching with instant cache-first rendering and a background refresh every 5 minutes.
 * **Runs Quietly in the Background**: After you close the window, GitStreak keeps running (no Dock or menu bar icon) so your widgets stay up to date. It launches at login by default.
 * **100% Serverless & Private**: Your GitHub token is stored encrypted in the macOS Keychain and is only ever sent to GitHub. Widgets never see it.
