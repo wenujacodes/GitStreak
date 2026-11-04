@@ -7,19 +7,22 @@ public enum KeychainService {
     nonisolated(unsafe) private static var inMemoryCache: [String: String] = [:]
     private static let lock = NSLock()
 
-    private static var isRunningInTestEnvironment: Bool {
+    internal static var isRunningInTestEnvironment: Bool {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil
     }
 
-    private static var baseQuery: [String: Any] {
+    /// Uses the login Keychain. The newer data protection Keychain
+    /// (`kSecUseDataProtectionKeychain`) needs a Team ID entitlement, which ad-hoc and
+    /// self-signed builds don't have: it fails with -34018 (errSecMissingEntitlement).
+    private static func query(forKey key: String) -> [String: Any] {
         [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecUseDataProtectionKeychain as String: true
+            kSecAttrAccount as String: key
         ]
     }
 
-    /// Saves or updates a secret string (e.g. GitHub Personal Access Token) in the macOS System Keychain.
+    /// Saves or updates a secret string (e.g. GitHub Personal Access Token) in the macOS login Keychain.
     /// - Parameters:
     ///   - token: The secret token string to store.
     ///   - key: The key account name for the Keychain entry.
@@ -33,75 +36,73 @@ public enum KeychainService {
         }
 
         guard let data = token.data(using: .utf8) else { return }
+        let query = query(forKey: key)
 
-        // Clean up any legacy login.keychain items to prevent OS prompt modals
-        let legacyQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key
-        ]
-        SecItemDelete(legacyQuery as CFDictionary)
-
-        var query = baseQuery
-        query[kSecAttrAccount as String] = key
-        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-
-        let status = SecItemCopyMatching(query as CFDictionary, nil)
-        if status == errSecSuccess {
-            let attributesToUpdate: [String: Any] = [kSecValueData as String: data]
-            let updateStatus = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
-            if updateStatus != errSecSuccess {
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: data] as CFDictionary)
+        if updateStatus == errSecSuccess {
+            return
+        }
+        if updateStatus != errSecItemNotFound {
+            // The existing item is blocked for this build (e.g. access was denied).
+            // Replace it with a fresh item owned by this build.
+            let deleteStatus = SecItemDelete(query as CFDictionary)
+            guard deleteStatus == errSecSuccess || deleteStatus == errSecItemNotFound else {
                 throw KeychainError.saveFailed(updateStatus)
             }
-        } else if status == errSecItemNotFound {
-            var newItem = query
-            newItem[kSecValueData as String] = data
-            let addStatus = SecItemAdd(newItem as CFDictionary, nil)
-            if addStatus != errSecSuccess {
-                throw KeychainError.saveFailed(addStatus)
-            }
-        } else {
-            throw KeychainError.saveFailed(status)
+        }
+
+        var newItem = query
+        newItem[kSecValueData as String] = data
+        newItem[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        newItem[kSecAttrLabel as String] = "GitStreak GitHub Token"
+        let addStatus = SecItemAdd(newItem as CFDictionary, nil)
+        if addStatus != errSecSuccess {
+            throw KeychainError.saveFailed(addStatus)
         }
     }
 
+    /// Result of reading a Keychain item.
+    public enum ReadResult: Equatable, Sendable {
+        case found(String)
+        case notFound
+        /// The item exists but macOS didn't allow access (the user clicked Deny or cancelled).
+        /// Without a Team ID, each new build of the app has to be approved once.
+        case denied
+    }
+
     public static func load(forKey key: String) -> String? {
+        if case .found(let token) = read(forKey: key) {
+            return token
+        }
+        return nil
+    }
+
+    public static func read(forKey key: String) -> ReadResult {
         if isRunningInTestEnvironment {
             lock.lock()
             defer { lock.unlock() }
-            return inMemoryCache[key]
+            return inMemoryCache[key].map { .found($0) } ?? .notFound
         }
 
-        // 1. Load from Data Protection Keychain (No OS prompt modal)
-        var query = baseQuery
-        query[kSecAttrAccount as String] = key
+        var query = query(forKey: key)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
 
-        var dataTypeRef: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-        if status == errSecSuccess, let data = dataTypeRef as? Data, let str = String(data: data, encoding: .utf8), !str.isEmpty {
-            return str
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        switch status {
+        case errSecSuccess:
+            guard let data = result as? Data,
+                  let token = String(data: data, encoding: .utf8),
+                  !token.isEmpty else {
+                return .notFound
+            }
+            return .found(token)
+        case errSecAuthFailed, errSecUserCanceled, errSecInteractionNotAllowed:
+            return .denied
+        default:
+            return .notFound
         }
-
-        // 2. Migration fallback: If an old entry exists in legacy login.keychain, read & migrate to Data Protection Keychain, then purge legacy item
-        let legacyQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        var legacyRef: AnyObject?
-        if SecItemCopyMatching(legacyQuery as CFDictionary, &legacyRef) == errSecSuccess,
-           let data = legacyRef as? Data,
-           let legacyToken = String(data: data, encoding: .utf8), !legacyToken.isEmpty {
-            SecItemDelete(legacyQuery as CFDictionary)
-            try? save(token: legacyToken, forKey: key)
-            return legacyToken
-        }
-
-        return nil
     }
 
     public static func delete(forKey key: String) throws {
@@ -112,16 +113,10 @@ public enum KeychainService {
             return
         }
 
-        var query = baseQuery
-        query[kSecAttrAccount as String] = key
-        SecItemDelete(query as CFDictionary)
-
-        let legacyQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key
-        ]
-        SecItemDelete(legacyQuery as CFDictionary)
+        let status = SecItemDelete(query(forKey: key) as CFDictionary)
+        if status != errSecSuccess && status != errSecItemNotFound {
+            throw KeychainError.deleteFailed(status)
+        }
     }
 }
 

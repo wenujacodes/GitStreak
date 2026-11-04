@@ -31,20 +31,24 @@ make run        # install to /Applications, register widget, launch
 make check-widget
 ```
 - If `xcode-select` still points at the Command Line Tools, prefix commands with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
-- **Careful:** `TokenStorageTests` and `CacheManagerTests` use the real Keychain and shared folder, so running them **deletes the developer's real token and cache**. Until they are isolated, run tests with
-  `-skip-testing:GitStreakTests/TokenStorageTests -skip-testing:GitStreakTests/CacheManagerTests`.
+- **Careful:** `CacheManagerTests` uses the real shared folder, so running it **overwrites and deletes the developer's real cache**. Until it is isolated, run tests with
+  `-skip-testing:GitStreakTests/CacheManagerTests`. (`TokenStorageTests` is safe: tests use an in-memory Keychain and a separate `com.gitstreak.tests` defaults suite.)
 
 ## Data flow
-App fetches GitHub data → `CacheManager` writes `contribution_cache.json` into `SharedContainer.url` → widgets read the cache (and also try to fetch themselves using `TokenStorage.loadToken()`).
-Token storage layers: Keychain → `UserDefaults(suiteName: "group.com.gitstreak")` → legacy file.
+The app fetches GitHub data (in the background every 5 min, `BackgroundController`) → `CacheManager` writes `contribution_cache.json` into `SharedContainer.url` (`~/Library/Application Support/com.gitstreak.shared/`) → the app reloads widget timelines → widgets only read the cache. **The widget never calls GitHub or touches the token.**
+
+## Token storage
+- The token lives in the **login Keychain** only (`KeychainService`, service `com.gitstreak.github`). The data protection Keychain is not an option: without a Team ID it fails with -34018.
+- Without a Team ID, macOS ties Keychain access to each build, so **after every update the user sees one "GitStreak wants to access key…" dialog**. A self-signed certificate does not avoid this (tested). This is expected.
+- If the user clicks Deny, `TokenStorage.keychainAccessDenied` stops further prompts for the session and the dashboard asks them to save the token again (which replaces the blocked item).
+- Plain-text copies from ≤1.1.10 (`group.com.gitstreak` defaults, `.token_auth` file) are migrated into the Keychain and deleted only after the Keychain save succeeds.
 
 ## Known issues to tackle (in order)
-1. **Widgets not working on macOS 15** (reported by users and reproduced on the maintainer's Mac). Cause (confirmed): no App Group entitlement and no Team ID. The unsandboxed app wrote to `~/Library/Group Containers/group.com.gitstreak/`, which macOS 15 blocks for the sandboxed widget, and the widget's `UserDefaults(suiteName:)` is a separate sandboxed copy with no username or token. *In progress, branch `fix/widget-macos15`.* Plan (Option B, no paid Apple account):
-   1. Shared data lives in `~/Library/Application Support/com.gitstreak.shared/` (allowed by both entitlements), with a one-time copy from the old location. **Done.**
-   2. The app keeps running hidden (no Dock or menu bar icon) after its window closes, refreshes every 5 min, and launches at login (on by default). Settings gets a "Quit GitStreak completely" button.
-   3. The widget stops calling GitHub and only reads the shared files.
-2. **Token stored in plaintext** in App Group `UserDefaults` (`TokenStorage.swift`), duplicating the Keychain copy. Don't just delete it: with ad-hoc signing the Keychain item may become unreadable after a Sparkle update (see commit `f0e3302`). Discuss options first.
-3. **Excessive API usage**: all 6 widgets fetch every 5 min (`TimelineProvider.swift`), each with 8 search queries; cache stale after 60 s (`CacheManager.swift`). README claims 15 min.
+Release target: fix everything below, then ship **1.1.11** (not released yet).
+
+1. ~~Widgets not working on macOS 15~~ **Done (PR #26).** Cause: no App Group entitlement and no Team ID, so the app and the sandboxed widget used different folders. Fixed with the shared Application Support folder, hidden background mode + launch at login, and a widget that only reads the cache.
+2. ~~Token stored in plaintext~~ **Done (branch `fix/token-keychain`).** Keychain saves had been failing silently (-34018). See "Token storage". Reported by a user on GitHub; reply once released.
+3. ~~Excessive API usage~~ **Mostly done** with #1: one fetch by the app every 5 min. Remaining: README still says 15 min.
 4. **Username interpolated into GraphQL search strings** (`GitHubGraphQL.swift`); should use variables.
 5. **PAT link requests the `repo` scope** (`SettingsView.swift`); device flow only uses `read:user,user:email`.
 6. Housekeeping:
@@ -55,7 +59,20 @@ Token storage layers: Keychain → `UserDefaults(suiteName: "group.com.gitstreak
    - Main app unsandboxed; ad-hoc signing.
    - No CI.
    - Little test coverage outside streak logic.
-   - `TokenStorageTests` and `CacheManagerTests` touch real user data (see Commands); they should use isolated storage.
+   - `CacheManagerTests` touches the real cache (see Commands); it should use isolated storage.
+   - README: document background mode, launch at login and the one-time Keychain dialog after updates.
+7. Ideas (optional): widget hint when data is stale (e.g. app not running or token denied).
 
 ## Commits
 - Never add Claude as a co-author (no `Co-Authored-By` line).
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- When graphify-out/graph.json exists, run `graphify query "<question>"` before your first grep, search or source-file read for a codebase question, and put this rule in every subagent prompt that explores code. Read raw files only for lines the graph or an earlier read already located. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- A committed graphify-out/graph.json is rewritten whole on every build, so a large diff to it in a pull request is expected. Do not flag it as churn or suggest skipping the graph rebuild or its hooks.

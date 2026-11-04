@@ -25,3 +25,5 @@ scratch/
 # Graphify generated files
 .graphify_*
 graphify-out/
+# Claude Code personal settings
+.claude/settings.local.json
