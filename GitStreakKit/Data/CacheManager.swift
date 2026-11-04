@@ -8,8 +8,19 @@ import Foundation
 /// don't have, and macOS 15 blocks the widget from reading it.
 internal enum SharedContainer {
     static var url: URL {
+        // Tests must never read or overwrite the user's real cache and preferences.
+        if KeychainService.isRunningInTestEnvironment {
+            return testDirectory
+        }
         _ = migrateFromGroupContainer
         return sharedDirectory
+    }
+
+    private static var testDirectory: URL {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitStreakTests-shared", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
+        return dir
     }
 
     private static var sharedDirectory: URL {

@@ -31,8 +31,7 @@ make run        # install to /Applications, register widget, launch
 make check-widget
 ```
 - If `xcode-select` still points at the Command Line Tools, prefix commands with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
-- **Careful:** `CacheManagerTests` uses the real shared folder, so running it **overwrites and deletes the developer's real cache**. Until it is isolated, run tests with
-  `-skip-testing:GitStreakTests/CacheManagerTests`. (`TokenStorageTests` is safe: tests use an in-memory Keychain and a separate `com.gitstreak.tests` defaults suite.)
+- All tests are safe to run on a developer Mac: during tests the Keychain is in-memory, token defaults use a separate `com.gitstreak.tests` suite, and `SharedContainer.url` points to a temporary folder.
 
 ## Data flow
 The app fetches GitHub data (in the background every 5 min, `BackgroundController`) → `CacheManager` writes `contribution_cache.json` into `SharedContainer.url` (`~/Library/Application Support/com.gitstreak.shared/`) → the app reloads widget timelines → widgets only read the cache. **The widget never calls GitHub or touches the token.**
@@ -59,7 +58,6 @@ Release target: fix everything below, then ship **1.1.11** (not released yet).
    - Main app unsandboxed; ad-hoc signing.
    - No CI.
    - Little test coverage outside streak logic.
-   - `CacheManagerTests` touches the real cache (see Commands); it should use isolated storage.
    - README: document background mode, launch at login and the one-time Keychain dialog after updates.
 7. Ideas (optional): widget hint when data is stale (e.g. app not running or token denied).
 
