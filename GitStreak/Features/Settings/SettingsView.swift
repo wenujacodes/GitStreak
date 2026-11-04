@@ -156,7 +156,8 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.link)
 
-                    Text("Opens GitHub with required scopes (repo, read:user) automatically pre-checked.")
+                    Text("Opens GitHub with the needed scopes (repo, read:user) pre-selected. GitHub requires repo to read private and organization activity; GitStreak only reads and never changes anything. Tip: set Expiration to \"No expiration\".")
+                        .fixedSize(horizontal: false, vertical: true)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -375,9 +376,7 @@ struct SettingsView: View {
     }
 
     private func openCreateTokenURL() {
-        if let url = URL(string: "https://github.com/settings/tokens/new?description=GitStreak%20App&scopes=repo,read:user") {
-            NSWorkspace.shared.open(url)
-        }
+        NSWorkspace.shared.open(OAuthService.createTokenURL)
     }
 
     private func savePersonalToken() {

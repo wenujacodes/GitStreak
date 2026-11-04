@@ -50,7 +50,7 @@ Release target: fix everything below, then ship **1.1.11** (not released yet).
 2. ~~Token stored in plaintext~~ **Done (branch `fix/token-keychain`).** Keychain saves had been failing silently (-34018). See "Token storage". Reported by a user on GitHub; reply once released.
 3. ~~Excessive API usage~~ **Mostly done** with #1: one fetch by the app every 5 min. Remaining: README still says 15 min.
 4. **Username interpolated into GraphQL search strings** (`GitHubGraphQL.swift`); should use variables.
-5. **PAT link requests the `repo` scope** (`SettingsView.swift`); device flow only uses `read:user,user:email`.
+5. ~~PAT link requests the `repo` scope~~ **Decided: keep classic `repo,read:user`** (`OAuthService.createTokenURL`, used by Settings and Onboarding). A fine-grained read-only token was tested and misses organization work (68 vs 120 PRs, 835 vs 1365 contributions); GitHub has no read-only token covering private org repos. The UI explains why `repo` is needed and suggests "No expiration". The OAuth device flow in `OAuthService` is currently unused.
 6. Housekeeping:
    - Committed binary `UserPreferences.o` should be removed and added to `.gitignore`.
    - Version numbers disagree across `Makefile`, `package_release.sh` and `project.yml`.

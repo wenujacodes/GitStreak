@@ -69,6 +69,7 @@
 		D3380215A469F2B33B5B3F24 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FCF89DDB0AB2336A939300E /* Assets.xcassets */; };
 		DA0623758389ADA17360767A /* GitStreakWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D029ECC6A2B6177BFCB51 /* GitStreakWidgetBundle.swift */; };
 		DB5DC60C4A95AB99DEFD6DA9 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3432C715C3257BA9E6BFFAD2 /* CacheManager.swift */; };
+		DCB452EC4516B66AF00236AB /* TokenLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5684420C0CF199BD8A2373 /* TokenLinkTests.swift */; };
 		DE0AA80166BA0A770B1B0ED1 /* TodaySmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6E8A405B9D75F6A2DCF8E /* TodaySmallWidgetView.swift */; };
 		DE700827B91041317E8F6C1D /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8907E99F016338007832B11C /* BackgroundController.swift */; };
 		DF166655EF9BECD81F78BEA4 /* ThemeRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA947BEDE6D85670B8A6D83 /* ThemeRegistryTests.swift */; };
@@ -183,6 +184,7 @@
 		660247658AE5FD2C25D4528D /* TodayCommitsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCommitsWidget.swift; sourceTree = "<group>"; };
 		662557879CABF23AE7C51D04 /* Octicons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Octicons.swift; sourceTree = "<group>"; };
 		6873A1FA19662F1729B8EAE2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		6B5684420C0CF199BD8A2373 /* TokenLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenLinkTests.swift; sourceTree = "<group>"; };
 		6D88F5612EC2D2C25EFC3B2E /* GitHubGraphQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubGraphQL.swift; sourceTree = "<group>"; };
 		6E0894261130670C38CB0A9A /* MockContributions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockContributions.swift; sourceTree = "<group>"; };
 		6F3DEC25E72961BE2A37AC85 /* GitStreakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitStreakApp.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				9FC2B3844154C1566A00CB2B /* MockContributionsTests.swift */,
 				BF59F1F372611A5BDA3CEE47 /* StreakCalculatorTests.swift */,
 				EDA947BEDE6D85670B8A6D83 /* ThemeRegistryTests.swift */,
+				6B5684420C0CF199BD8A2373 /* TokenLinkTests.swift */,
 				0B6B61D25347980934205C9C /* TokenStorageTests.swift */,
 				949E985D556D6FDCC7D5EFB6 /* UserActivityStatsTests.swift */,
 			);
@@ -678,6 +681,7 @@
 				AC3921266C4553180614B7A9 /* MockContributionsTests.swift in Sources */,
 				8B5549E78631989288A0C478 /* StreakCalculatorTests.swift in Sources */,
 				DF166655EF9BECD81F78BEA4 /* ThemeRegistryTests.swift in Sources */,
+				DCB452EC4516B66AF00236AB /* TokenLinkTests.swift in Sources */,
 				C02C54CCE1D94F3F9CC65F8D /* TokenStorageTests.swift in Sources */,
 				7CC1C8C2386B113A319143FC /* UserActivityStatsTests.swift in Sources */,
 			);
