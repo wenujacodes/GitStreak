@@ -69,6 +69,16 @@ public final class OAuthService: @unchecked Sendable {
     public static let clientID = "Ov23lidbeTr3oc4Fy82o"
     public static let defaultScopes = "read:user,user:email"
 
+    /// Opens GitHub's form for a classic token with the scopes GitStreak needs pre-selected.
+    ///
+    /// Why classic `repo`: GitHub has no read-only token that covers private repos across
+    /// organizations. A fine-grained read-only token only sees one owner, so org PRs and
+    /// commits go missing (tested: 68 vs 120 PRs, 835 vs 1365 contributions).
+    /// GitStreak only reads data; it never writes.
+    public static let createTokenURL = URL(string:
+        "https://github.com/settings/tokens/new?description=GitStreak%20App&scopes=repo,read:user"
+    )!
+
     private init() {}
 
     /// Initiates GitHub OAuth Device Flow by requesting a user verification code and device code.
