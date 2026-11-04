@@ -6,6 +6,10 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -14,10 +18,6 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
-	<key>CFBundleIconFile</key>
-	<string>AppIcon</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
@@ -26,11 +26,11 @@
 	<true/>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
-	<key>SUScheduledCheckInterval</key>
-	<integer>3600</integer>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/wenujacodes/GitStreak/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934=</string>
+	<string>pJ3lxA7SUz5vTGTunxBAooBiewVrOK+OtPJ7Ovt2EME=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>3600</integer>
 </dict>
 </plist>

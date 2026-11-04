@@ -6,6 +6,31 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.2.0</title>
+            <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.2.0</link>
+            <sparkle:informationalUpdate>
+                <sparkle:belowVersion>13</sparkle:belowVersion>
+            </sparkle:informationalUpdate>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.2.0</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>GitStreak 1.2.0</h2>
+                <p><b>Updating from 1.1.10 or older?</b> Please download this version once from GitHub and drag it into Applications. Automatic updates work again from 1.2.0 on.</p>
+                <ul>
+                    <li><b>Widgets fixed on macOS 15</b>: widgets now show your data on macOS 14, 15 and later.</li>
+                    <li><b>Runs in the background</b>: closing the window keeps GitStreak running (no Dock icon) so widgets refresh every 5 minutes. Launches at login by default; change it in Settings &rarr; Background.</li>
+                    <li><b>Token stored in the Keychain</b>: your GitHub token is now encrypted in the macOS Keychain and moved there automatically. After each update, macOS asks once to allow access; click Always Allow.</li>
+                    <li>Clearer token instructions, safer GitHub queries, and other fixes.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Wed, 04 Nov 2026 07:25:03 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.2.0/GitStreak-v1.2.0.zip"
+                       sparkle:version="13"
+                       sparkle:shortVersionString="1.2.0"
+                       sparkle:edSignature="lQxpi8WzR24KIaX8PpnErZsuH/d2mBxurrl3N/N8tp2+ub6geeEStUi2OfkmfcPNws6qiihzVxDzZ1sUUvzBCw=="
+                       length="10632047"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.1.10</title>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.10</sparkle:releaseNotesLink>
             <sparkle:tags>
@@ -64,27 +89,6 @@
                        sparkle:shortVersionString="1.1.9"
                        sparkle:edSignature="G+plSIoyn3Xw2IDX7bRcIdI97hQltIcvF0cBt+qeSV1uzNzU3BAoiH173RZuac9hRxF/oUswssVubpyghGMsDA=="
                        length="10375794"
-                       type="application/octet-stream" />
-        </item>
-        <item>
-            <title>Version 1.1.8</title>
-            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.1.8</sparkle:releaseNotesLink>
-            <description><![CDATA[
-                <h2>Version 1.1.8 Release Notes</h2>
-                <h3>🎨 UI Polish, Pure White Light Mode & Token Storage Persistence</h3>
-                <ul>
-                    <li><b>Pure White Light Mode</b>: Updated general app background in Light mode to pure white (`#FFFFFF`).</li>
-                    <li><b>Dark Metric Cards Styling</b>: Aligned all metric summary card backgrounds to dark `#1A1A1A` in Dark mode.</li>
-                    <li><b>Token Persistence Self-Healing Sync</b>: Fixed token reset/reversion issue by guaranteeing `TokenStorage` updates all 3 persistence layers atomically.</li>
-                    <li><b>Settings Window Polish</b>: Restored clean section dividers and solid titlebar header background.</li>
-                </ul>
-            ]]></description>
-            <pubDate>Thu, 27 Aug 2026 23:55:00 +0000</pubDate>
-            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.1.8/GitStreak-v1.1.8.zip"
-                       sparkle:version="10"
-                       sparkle:shortVersionString="1.1.8"
-                       sparkle:edSignature="z1z/n9xJRISRiXoOS9GikfFSEPL0An7Eqw+P/qHhPqU9n+H/qEMTYA9X7PqnSR2nT26KbM4n+j6K6G5dDxNQBA=="
-                       length="10375799"
                        type="application/octet-stream" />
         </item>
         <item>

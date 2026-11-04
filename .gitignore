@@ -30,3 +30,6 @@ graphify-out/
 
 # Compiled object files
 *.o
+
+# Python bytecode
+__pycache__/
