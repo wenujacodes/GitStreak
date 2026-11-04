@@ -18,6 +18,14 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
     }
 
     public func feedURLString(for updater: SPUUpdater) -> String? {
+        #if DEBUG
+        // Release testing only: point a Debug build at a local feed with
+        // `defaults write com.gitstreak.GitStreak GitStreakTestFeedURL http://127.0.0.1:8765/appcast.xml`.
+        // Release builds always use the real feed.
+        if let testFeed = UserDefaults.standard.string(forKey: "GitStreakTestFeedURL"), !testFeed.isEmpty {
+            return testFeed
+        }
+        #endif
         return SparkleUpdaterViewModel.defaultFeedURL
     }
 

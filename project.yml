@@ -15,8 +15,8 @@ settings:
     CODE_SIGNING_REQUIRED: "NO"
     CODE_SIGNING_ALLOWED: "YES"
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "1.1.10"  # single source of truth: all targets and scripts/package_release.sh read this
-    CURRENT_PROJECT_VERSION: 12
+    MARKETING_VERSION: "1.2.0"  # single source of truth: all targets and scripts/package_release.sh read this
+    CURRENT_PROJECT_VERSION: 13
 
 packages:
   Sparkle:
@@ -43,7 +43,7 @@ targets:
       path: GitStreak/Info.plist
       properties:
         SUFeedURL: "https://raw.githubusercontent.com/wenujacodes/GitStreak/main/appcast.xml"
-        SUPublicEDKey: "hAVQuxYqxeSviYywMbrjWCd4roJqK4RWfJ3pnpL9934="
+        SUPublicEDKey: "pJ3lxA7SUz5vTGTunxBAooBiewVrOK+OtPJ7Ovt2EME="  # new key since 1.2.0 (old key lost; 1.1.10 users update manually once)
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
         SUScheduledCheckInterval: 3600

@@ -9,7 +9,7 @@ cd "$PROJECT_DIR"
 
 # Version and build number come from project.yml (single source of truth).
 # Pass them as arguments only to override: ./scripts/package_release.sh 1.2.0 14
-YML_VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\(.*\)"/\1/p' project.yml | head -1)
+YML_VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\([^"]*\)".*/\1/p' project.yml | head -1)
 YML_BUILD=$(sed -n 's/^ *CURRENT_PROJECT_VERSION: *\([0-9]*\)/\1/p' project.yml | head -1)
 VERSION="${1:-$YML_VERSION}"
 BUILD_NUMBER="${2:-$YML_BUILD}"

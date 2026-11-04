@@ -4,6 +4,12 @@ import os
 import re
 from datetime import datetime, timezone
 
+# Builds older than this were signed with a Sparkle key that was lost (up to 1.1.10, build 12).
+# They can't verify updates signed with the current key, so every entry tells them to
+# download manually instead (Sparkle "informational update": shows a Download button
+# that opens the release page). Builds >= 13 auto-update normally.
+FIRST_BUILD_WITH_CURRENT_KEY = 13
+
 def update_appcast(appcast_path, version, build_number, zip_url, zip_size, ed_signature, release_notes=""):
     with open(appcast_path, "r", encoding="utf-8") as f:
         content = f.read()
@@ -16,6 +22,10 @@ def update_appcast(appcast_path, version, build_number, zip_url, zip_size, ed_si
 
     item_xml = f"""        <item>
             <title>Version {version}</title>
+            <link>https://github.com/wenujacodes/GitStreak/releases/tag/v{version}</link>
+            <sparkle:informationalUpdate>
+                <sparkle:belowVersion>{FIRST_BUILD_WITH_CURRENT_KEY}</sparkle:belowVersion>
+            </sparkle:informationalUpdate>
             <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v{version}</sparkle:releaseNotesLink>
             <description><![CDATA[
                 {release_notes.strip()}
@@ -30,8 +40,7 @@ def update_appcast(appcast_path, version, build_number, zip_url, zip_size, ed_si
         </item>"""
 
     # Check if this version item is already in appcast.xml
-    version_pattern = rf'<sparkle:shortVersionString>{re.escape(version)}</sparkle:shortVersionString>'
-    if version_pattern in content:
+    if re.search(rf'sparkle:shortVersionString="{re.escape(version)}"', content):
         print(f"Version {version} already exists in {appcast_path}. Skipping duplication.")
         return
 
