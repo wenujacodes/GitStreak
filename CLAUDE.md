@@ -49,7 +49,7 @@ Release target: fix everything below, then ship **1.1.11** (not released yet).
 1. ~~Widgets not working on macOS 15~~ **Done (PR #26).** Cause: no App Group entitlement and no Team ID, so the app and the sandboxed widget used different folders. Fixed with the shared Application Support folder, hidden background mode + launch at login, and a widget that only reads the cache.
 2. ~~Token stored in plaintext~~ **Done (branch `fix/token-keychain`).** Keychain saves had been failing silently (-34018). See "Token storage". Reported by a user on GitHub; reply once released.
 3. ~~Excessive API usage~~ **Mostly done** with #1: one fetch by the app every 5 min. Remaining: README still says 15 min.
-4. **Username interpolated into GraphQL search strings** (`GitHubGraphQL.swift`); should use variables.
+4. ~~Username interpolated into GraphQL search strings~~ **Done:** low risk (the username comes from GitHub itself), so instead of a rewrite, `GitHubGraphQL.isValidUsername` rejects anything but letters, numbers and hyphens before a request is built.
 5. ~~PAT link requests the `repo` scope~~ **Decided: keep classic `repo,read:user`** (`OAuthService.createTokenURL`, used by Settings and Onboarding). A fine-grained read-only token was tested and misses organization work (68 vs 120 PRs, 835 vs 1365 contributions); GitHub has no read-only token covering private org repos. The UI explains why `repo` is needed and suggests "No expiration". The OAuth device flow in `OAuthService` is currently unused.
 6. Housekeeping:
    - Committed binary `UserPreferences.o` should be removed and added to `.gitignore`.

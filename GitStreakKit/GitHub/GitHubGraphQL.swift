@@ -42,7 +42,18 @@ public struct GitHubGraphQL {
         """
     }
 
+    /// GitHub logins only contain letters, numbers and hyphens (max 39 characters).
+    /// The username is placed inside search strings, so anything else (spaces, quotes,
+    /// extra search words) is rejected rather than sent.
+    public static func isValidUsername(_ username: String) -> Bool {
+        username.range(of: "^[A-Za-z0-9-]{1,39}$", options: .regularExpression) != nil
+    }
+
     public static func makeRequestBody(username: String, year: Int? = nil) throws -> Data {
+        guard isValidUsername(username) else {
+            throw GitHubAPIError.userNotFound
+        }
+
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         formatter.timeZone = TimeZone(identifier: "UTC")
