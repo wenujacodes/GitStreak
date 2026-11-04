@@ -2,14 +2,6 @@ import WidgetKit
 import SwiftUI
 import GitStreakKit
 
-private final class TimelineCompletionBox: @unchecked Sendable {
-    let completion: (Timeline<GitStreakEntry>) -> Void
-
-    init(_ completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
-        self.completion = completion
-    }
-}
-
 struct GitStreakTimelineProvider: TimelineProvider {
     typealias Entry = GitStreakEntry
 
@@ -26,36 +18,21 @@ struct GitStreakTimelineProvider: TimelineProvider {
         }
     }
 
+    /// The widget never calls GitHub itself. The app fetches in the background and writes
+    /// the shared cache, then reloads the widgets; here we only read that cache.
     func getTimeline(in context: Context, completion: @escaping (Timeline<GitStreakEntry>) -> Void) {
-        let completionBox = TimelineCompletionBox(completion)
-        Task { @MainActor in
-            let prefs = UserPreferences.shared
-            prefs.reloadFromDisk()
-            let username = prefs.username
-            let token = TokenStorage.loadToken()
+        let entry = createEntry()
 
-            if let username = username, !username.isEmpty, let token = token, !token.isEmpty {
-                let service = ContributionService()
-                do {
-                    _ = try await service.fetchContributions(username: username, token: token)
-                } catch {
-                    // Fall back gracefully to cached data if offline or rate-limited
-                }
-            }
+        let now = Date()
+        let fiveMinutesLater = Calendar.current.date(byAdding: .minute, value: 5, to: now) ?? now.addingTimeInterval(300)
+        let nextMidnight = Calendar.current.nextDate(
+            after: now,
+            matching: DateComponents(hour: 0, minute: 0, second: 1),
+            matchingPolicy: .nextTime
+        ) ?? fiveMinutesLater
 
-            let entry = createEntry()
-
-            let now = Date()
-            let fiveMinutesLater = Calendar.current.date(byAdding: .minute, value: 5, to: now) ?? now.addingTimeInterval(300)
-            let nextMidnight = Calendar.current.nextDate(
-                after: now,
-                matching: DateComponents(hour: 0, minute: 0, second: 1),
-                matchingPolicy: .nextTime
-            ) ?? fiveMinutesLater
-
-            let nextUpdate = min(fiveMinutesLater, nextMidnight)
-            completionBox.completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
-        }
+        let nextUpdate = min(fiveMinutesLater, nextMidnight)
+        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 
     private func createEntry() -> GitStreakEntry {
