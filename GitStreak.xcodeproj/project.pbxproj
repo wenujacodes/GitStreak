@@ -70,6 +70,7 @@
 		DA0623758389ADA17360767A /* GitStreakWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D029ECC6A2B6177BFCB51 /* GitStreakWidgetBundle.swift */; };
 		DB5DC60C4A95AB99DEFD6DA9 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3432C715C3257BA9E6BFFAD2 /* CacheManager.swift */; };
 		DE0AA80166BA0A770B1B0ED1 /* TodaySmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6E8A405B9D75F6A2DCF8E /* TodaySmallWidgetView.swift */; };
+		DE700827B91041317E8F6C1D /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8907E99F016338007832B11C /* BackgroundController.swift */; };
 		DF166655EF9BECD81F78BEA4 /* ThemeRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA947BEDE6D85670B8A6D83 /* ThemeRegistryTests.swift */; };
 		DFBE3F2003068CCFE877F010 /* GitStreakWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27ECD56B6A894FFAD3518DD4 /* GitStreakWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E07F9C08F26D308C59CAF512 /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8CCED57495023556366765 /* Spacing.swift */; };
@@ -192,6 +193,7 @@
 		85DCF7D906251D390FEA0D6D /* GitStreakComboWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitStreakComboWidget.swift; sourceTree = "<group>"; };
 		864B7B4E2449EFF15D33EEA2 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		87DF3CBA28DD26C99F95292C /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		8907E99F016338007832B11C /* BackgroundController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundController.swift; sourceTree = "<group>"; };
 		895253AC45BD069C98F9893B /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
 		8C8C09243F59CA6BA15CAA8C /* WidgetEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntry.swift; sourceTree = "<group>"; };
 		949C87DC791AFF94124E6BC4 /* ActivityRadarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRadarChartView.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 		D293C6B94B93245769943AD3 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				8907E99F016338007832B11C /* BackgroundController.swift */,
 				6F3DEC25E72961BE2A37AC85 /* GitStreakApp.swift */,
 			);
 			path = App;
@@ -655,6 +658,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE700827B91041317E8F6C1D /* BackgroundController.swift in Sources */,
 				9128CFFEA33DA19F6B240C2D /* DashboardView.swift in Sources */,
 				995506F657BC0203AEED647D /* GitStreakApp.swift in Sources */,
 				5D6FC2BB6CAD6F754A362C93 /* OnboardingView.swift in Sources */,
