@@ -40,8 +40,9 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ### ⚡ Performance & Security
 * **Single GraphQL Call**: Fetches contributions, PRs, and Issues in a single GraphQL query at zero extra rate-limit cost.
-* **Smart Local Cache**: Multi-year switching with instant cache-first rendering and 15-minute background refresh.
-* **100% Serverless & Private**: Credentials stored in macOS Keychain with triple-layer self-healing persistence across app updates.
+* **Smart Local Cache**: Multi-year switching with instant cache-first rendering and a background refresh every 5 minutes.
+* **Runs Quietly in the Background**: After you close the window, GitStreak keeps running (no Dock or menu bar icon) so your widgets stay up to date. It launches at login by default.
+* **100% Serverless & Private**: Your GitHub token is stored encrypted in the macOS Keychain and is only ever sent to GitHub. Widgets never see it.
 
 ---
 
@@ -92,6 +93,17 @@ make run
 2. Click **Edit Widgets...**
 3. Search for **GitStreak** in the widget gallery.
 4. Drag your preferred widget size (**Small**, **Medium**, **Large**, **PRs**, or **Issues**) onto your desktop!
+
+Widgets update while GitStreak runs in the background. To stop it, open **Settings → Background** and click **Quit GitStreak Completely**, or turn off **Launch at login**.
+
+---
+
+## 🔑 GitHub Token
+
+GitStreak needs a **classic Personal Access Token** with the `repo` and `read:user` scopes. The **Generate Token on GitHub** button in the app opens GitHub with both already selected. Set **Expiration** to *No expiration* if you don't want to renew it.
+
+* **Why `repo`?** GitHub has no read-only token that can see private and organization activity. GitStreak only **reads** your data and never changes anything.
+* **Keychain prompt after updates:** after each update, macOS asks once: *"GitStreak wants to access key 'GitStreak GitHub Token' in your keychain."* Enter your Mac password and click **Always Allow**. This happens because GitStreak isn't signed with a paid Apple developer account. If you click **Deny**, open Settings and save your token again.
 
 ---
 
