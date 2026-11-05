@@ -36,7 +36,7 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ### Customization & Filtering
 * **Widget Metrics Filter**: Pick between PR categories (*Created*, *Assigned*, *Mentioned*, *Review Requests*) and Issue categories (*All Open*, *Assigned to Me*).
-* **6 Theme Color Palettes**:
+* **8 Theme Color Palettes**: GitHub, Ocean, Sunset, Forest, Lavender, Rose, Amber and Teal.
 
 ### Performance & Security
 * **Single GraphQL Call**: Fetches contributions, PRs, and Issues in one GraphQL request every 5 minutes, well within GitHub's rate limit.
