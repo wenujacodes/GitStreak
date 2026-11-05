@@ -23,11 +23,20 @@ final class ThemeRegistryTests: XCTestCase {
 
     func testAllThemesAvailableFreely() {
         let all = ThemeRegistry.allThemes
-        XCTAssertEqual(all.count, 5)
-        XCTAssertEqual(ThemeRegistry.freeThemes.count, 5)
+        XCTAssertEqual(all.count, 8)
+        XCTAssertEqual(ThemeRegistry.freeThemes.count, 8)
         XCTAssertFalse(all.contains { $0.id == "monochrome" })
-        XCTAssertTrue(all.contains { $0.id == "nord" })
+        XCTAssertFalse(all.contains { $0.id == "nord" })
         XCTAssertTrue(all.contains { $0.id == "forest" })
+        for id in ["lavender", "rose", "amber", "teal"] {
+            XCTAssertTrue(all.contains { $0.id == id }, "missing theme \(id)")
+        }
+        XCTAssertEqual(Set(all.map(\.id)).count, all.count, "theme ids must be unique")
+    }
+
+    func testRemovedNordThemeFallsBackToDefault() {
+        // Users who had picked Nord get the default theme instead of a crash or blank grid.
+        XCTAssertEqual(ThemeRegistry.theme(for: "nord").id, ThemeRegistry.defaultTheme.id)
     }
 
     func testThemeColorsAllLevels() {

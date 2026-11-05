@@ -122,12 +122,28 @@ public enum ThemeRegistry {
         id: "forest", name: "Forest", description: "Deep greens.", isPro: false,
         noneHex: "#151B23", lowHex: "#99d18b", mediumHex: "#5bb543", highHex: "#358422", veryHighHex: "#1d5212"
     )
-    public static let nord = ThemeColors(
-        id: "nord", name: "Nord", description: "Arctic, north-bluish color palette.", isPro: false,
-        noneHex: "#151B23", lowHex: "#88c0d0", mediumHex: "#5e81ac", highHex: "#4c6f94", veryHighHex: "#2e3440"
+    public static let lavender = ThemeColors(
+        id: "lavender", name: "Lavender", description: "Soft lilac to deep violet.", isPro: false,
+        noneHex: "#151B23", lowHex: "#e9d5ff", mediumHex: "#c084fc", highHex: "#9333ea", veryHighHex: "#581c87",
+        darkLowHex: "#4c1d95", darkMediumHex: "#6d28d9", darkHighHex: "#a855f7", darkVeryHighHex: "#d8b4fe"
+    )
+    public static let rose = ThemeColors(
+        id: "rose", name: "Rose", description: "Blush pink to deep magenta.", isPro: false,
+        noneHex: "#151B23", lowHex: "#fbcfe8", mediumHex: "#f472b6", highHex: "#db2777", veryHighHex: "#9d174d",
+        darkLowHex: "#831843", darkMediumHex: "#be185d", darkHighHex: "#ec4899", darkVeryHighHex: "#f9a8d4"
+    )
+    public static let amber = ThemeColors(
+        id: "amber", name: "Amber", description: "Pale yellow to burnt gold.", isPro: false,
+        noneHex: "#151B23", lowHex: "#fde68a", mediumHex: "#fbbf24", highHex: "#d97706", veryHighHex: "#92400e",
+        darkLowHex: "#78350f", darkMediumHex: "#b45309", darkHighHex: "#f59e0b", darkVeryHighHex: "#fde68a"
+    )
+    public static let teal = ThemeColors(
+        id: "teal", name: "Teal", description: "Mint to deep teal.", isPro: false,
+        noneHex: "#151B23", lowHex: "#99f6e4", mediumHex: "#2dd4bf", highHex: "#0d9488", veryHighHex: "#115e59",
+        darkLowHex: "#134e4a", darkMediumHex: "#0f766e", darkHighHex: "#14b8a6", darkVeryHighHex: "#5eead4"
     )
 
-    public static let allThemes: [ThemeColors] = [github, ocean, sunset, forest, nord]
+    public static let allThemes: [ThemeColors] = [github, ocean, sunset, forest, lavender, rose, amber, teal]
     public static let freeThemes: [ThemeColors] = allThemes
 
     public static func theme(for id: String) -> ThemeColors {
