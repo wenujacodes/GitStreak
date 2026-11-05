@@ -30,16 +30,17 @@ public struct TodaySmallWidgetView: View {
 
                     if family == .systemMedium {
                         HStack(spacing: 16) {
-                            // LEFT SIDE: 10-column week contribution graph (no icons)
+                            // LEFT SIDE: week contribution graph, same cell size and spacing
+                            // as the GitStreak Matrix medium widget (MediumWidgetView)
                             VStack {
                                 Spacer(minLength: 0)
                                 ContributionGridView(
                                     weeks: data.weeks,
                                     theme: entry.theme,
-                                    maxWeeks: 10,
-                                    cellSize: 13.0,
-                                    columnSpacing: 3.5,
-                                    rowSpacing: 3.0,
+                                    maxWeeks: 8,
+                                    cellSize: 15.5,
+                                    columnSpacing: 4.25,
+                                    rowSpacing: 3.9,
                                     cornerRadius: 2.0,
                                     showTooltips: false,
                                     isWidget: true
@@ -47,7 +48,7 @@ public struct TodaySmallWidgetView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                                 Spacer(minLength: 0)
                             }
-                            .frame(maxWidth: .infinity, alignment: .center)
+                            .fixedSize(horizontal: true, vertical: false)
 
                             Divider()
                                 .opacity(0.3)
@@ -90,7 +91,8 @@ public struct TodaySmallWidgetView: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding(14)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
                     } else {
                         VStack(alignment: .leading, spacing: 0) {
                             GitCommitIcon(size: 22, color: .primary)
