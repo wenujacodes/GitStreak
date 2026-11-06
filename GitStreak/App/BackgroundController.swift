@@ -58,7 +58,9 @@ final class BackgroundController {
         let prefs = UserPreferences.shared
         guard prefs.hasCompletedOnboarding, let username = prefs.username, !username.isEmpty else { return }
         // Errors (offline, rate limit) are fine: widgets keep showing the last cached data.
-        _ = try? await SharedDataStore.shared.refreshData(force: false)
+        // Notifications only use fresh data, so a failed refresh never causes a wrong reminder.
+        guard let data = try? await SharedDataStore.shared.refreshData(force: false) else { return }
+        await StreakNotifier.shared.process(data)
     }
 
     // MARK: - Window and Dock icon

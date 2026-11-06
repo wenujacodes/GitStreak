@@ -4,6 +4,7 @@ import GitStreakKit
 
 enum SettingsTab: Hashable {
     case general
+    case notifications
     case about
 }
 
@@ -32,6 +33,13 @@ struct SettingsView: View {
                         .tabItem {
                             Image(systemName: "gearshape")
                             Text("General")
+                        }
+
+                    NotificationSettingsView()
+                        .tag(SettingsTab.notifications)
+                        .tabItem {
+                            Image(systemName: "bell.badge")
+                            Text("Notifications")
                         }
 
                     aboutTab
@@ -413,6 +421,7 @@ struct SettingsView: View {
 
     private func signOut() {
         try? SharedDataStore.shared.clearAllData()
+        StreakNotifier.resetState()
         username = ""
         avatarURL = nil
         patInput = ""
@@ -421,6 +430,7 @@ struct SettingsView: View {
 
     private func clearData() {
         try? SharedDataStore.shared.clearAllData()
+        StreakNotifier.resetState()
         username = ""
         avatarURL = nil
         patInput = ""

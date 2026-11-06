@@ -11,6 +11,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        StreakNotifier.shared.setUp()
+        if UserPreferences.shared.hasCompletedOnboarding && StreakNotificationPreferences.load().enabled {
+            Task { await StreakNotifier.shared.requestAuthorization() }
+        }
+
         Task { @MainActor in
             SparkleUpdaterViewModel.shared.checkForUpdatesInBackground()
         }
@@ -91,6 +96,9 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.45)) {
                         UserPreferences.shared.hasCompletedOnboarding = true
                         hasCompletedOnboarding = true
+                    }
+                    if StreakNotificationPreferences.load().enabled {
+                        Task { await StreakNotifier.shared.requestAuthorization() }
                     }
                 })
                 .transition(.opacity.combined(with: .scale(scale: 1.02)))
