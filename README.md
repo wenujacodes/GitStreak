@@ -34,6 +34,12 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 * **Pull Requests Widget**: Real-time tracker for PRs created, assigned, mentioned, or review requested.
 * **Issues Widget**: Live metrics for open and assigned GitHub issues with custom filters.
 
+### Streak Notifications
+* **Streak at Risk**: A reminder at 6 PM (adjustable) if you haven't contributed yet today, with a "Remind Me in 1 Hour" button, plus a last call at 11 PM.
+* **Celebrations**: Streak extended, new longest streak, and milestones (7, 30, 50, 100, 365 days and more).
+* **Streak Lost & Weekly Recap**: A gentle note the morning after a streak ends, and a Sunday-evening summary of your week.
+* Turn each one on or off in **Settings → Notifications**. Only contributions pushed to GitHub count, and GitHub can take a few minutes to show them.
+
 ### Customization & Filtering
 * **Widget Metrics Filter**: Pick between PR categories (*Created*, *Assigned*, *Mentioned*, *Review Requests*) and Issue categories (*All Open*, *Assigned to Me*).
 * **8 Theme Color Palettes**: GitHub, Ocean, Sunset, Forest, Lavender, Rose, Amber and Teal.
