@@ -36,6 +36,10 @@ final class StreakNotifier: NSObject, UNUserNotificationCenterDelegate, @uncheck
     // MARK: - After each refresh
 
     func process(_ data: ContributionData) async {
+        // While notifications are blocked in System Settings, leave the saved state alone,
+        // so nothing gets marked as sent and today's reminders still arrive once allowed.
+        guard await isAllowed() else { return }
+
         let settings = StreakNotificationPreferences.load()
         let plan: StreakNotificationPlan = Self.lock.withLock {
             let plan = StreakNotificationPlanner.plan(days: data.allDays, previous: Self.loadState(), settings: settings)
@@ -52,19 +56,9 @@ final class StreakNotifier: NSObject, UNUserNotificationCenterDelegate, @uncheck
             center.removePendingNotificationRequests(withIdentifiers: [StreakNotificationKind.streakLost.identifier])
         }
 
-        guard !plan.notifications.isEmpty, await isAllowed() else { return }
         for note in plan.notifications {
             await send(note)
         }
-    }
-
-    func sendTest() async {
-        guard await requestAuthorization() else { return }
-        await send(StreakNotification(
-            kind: .atRisk,
-            title: "🔥 Your 13-day streak is at risk",
-            body: "This is a test. Real reminders look like this.",
-            deliverAt: nil))
     }
 
     /// Forget what was sent, e.g. after signing out, so the next account starts fresh.
