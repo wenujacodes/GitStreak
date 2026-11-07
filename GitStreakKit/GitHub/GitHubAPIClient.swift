@@ -50,6 +50,40 @@ public actor GitHubAPIClient {
     public init() {}
 
     public func fetchContributions(username: String, token: String, year: Int? = nil) async throws -> (GitHubUser, [ContributionWeek], Int, UserActivityStats, [Int]) {
+        let body = try GitHubGraphQL.makeRequestBody(username: username, year: year)
+        let data = try await send(body: body, token: token)
+
+        let graphQLResponse: GraphQLResponse
+        do {
+            graphQLResponse = try JSONDecoder().decode(GraphQLResponse.self, from: data)
+        } catch {
+            throw GitHubAPIError.decodingError(error)
+        }
+        return try graphQLResponse.toDomainModel()
+    }
+
+    /// Contribution days for one calendar year only (no profile or PR/issue counts).
+    /// Used once to read older years, for streaks and records longer than the 12-month window.
+    public func fetchCalendarDays(username: String, token: String, year: Int) async throws -> [ContributionDay] {
+        let body = try GitHubGraphQL.makeCalendarRequestBody(username: username, year: year)
+        let data = try await send(body: body, token: token)
+
+        let response: CalendarResponse
+        do {
+            response = try JSONDecoder().decode(CalendarResponse.self, from: data)
+        } catch {
+            throw GitHubAPIError.decodingError(error)
+        }
+        if let message = response.errors?.first?.message {
+            throw GitHubAPIError.serverError(message)
+        }
+        guard let user = response.data?.user else {
+            throw GitHubAPIError.userNotFound
+        }
+        return user.contributionsCollection.contributionCalendar.weeks.flatMap(\.contributionDays)
+    }
+
+    private func send(body: Data, token: String) async throws -> Data {
         let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedToken.isEmpty else {
             throw GitHubAPIError.unauthorized
@@ -65,8 +99,7 @@ public actor GitHubAPIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("GitStreak", forHTTPHeaderField: "User-Agent")
         request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
-
-        request.httpBody = try GitHubGraphQL.makeRequestBody(username: username, year: year)
+        request.httpBody = body
 
         let data: Data
         let response: URLResponse
@@ -82,7 +115,7 @@ public actor GitHubAPIClient {
 
         switch httpResponse.statusCode {
         case 200:
-            break
+            return data
         case 401:
             throw GitHubAPIError.unauthorized
         case 403:
@@ -102,16 +135,6 @@ public actor GitHubAPIClient {
             let desc = message.isEmpty ? "HTTP Status \(httpResponse.statusCode)" : message
             throw GitHubAPIError.serverError(desc)
         }
-
-        let decoder = JSONDecoder()
-        let graphQLResponse: GraphQLResponse
-        do {
-            graphQLResponse = try decoder.decode(GraphQLResponse.self, from: data)
-        } catch {
-            throw GitHubAPIError.decodingError(error)
-        }
-
-        return try graphQLResponse.toDomainModel()
     }
 
     private func parseErrorMessage(from data: Data) -> String {
@@ -121,4 +144,20 @@ public actor GitHubAPIClient {
         }
         return ""
     }
+}
+
+/// Response of the calendar-only query.
+private struct CalendarResponse: Decodable {
+    struct Payload: Decodable {
+        struct User: Decodable {
+            struct Collection: Decodable {
+                let contributionCalendar: ContributionCalendar
+            }
+            let contributionsCollection: Collection
+        }
+        let user: User?
+    }
+    struct APIError: Decodable { let message: String }
+    let data: Payload?
+    let errors: [APIError]?
 }

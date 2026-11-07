@@ -28,6 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        StreakNotifier.shared.removeScheduledReminders()
+    }
+
     /// The user opened GitStreak again while it was running in the background.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         BackgroundController.shared.showApp()

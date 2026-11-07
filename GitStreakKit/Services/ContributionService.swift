@@ -35,8 +35,13 @@ public actor ContributionService {
         let cached = cacheManager.load()
         let calculatedTotal = allDays.reduce(0) { $0 + $1.contributionCount }
         let finalTotal = max(totalContributions, calculatedTotal)
-        let currentStreakCount = StreakCalculator.currentStreak(days: allDays)
-        let longestStreakCount = StreakCalculator.longestStreak(days: allDays)
+        var currentStreakCount = StreakCalculator.currentStreak(days: allDays)
+        var longestStreakCount = StreakCalculator.longestStreak(days: allDays)
+        if year == nil {
+            // The default view: include older years so long streaks and records are complete.
+            (currentStreakCount, longestStreakCount) = await resolveStreaks(
+                username: user.username, token: token, windowDays: allDays, contributionYears: contributionYears)
+        }
 
         let accurateCommits = max(activityStats.commits, finalTotal - (activityStats.issues + activityStats.pullRequests + activityStats.reviews))
         let accurateStats = UserActivityStats(
@@ -74,6 +79,54 @@ public actor ContributionService {
             try? cacheManager.save(data)
         }
         return data
+    }
+
+    /// How long to wait before trying to read older years again after a failure.
+    private static let backfillRetryInterval: TimeInterval = 6 * 60 * 60
+
+    /// Current and longest streak including years before the 12-month window.
+    /// Older years are fetched once (and again only if the history can't be continued);
+    /// any failure falls back to the window's own numbers.
+    private func resolveStreaks(username: String, token: String, windowDays: [ContributionDay], contributionYears: [Int]) async -> (Int, Int) {
+        let today = StreakCalculator.todayDateString()
+        var history = cacheManager.loadHistory()
+        if history?.username.lowercased() != username.lowercased() {
+            history = nil
+        }
+
+        let base = history ?? StreakHistory(username: username)
+        var resolution = base.resolve(windowDays: windowDays, today: today)
+        var saved = resolution.history
+
+        let needsOlderYears = !base.includesOlderYears || resolution.needsBackfill
+        let mayRetry = base.lastBackfillAttempt.map { Date().timeIntervalSince($0) > Self.backfillRetryInterval } ?? true
+
+        if needsOlderYears && mayRetry {
+            if let olderDays = try? await fetchOlderDays(username: username, token: token, windowDays: windowDays, contributionYears: contributionYears) {
+                let fresh = StreakHistory.backfilled(username: username, olderDays: olderDays, windowDays: windowDays, attemptedAt: Date())
+                // Keep a best streak seen earlier even if GitHub no longer reports it the same way.
+                var merged = fresh
+                merged.allTimeLongest = max(fresh.allTimeLongest, history?.allTimeLongest ?? 0)
+                resolution = merged.resolve(windowDays: windowDays, today: today)
+                saved = resolution.history
+            } else {
+                saved.lastBackfillAttempt = Date()
+            }
+        }
+
+        try? cacheManager.saveHistory(saved)
+        return (resolution.currentStreak, resolution.longestStreak)
+    }
+
+    /// Contribution days of every year that starts before the window, newest year first.
+    private func fetchOlderDays(username: String, token: String, windowDays: [ContributionDay], contributionYears: [Int]) async throws -> [ContributionDay] {
+        guard let windowStart = windowDays.map(\.date).min() else { return [] }
+        let years = contributionYears.filter { String(format: "%04d-01-01", $0) < windowStart }.sorted(by: >)
+        var days: [ContributionDay] = []
+        for year in years {
+            days += try await apiClient.fetchCalendarDays(username: username, token: token, year: year)
+        }
+        return days
     }
 
     /// Ensures that the weeks array includes all days up to today's date in local time, adding empty cells for uncommitted days.
@@ -144,12 +197,21 @@ public actor ContributionService {
             let updatedWeeks = Self.ensureDaysUpToToday(weeks: cached.weeks)
             if updatedWeeks != cached.weeks {
                 let allDays = updatedWeeks.flatMap { $0.contributionDays }
+                var current = StreakCalculator.currentStreak(days: allDays)
+                var longest = StreakCalculator.longestStreak(days: allDays)
+                if cached.selectedYear == nil,
+                   let history = cacheManager.loadHistory(),
+                   history.username.lowercased() == cached.user.username.lowercased() {
+                    let resolution = history.resolve(windowDays: allDays, today: StreakCalculator.todayDateString())
+                    current = resolution.currentStreak
+                    longest = resolution.longestStreak
+                }
                 return ContributionData(
                     user: cached.user,
                     weeks: updatedWeeks,
                     totalContributions: cached.totalContributions,
-                    currentStreak: StreakCalculator.currentStreak(days: allDays),
-                    longestStreak: StreakCalculator.longestStreak(days: allDays),
+                    currentStreak: current,
+                    longestStreak: longest,
                     activityStats: cached.activityStats,
                     availableYears: cached.availableYears,
                     selectedYear: cached.selectedYear,
