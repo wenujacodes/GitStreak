@@ -56,8 +56,8 @@ A native macOS application & WidgetKit engine bringing your GitHub contribution 
 
 ### Option 1: Direct Download
 
-1. Download the latest release disk image: [**GitStreak-v1.3.0.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.3.0.dmg)
-2. Open `GitStreak-v1.3.0.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
+1. Download the latest release disk image: [**GitStreak-v1.4.0.dmg**](https://github.com/wenujacodes/GitStreak/releases/latest/download/GitStreak-v1.4.0.dmg)
+2. Open `GitStreak-v1.4.0.dmg` and **drag `GitStreak.app` into the `Applications` folder shortcut** inside the installer window.
 3. Launch **GitStreak** from your `/Applications` folder!
 
 > [!IMPORTANT]
