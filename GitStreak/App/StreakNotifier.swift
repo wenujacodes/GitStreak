@@ -42,10 +42,19 @@ final class StreakNotifier: NSObject, UNUserNotificationCenterDelegate, @uncheck
 
         let settings = StreakNotificationPreferences.load()
         let plan: StreakNotificationPlan = Self.lock.withLock {
-            let plan = StreakNotificationPlanner.plan(days: data.allDays, previous: Self.loadState(), settings: settings)
+            let plan = StreakNotificationPlanner.plan(
+                days: data.allDays,
+                currentStreak: data.currentStreak,
+                longestStreak: data.longestStreak,
+                previous: Self.loadState(),
+                settings: settings)
             Self.saveState(plan.state)
             return plan
         }
+
+        // Scheduled reminders are re-added below while they still apply, so drop the old ones first
+        // (their text or time may have changed, or they may no longer be wanted).
+        center.removePendingNotificationRequests(withIdentifiers: Self.scheduledReminderIDs)
 
         if plan.contributedToday {
             let reminders = [StreakNotificationKind.atRisk.identifier, StreakNotificationKind.lastCall.identifier, Self.snoozeIdentifier]
@@ -59,6 +68,14 @@ final class StreakNotifier: NSObject, UNUserNotificationCenterDelegate, @uncheck
         for note in plan.notifications {
             await send(note)
         }
+    }
+
+    private static let scheduledReminderIDs = [StreakNotificationKind.atRisk.identifier, StreakNotificationKind.lastCall.identifier]
+
+    /// Called when GitStreak quits: without the app running nobody can cancel a reminder
+    /// after you contribute, so don't leave any behind.
+    func removeScheduledReminders() {
+        center.removePendingNotificationRequests(withIdentifiers: Self.scheduledReminderIDs + [Self.snoozeIdentifier])
     }
 
     /// Forget what was sent, e.g. after signing out, so the next account starts fresh.

@@ -47,25 +47,53 @@ final class StreakNotificationPlannerTests: XCTestCase {
 
     // MARK: - At risk / last call
 
-    func testAtRiskFiresAtReminderTimeOnce() {
+    func testRemindersScheduledAheadForExactTime() {
         let d = days([0, 1, 1, 1, 0]) // 3-day streak, nothing today
-        let before = plan(d, state(streak: 3, longest: 3), at: at("2026-11-06", 17, 59))
-        XCTAssertTrue(before.notifications.isEmpty)
+        let morning = plan(d, state(streak: 3, longest: 3), at: at("2026-11-06", 10))
+        XCTAssertEqual(morning.notifications.map(\.kind), [.lastCall, .atRisk])
+        XCTAssertEqual(morning.notifications.first { $0.kind == .atRisk }?.deliverAt, at("2026-11-06", 18))
+        XCTAssertEqual(morning.notifications.first { $0.kind == .lastCall }?.deliverAt, at("2026-11-06", 23))
+        XCTAssertEqual(morning.notifications.first { $0.kind == .atRisk }?.title, "🔥 Your 3-day streak is at risk")
 
-        let due = plan(d, before.state, at: at("2026-11-06", 18))
-        XCTAssertEqual(due.notifications.map(\.kind), [.atRisk])
-        XCTAssertEqual(due.notifications.first?.title, "🔥 Your 3-day streak is at risk")
+        // After 6 PM macOS has shown it: not sent again, only the last call stays scheduled.
+        let evening = plan(d, morning.state, at: at("2026-11-06", 18, 5))
+        XCTAssertEqual(evening.notifications.map(\.kind), [.lastCall])
+        XCTAssertNotNil(evening.notifications.first?.deliverAt)
 
-        let again = plan(d, due.state, at: at("2026-11-06", 18, 5))
-        XCTAssertTrue(again.notifications.isEmpty)
+        // After 11 PM both were shown: nothing more.
+        XCTAssertTrue(plan(d, evening.state, at: at("2026-11-06", 23, 5)).notifications.isEmpty)
+    }
+
+    func testAtRiskSentNowWhenTimeAlreadyPassed() {
+        let d = days([0, 1, 1, 1, 0])
+        let result = plan(d, state(streak: 3, longest: 3), at: at("2026-11-06", 19))
+        XCTAssertEqual(result.notifications.first { $0.kind == .atRisk }?.deliverAt, nil)
+        XCTAssertTrue(plan(d, result.state, at: at("2026-11-06", 19, 5)).notifications.allSatisfy { $0.kind == .lastCall })
+    }
+
+    func testAtRiskSentNowWithinAMinuteOfTime() {
+        let d = days([0, 1, 1, 0])
+        let result = plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 17, 59))
+        let atRisk = result.notifications.first { $0.kind == .atRisk }
+        XCTAssertNotNil(atRisk)
+        XCTAssertNil(atRisk?.deliverAt)
     }
 
     func testCustomReminderTime() {
         var settings = StreakNotificationSettings()
         settings.atRiskMinutes = 20 * 60 + 30
         let d = days([0, 1, 1, 0])
-        XCTAssertTrue(plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 20, 29), settings: settings).notifications.isEmpty)
-        XCTAssertEqual(plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 20, 30), settings: settings).notifications.map(\.kind), [.atRisk])
+        let result = plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 12), settings: settings)
+        XCTAssertEqual(result.notifications.first { $0.kind == .atRisk }?.deliverAt, at("2026-11-06", 20, 30))
+    }
+
+    func testNoRemindersAfterContributing() {
+        let d = days([0, 1, 1, 1]) // contributed today
+        var s = state(streak: 2, longest: 10)
+        s.extendedDate = "2026-11-06"
+        let result = plan(d, s, at: at("2026-11-06", 12))
+        XCTAssertTrue(result.notifications.isEmpty)
+        XCTAssertTrue(result.contributedToday)
     }
 
     func testNoAtRiskWithoutStreak() {
@@ -73,11 +101,17 @@ final class StreakNotificationPlannerTests: XCTestCase {
         XCTAssertTrue(plan(d, state(streak: 0, longest: 1), at: at("2026-11-06", 19)).notifications.isEmpty)
     }
 
-    func testLastCallAfterAtRisk() {
+    func testLastCallSentNowIfNeverScheduled() {
+        var settings = StreakNotificationSettings()
+        settings.lastCall = false
         let d = days([0, 1, 1, 0])
-        let risk = plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 18))
+        let risk = plan(d, state(streak: 2, longest: 2), at: at("2026-11-06", 18), settings: settings)
+        XCTAssertEqual(risk.notifications.map(\.kind), [.atRisk])
+
+        // Last call turned on later in the evening: nothing was scheduled, so it goes out now.
         let last = plan(d, risk.state, at: at("2026-11-06", 23, 2))
         XCTAssertEqual(last.notifications.map(\.kind), [.lastCall])
+        XCTAssertNil(last.notifications.first?.deliverAt)
         XCTAssertTrue(plan(d, last.state, at: at("2026-11-06", 23, 30)).notifications.isEmpty)
     }
 
@@ -94,7 +128,7 @@ final class StreakNotificationPlannerTests: XCTestCase {
         let d = days([0, 1, 1, 1, 1]) // today counted: 4 days
         let first = plan(d, state(streak: 3, longest: 10), at: at("2026-11-06", 10))
         XCTAssertEqual(first.notifications.map(\.kind), [.extended])
-        XCTAssertEqual(first.notifications.first?.title, "✅ Streak extended to 4 days")
+        XCTAssertEqual(first.notifications.first?.title, "Streak extended to 4 days")
         XCTAssertTrue(first.contributedToday)
         XCTAssertTrue(plan(d, first.state, at: at("2026-11-06", 11)).notifications.isEmpty)
     }
@@ -102,7 +136,7 @@ final class StreakNotificationPlannerTests: XCTestCase {
     func testNewStreakStarted() {
         let d = days([1, 0, 1])
         let result = plan(d, state(streak: 0, longest: 5), at: at("2026-11-06", 10))
-        XCTAssertEqual(result.notifications.first?.title, "🌱 New streak started")
+        XCTAssertEqual(result.notifications.first?.title, "New streak started")
     }
 
     func testNewRecordOncePerStreak() {
@@ -137,6 +171,25 @@ final class StreakNotificationPlannerTests: XCTestCase {
         let first = plan(d, state(streak: 2, longest: 10), at: at("2026-11-06", 10), settings: off)
         XCTAssertTrue(first.notifications.isEmpty)
         XCTAssertTrue(plan(d, first.state, at: at("2026-11-06", 11)).notifications.isEmpty)
+    }
+
+    func testUsesStreakIncludingOlderYears() {
+        // The window only shows 5 days, but with older years the streak is 400 days (record was 399).
+        let d = days([1, 1, 1, 1, 1])
+        let result = StreakNotificationPlanner.plan(
+            days: d, currentStreak: 400, longestStreak: 400,
+            previous: state(streak: 399, longest: 399),
+            settings: StreakNotificationSettings(), now: at("2026-11-06", 10), calendar: calendar)
+        XCTAssertEqual(result.notifications.first?.title, "🏆 New longest streak: 400 days!")
+    }
+
+    func testNoFalseRecordWhenOlderBestIsHigher() {
+        let d = days([0, 1, 1, 1, 1, 1]) // 5 days; best in this window was 4, but 60 two years ago
+        let result = StreakNotificationPlanner.plan(
+            days: d, currentStreak: 5, longestStreak: 60,
+            previous: state(streak: 4, longest: 60),
+            settings: StreakNotificationSettings(), now: at("2026-11-06", 10), calendar: calendar)
+        XCTAssertEqual(result.notifications.map(\.kind), [.extended])
     }
 
     // MARK: - Streak lost

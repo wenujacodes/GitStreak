@@ -28,6 +28,9 @@ public struct StreakNotificationState: Codable, Equatable, Sendable {
     public var weeklyRecapDate: String?
     /// Start day of the streak a "new record" was already sent for.
     public var recordStreakStart: String?
+    /// When today's reminders were scheduled with macOS. Once that time has passed, macOS has shown them.
+    public var atRiskScheduledFor: Date?
+    public var lastCallScheduledFor: Date?
 
     public init(lastStreak: Int, lastLongest: Int) {
         self.lastStreak = lastStreak
@@ -46,7 +49,8 @@ public struct StreakNotification: Equatable, Sendable {
     public let kind: StreakNotificationKind
     public let title: String
     public let body: String
-    /// When to show it. `nil` means right away.
+    /// When to show it. `nil` means right away. At-risk reminders are scheduled ahead so macOS
+    /// shows them on time even while GitStreak is napping in the background.
     public let deliverAt: Date?
 
     public init(kind: StreakNotificationKind, title: String, body: String, deliverAt: Date?) {
@@ -60,7 +64,8 @@ public struct StreakNotification: Equatable, Sendable {
 public struct StreakNotificationPlan: Equatable, Sendable {
     public var notifications: [StreakNotification] = []
     /// True once there is a contribution today: pending reminders should be removed
-    /// and delivered "at risk" banners cleared.
+    /// and delivered "at risk" banners cleared. Pending at-risk and last-call reminders that
+    /// aren't in `notifications` should always be removed (they are re-added on every refresh).
     public var contributedToday = false
     /// False when the streak is broken. When true, a pending "streak lost" must be removed
     /// (GitHub can show a late contribution for yesterday after midnight).
@@ -78,8 +83,13 @@ public enum StreakNotificationPlanner {
     /// Sunday in Calendar's weekday numbering.
     static let weeklyRecapWeekday = 1
 
+    /// - Parameters:
+    ///   - currentStreak, longestStreak: the numbers including older years (see `StreakHistory`).
+    ///     When nil they are counted from `days` alone.
     public static func plan(
         days: [ContributionDay],
+        currentStreak: Int? = nil,
+        longestStreak: Int? = nil,
         previous: StreakNotificationState?,
         settings: StreakNotificationSettings,
         now: Date = Date(),
@@ -87,8 +97,8 @@ public enum StreakNotificationPlanner {
     ) -> StreakNotificationPlan {
         let today = dateString(now, calendar: calendar)
         let todayCount = days.first(where: { $0.date == today })?.contributionCount ?? 0
-        let streak = StreakCalculator.currentStreak(days: days, referenceDate: today)
-        let longest = StreakCalculator.longestStreak(days: days)
+        let streak = currentStreak ?? StreakCalculator.currentStreak(days: days, referenceDate: today)
+        let longest = longestStreak ?? StreakCalculator.longestStreak(days: days)
 
         var state = previous ?? StreakNotificationState(lastStreak: streak, lastLongest: longest)
         var plan = StreakNotificationPlan(contributedToday: todayCount > 0, streakAlive: streak > 0, state: state)
@@ -129,12 +139,12 @@ public enum StreakNotificationPlanner {
                 notes.append(streak <= 1
                     ? StreakNotification(
                         kind: .extended,
-                        title: "🌱 New streak started",
+                        title: "New streak started",
                         body: "Day 1 done. Contribute again tomorrow to make it 2 days.",
                         deliverAt: nil)
                     : StreakNotification(
                         kind: .extended,
-                        title: "✅ Streak extended to \(dayCount(streak))",
+                        title: "Streak extended to \(dayCount(streak))",
                         body: "Today's contribution is in. See you tomorrow.",
                         deliverAt: nil))
             } else if isRecord {
@@ -143,26 +153,45 @@ public enum StreakNotificationPlanner {
         }
 
         // 2. No contribution yet today and a streak to lose: at risk / last call.
+        //    Before their time they are scheduled with macOS (so they arrive on the minute);
+        //    if their time has already passed (Mac was asleep, app just started) they go out now.
         if todayCount == 0 && streak > 0 {
-            let lastCallDue = settings.lastCall && minutesNow >= lastCallMinutes && state.lastCallDate != today
-            let atRiskDue = settings.atRisk && minutesNow >= settings.atRiskMinutes && state.atRiskDate != today
-
-            if lastCallDue {
-                // Covers the 6 PM reminder too if the Mac was asleep until now.
+            if let t = state.atRiskScheduledFor, t <= now, dateString(t, calendar: calendar) == today {
+                state.atRiskDate = today
+            }
+            if let t = state.lastCallScheduledFor, t <= now, dateString(t, calendar: calendar) == today {
                 state.lastCallDate = today
                 state.atRiskDate = today
-                notes.append(StreakNotification(
-                    kind: .lastCall,
-                    title: "⏰ Less than an hour left",
-                    body: "Push a contribution before midnight to keep your \(dayLabel(streak)) streak.",
-                    deliverAt: nil))
-            } else if atRiskDue {
-                state.atRiskDate = today
-                notes.append(StreakNotification(
-                    kind: .atRisk,
-                    title: "🔥 Your \(dayLabel(streak)) streak is at risk",
-                    body: "No contributions yet today. Push a commit before midnight to keep it going.",
-                    deliverAt: nil))
+            }
+
+            let lastCallAt = time(lastCallMinutes, on: now, calendar: calendar)
+            let atRiskAt = time(settings.atRiskMinutes, on: now, calendar: calendar)
+            // Within a minute of the time, send now rather than schedule a moment that may already be gone.
+            let soon = now.addingTimeInterval(60)
+            let lastCallText = "Push a contribution before midnight to keep your \(dayLabel(streak)) streak."
+
+            if settings.lastCall && state.lastCallDate != today {
+                if soon >= lastCallAt {
+                    // Covers the at-risk reminder too if the Mac was asleep until now.
+                    state.lastCallDate = today
+                    state.atRiskDate = today
+                    notes.append(StreakNotification(kind: .lastCall, title: "Less than an hour left", body: lastCallText, deliverAt: nil))
+                } else {
+                    state.lastCallScheduledFor = lastCallAt
+                    notes.append(StreakNotification(kind: .lastCall, title: "Less than an hour left", body: lastCallText, deliverAt: lastCallAt))
+                }
+            }
+
+            if settings.atRisk && state.atRiskDate != today {
+                let title = "🔥 Your \(dayLabel(streak)) streak is at risk"
+                let body = "No contributions yet today. Push a commit before midnight to keep it going."
+                if soon >= atRiskAt {
+                    state.atRiskDate = today
+                    notes.append(StreakNotification(kind: .atRisk, title: title, body: body, deliverAt: nil))
+                } else {
+                    state.atRiskScheduledFor = atRiskAt
+                    notes.append(StreakNotification(kind: .atRisk, title: title, body: body, deliverAt: atRiskAt))
+                }
             }
         }
 
@@ -207,7 +236,7 @@ public enum StreakNotificationPlanner {
         guard thisTotal > 0 else {
             return StreakNotification(
                 kind: .weeklyRecap,
-                title: "📊 Your week on GitHub",
+                title: "Your week on GitHub",
                 body: "No contributions this week. A fresh week starts tomorrow.",
                 deliverAt: nil)
         }
@@ -231,13 +260,18 @@ public enum StreakNotificationPlanner {
             body += " Best day: \(formatter.string(from: bestDate)) (\(counts[best] ?? 0))."
         }
 
-        return StreakNotification(kind: .weeklyRecap, title: "📊 Your week on GitHub", body: body, deliverAt: nil)
+        return StreakNotification(kind: .weeklyRecap, title: "Your week on GitHub", body: body, deliverAt: nil)
     }
 
     // MARK: - Helpers
 
     static func dayLabel(_ n: Int) -> String { n == 1 ? "1-day" : "\(n)-day" }
     static func dayCount(_ n: Int) -> String { n == 1 ? "1 day" : "\(n) days" }
+
+    /// `minutes` after midnight on the day of `now`.
+    static func time(_ minutes: Int, on now: Date, calendar: Calendar) -> Date {
+        calendar.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: now) ?? now
+    }
 
     static func morningDelivery(_ now: Date, calendar: Calendar) -> Date? {
         guard let morning = calendar.date(bySettingHour: streakLostDeliveryHour, minute: 0, second: 0, of: now),

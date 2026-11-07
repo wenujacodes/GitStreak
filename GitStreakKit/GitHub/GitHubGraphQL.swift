@@ -49,6 +49,51 @@ public struct GitHubGraphQL {
         username.range(of: "^[A-Za-z0-9-]{1,39}$", options: .regularExpression) != nil
     }
 
+    public static let calendarQuery = """
+    query($username: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $username) {
+        contributionsCollection(from: $from, to: $to) {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+                contributionLevel
+                weekday
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+
+    /// Request for one year's contribution days only (see `GitHubAPIClient.fetchCalendarDays`).
+    public static func makeCalendarRequestBody(username: String, year: Int) throws -> Data {
+        guard isValidUsername(username) else {
+            throw GitHubAPIError.userNotFound
+        }
+        let (from, to) = yearRange(year)
+        let payload: [String: Any] = [
+            "query": calendarQuery,
+            "variables": ["username": username, "from": from, "to": to]
+        ]
+        return try JSONSerialization.data(withJSONObject: payload, options: [])
+    }
+
+    /// Jan 1 00:00:00 to Dec 31 23:59:59 (UTC) of a year, as ISO 8601 strings.
+    static func yearRange(_ year: Int) -> (String, String) {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let from = calendar.date(from: DateComponents(year: year, month: 1, day: 1)) ?? Date()
+        let to = calendar.date(from: DateComponents(year: year, month: 12, day: 31, hour: 23, minute: 59, second: 59)) ?? Date()
+        return (formatter.string(from: from), formatter.string(from: to))
+    }
+
     public static func makeRequestBody(username: String, year: Int? = nil) throws -> Data {
         guard isValidUsername(username) else {
             throw GitHubAPIError.userNotFound

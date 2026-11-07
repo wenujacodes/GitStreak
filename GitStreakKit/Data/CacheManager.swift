@@ -110,5 +110,25 @@ public final class CacheManager: Sendable {
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: url)
         }
+        try? FileManager.default.removeItem(at: Self.historyFileURL)
+    }
+
+    // MARK: - Streak history (older years, see StreakHistory)
+
+    private static var historyFileURL: URL {
+        SharedContainer.url.appendingPathComponent("streak_history.json")
+    }
+
+    public func saveHistory(_ history: StreakHistory) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        try encoder.encode(history).write(to: Self.historyFileURL, options: .atomic)
+    }
+
+    public func loadHistory() -> StreakHistory? {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        guard let data = try? Data(contentsOf: Self.historyFileURL) else { return nil }
+        return try? decoder.decode(StreakHistory.self, from: data)
     }
 }
