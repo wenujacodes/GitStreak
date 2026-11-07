@@ -6,6 +6,30 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.4.1</title>
+            <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.1</link>
+            <sparkle:informationalUpdate>
+                <sparkle:belowVersion>13</sparkle:belowVersion>
+            </sparkle:informationalUpdate>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.1</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>GitStreak 1.4.1</h2>
+                <p><b>Updating from 1.1.10 or older?</b> Please download this version once from GitHub and drag it into Applications. Automatic updates work from 1.2.0 on.</p>
+                <ul>
+                    <li><b>Streaks longer than a year</b>: your current and longest streak now count every year on GitHub, not just the last 12 months, so long streaks and new records are always right.</li>
+                    <li><b>Reminders on time</b>: &quot;streak at risk&quot; and the 11 PM last call now arrive exactly at their time, even while GitStreak runs in the background.</li>
+                    <li><b>Cleaner notifications</b>: fewer emojis in notification titles.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Sat, 07 Nov 2026 15:00:44 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.4.1/GitStreak-v1.4.1.zip"
+                       sparkle:version="16"
+                       sparkle:shortVersionString="1.4.1"
+                       sparkle:edSignature="XPfxwphdPMhgXiokZzuQNL4Z64f7zBOBkbGg44FVssBCMV5OnzBVGewO2cr7V/bPaPd/1OB8wfvbHYHTGbMGAQ=="
+                       length="9155634"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.4.0</title>
             <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.0</link>
             <sparkle:informationalUpdate>
