@@ -67,20 +67,10 @@ struct NotificationSettingsView: View {
 
             Spacer()
 
-            HStack {
-                Text("GitHub can take a few minutes to show a new contribution, so notifications may arrive a little after you push.")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer()
-                Button("Send Test Notification") {
-                    Task {
-                        await StreakNotifier.shared.sendTest()
-                        await refreshStatus()
-                    }
-                }
-                .buttonStyle(ModernSecondaryButtonStyle())
-            }
+            Text("GitHub can take a few minutes to show a new contribution, so notifications may arrive a little after you push.")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)
         .task { await refreshStatus() }
