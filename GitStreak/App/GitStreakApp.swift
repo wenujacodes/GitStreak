@@ -3,11 +3,20 @@ import AppKit
 import GitStreakKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var launchedAtLogin = false
+    /// True when launched at login or relaunched after a silent update: run without a window.
+    private var launchedInBackground = false
 
     func applicationWillFinishLaunching(_ notification: Notification) {
+        let defaults = UserDefaults.standard
+        let relaunchedAfterUpdate = defaults.bool(forKey: SparkleUpdaterViewModel.relaunchHiddenKey)
+        defaults.removeObject(forKey: SparkleUpdaterViewModel.relaunchHiddenKey)
+
         // The launch event is only readable at this point.
-        launchedAtLogin = BackgroundController.wasLaunchedAtLogin()
+        launchedInBackground = relaunchedAfterUpdate || BackgroundController.wasLaunchedAtLogin()
+        if launchedInBackground && UserPreferences.shared.hasCompletedOnboarding {
+            // Hide the Dock icon before it appears, not after.
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -23,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let background = BackgroundController.shared
         background.start()
         background.setUpLaunchAtLoginIfNeeded()
-        if launchedAtLogin && UserPreferences.shared.hasCompletedOnboarding {
+        if launchedInBackground && UserPreferences.shared.hasCompletedOnboarding {
             background.startHidden()
         }
     }
@@ -34,8 +43,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// The user opened GitStreak again while it was running in the background.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        BackgroundController.shared.showApp()
-        return true
+        // If we showed a window ourselves, stop SwiftUI from opening a second one.
+        return !BackgroundController.shared.showApp()
     }
 
     /// Keep running after the window closes so widgets stay fresh,
@@ -51,7 +60,7 @@ struct GitStreakApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: ContentView.windowID) {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)
@@ -88,6 +97,9 @@ struct GitStreakApp: App {
 }
 
 struct ContentView: View {
+    static let windowID = "main"
+
+    @Environment(\.openWindow) private var openWindow
     @State private var hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
 
     var body: some View {
@@ -109,6 +121,11 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.45), value: hasCompletedOnboarding)
+        .onAppear {
+            // Lets the app delegate open a window again after this one was closed.
+            let openWindow = openWindow
+            BackgroundController.shared.openMainWindow = { openWindow(id: ContentView.windowID) }
+        }
         .onReceive(NotificationCenter.default.publisher(for: .userPreferencesDidChange)) { _ in
             withAnimation(.easeInOut(duration: 0.45)) {
                 self.hasCompletedOnboarding = UserPreferences.shared.hasCompletedOnboarding
