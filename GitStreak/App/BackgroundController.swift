@@ -75,10 +75,31 @@ final class BackgroundController {
         }
     }
 
-    /// Called when the user opens the app again while it runs in the background.
-    func showApp() {
+    /// Opens a new main window. Set by the main view, which can reach SwiftUI's `openWindow`.
+    var openMainWindow: (() -> Void)?
+
+    /// Called when the user opens the app again (Dock, Finder or a widget click)
+    /// while it runs in the background. Brings back the Dock icon and the window.
+    /// Returns false if no window could be shown, so SwiftUI can open one itself.
+    @discardableResult
+    func showApp() -> Bool {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate()
+
+        if let window = NSApp.windows.first(where: { Self.isMainWindow($0) && ($0.isVisible || $0.isMiniaturized) }) {
+            if window.isMiniaturized { window.deminiaturize(nil) }
+            window.makeKeyAndOrderFront(nil)
+            return true
+        }
+        guard let openMainWindow else { return false }
+        // The window was closed while the app ran in the background: open a new one.
+        openMainWindow()
+        return true
+    }
+
+    /// SwiftUI gives the main window group's windows identifiers that start with its scene ID.
+    private static func isMainWindow(_ window: NSWindow) -> Bool {
+        window.identifier?.rawValue.hasPrefix(ContentView.windowID) == true
     }
 
     private func hideDockIconIfNoWindows() {
