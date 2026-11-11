@@ -6,6 +6,30 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.4.2</title>
+            <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.2</link>
+            <sparkle:informationalUpdate>
+                <sparkle:belowVersion>13</sparkle:belowVersion>
+            </sparkle:informationalUpdate>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.2</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>GitStreak 1.4.2</h2>
+                <p><b>Updating from 1.1.10 or older?</b> Please download this version once from GitHub and drag it into Applications. Automatic updates work from 1.2.0 on.</p>
+                <ul>
+                    <li><b>Automatic updates</b>: from now on, new versions download and install by themselves while GitStreak runs in the background. No more clicking Install.</li>
+                    <li><b>Opening GitStreak shows its window</b>: clicking a widget or the app icon now opens the window right away, instead of only showing the Dock icon.</li>
+                    <li><b>Quiet at login</b>: GitStreak now starts at login without a window or Dock icon and just keeps your widgets up to date.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Wed, 11 Nov 2026 04:45:16 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.4.2/GitStreak-v1.4.2.zip"
+                       sparkle:version="17"
+                       sparkle:shortVersionString="1.4.2"
+                       sparkle:edSignature="JGu/AEXu0UAyAinAW53EM0JZYTwBPAZZyuQyg59WO7hy/V+Eckx56ta55SfcjCSvnyt7vJoN/LPlLSk4obxOAg=="
+                       length="9164493"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.4.1</title>
             <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.1</link>
             <sparkle:informationalUpdate>
