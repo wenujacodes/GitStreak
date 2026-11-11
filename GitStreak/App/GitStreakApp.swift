@@ -8,6 +8,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillFinishLaunching(_ notification: Notification) {
         // The launch event is only readable at this point.
         launchedAtLogin = BackgroundController.wasLaunchedAtLogin()
+        if launchedAtLogin && UserPreferences.shared.hasCompletedOnboarding {
+            // Hide the Dock icon before it appears, not after.
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {

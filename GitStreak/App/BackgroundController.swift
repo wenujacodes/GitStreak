@@ -1,4 +1,5 @@
 import AppKit
+import Darwin
 import ServiceManagement
 import GitStreakKit
 
@@ -110,14 +111,36 @@ final class BackgroundController {
         }
     }
 
-    /// True when macOS started the app as a login item (as opposed to the user opening it).
+    /// True when macOS started the app at login (as opposed to the user opening it).
     /// Must be called while the launch event is being handled (applicationWillFinishLaunching).
     static func wasLaunchedAtLogin() -> Bool {
-        guard let event = NSAppleEventManager.shared().currentAppleEvent,
-              event.eventID == kAEOpenApplication else {
-            return false
+        if let event = NSAppleEventManager.shared().currentAppleEvent,
+           event.eventID == kAEOpenApplication,
+           event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem {
+            return true
         }
-        return event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
+        // Login items and "reopen windows when logging back in" don't always set the flag
+        // above, so also treat a launch shortly after the user logged in as a login launch.
+        guard let loginDate = consoleLoginDate() else { return false }
+        return Date().timeIntervalSince(loginDate) < 120
+    }
+
+    /// When the current user last logged in at the console (the same record `who` shows).
+    private static func consoleLoginDate() -> Date? {
+        let user = NSUserName()
+        var latest: Date?
+        setutxent()
+        defer { endutxent() }
+        while let entry = getutxent() {
+            var record = entry.pointee
+            guard record.ut_type == USER_PROCESS else { continue }
+            let line = withUnsafeBytes(of: &record.ut_line) { String(decoding: $0.prefix { $0 != 0 }, as: UTF8.self) }
+            let name = withUnsafeBytes(of: &record.ut_user) { String(decoding: $0.prefix { $0 != 0 }, as: UTF8.self) }
+            guard line == "console", name == user else { continue }
+            let date = Date(timeIntervalSince1970: TimeInterval(record.ut_tv.tv_sec))
+            if latest == nil || date > latest! { latest = date }
+        }
+        return latest
     }
 
     // MARK: - Launch at login
