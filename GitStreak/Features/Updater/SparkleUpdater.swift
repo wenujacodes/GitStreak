@@ -71,6 +71,37 @@ public final class SparkleUpdaterViewModel: NSObject, ObservableObject, SPUUpdat
         #endif
     }
 
+    // MARK: - Installing without the user
+
+    /// Set by Sparkle once an update has downloaded; calling it installs and relaunches.
+    private var pendingInstall: (() -> Void)?
+
+    /// When set, the next launch is the relaunch after a silent update and should stay hidden.
+    public static let relaunchHiddenKey = "relaunchHiddenAfterUpdate"
+
+    /// Sparkle installs downloaded updates when the app quits, but GitStreak keeps running
+    /// in the background. Install right away instead, unless the user has the window open;
+    /// then wait until they close it.
+    public func updater(
+        _ updater: SPUUpdater,
+        willInstallUpdateOnQuit item: SUAppcastItem,
+        immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
+    ) -> Bool {
+        pendingInstall = immediateInstallHandler
+        installPendingUpdateIfIdle()
+        return true
+    }
+
+    /// Installs a downloaded update if no GitStreak window is open. Called again when a window closes.
+    public func installPendingUpdateIfIdle() {
+        guard let install = pendingInstall else { return }
+        let hasOpenWindow = NSApp.windows.contains { $0.isVisible && $0.canBecomeMain }
+        guard !hasOpenWindow else { return }
+        pendingInstall = nil
+        UserDefaults.standard.set(true, forKey: Self.relaunchHiddenKey)
+        install()
+    }
+
     public func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
         isCheckingForUpdates = false
         lastStatusMessage = "Found update: Version \(item.displayVersionString)"

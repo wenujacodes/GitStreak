@@ -46,6 +46,7 @@ targets:
         SUPublicEDKey: "pJ3lxA7SUz5vTGTunxBAooBiewVrOK+OtPJ7Ovt2EME="  # new key since 1.2.0 (old key lost; 1.1.10 users update manually once)
         SUEnableAutomaticChecks: true
         SUAllowsAutomaticUpdates: true
+        SUAutomaticallyUpdate: true  # download and install without asking (installed while no window is open)
         SUScheduledCheckInterval: 3600
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"

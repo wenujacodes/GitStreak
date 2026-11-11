@@ -108,6 +108,7 @@ final class BackgroundController {
         let hasVisibleWindow = NSApp.windows.contains { $0.isVisible && $0.canBecomeMain }
         if !hasVisibleWindow {
             NSApp.setActivationPolicy(.accessory)
+            SparkleUpdaterViewModel.shared.installPendingUpdateIfIdle()
         }
     }
 

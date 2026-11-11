@@ -3,12 +3,17 @@ import AppKit
 import GitStreakKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var launchedAtLogin = false
+    /// True when launched at login or relaunched after a silent update: run without a window.
+    private var launchedInBackground = false
 
     func applicationWillFinishLaunching(_ notification: Notification) {
+        let defaults = UserDefaults.standard
+        let relaunchedAfterUpdate = defaults.bool(forKey: SparkleUpdaterViewModel.relaunchHiddenKey)
+        defaults.removeObject(forKey: SparkleUpdaterViewModel.relaunchHiddenKey)
+
         // The launch event is only readable at this point.
-        launchedAtLogin = BackgroundController.wasLaunchedAtLogin()
-        if launchedAtLogin && UserPreferences.shared.hasCompletedOnboarding {
+        launchedInBackground = relaunchedAfterUpdate || BackgroundController.wasLaunchedAtLogin()
+        if launchedInBackground && UserPreferences.shared.hasCompletedOnboarding {
             // Hide the Dock icon before it appears, not after.
             NSApp.setActivationPolicy(.accessory)
         }
@@ -27,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let background = BackgroundController.shared
         background.start()
         background.setUpLaunchAtLoginIfNeeded()
-        if launchedAtLogin && UserPreferences.shared.hasCompletedOnboarding {
+        if launchedInBackground && UserPreferences.shared.hasCompletedOnboarding {
             background.startHidden()
         }
     }
