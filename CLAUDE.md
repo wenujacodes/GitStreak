@@ -17,7 +17,7 @@ Native macOS app + WidgetKit extension that shows a user's GitHub contribution g
 | Path | Purpose |
 |---|---|
 | `GitStreak/` | App target: Onboarding, Dashboard, Settings, ThemePicker, Sparkle updater. **Not sandboxed.** |
-| `GitStreakWidget/` | Widget extension (6 widgets sharing `GitStreakTimelineProvider`). **Sandboxed.** |
+| `GitStreakWidget/` | Widget extension (7 widgets sharing `GitStreakTimelineProvider`). **Sandboxed.** |
 | `GitStreakKit/` | Shared framework: `GitHub/` (API client, GraphQL, OAuth, models), `Services/` (ContributionService, StreakCalculator, TokenStorage, KeychainService), `Data/` (CacheManager, SharedContainer, UserPreferences), `DesignSystem/` |
 | `GitStreakTests/` | XCTest unit tests (~40) |
 | `scripts/` | `package_release.sh` (DMG + Sparkle zip), `update_appcast.py` |

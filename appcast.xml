@@ -6,6 +6,28 @@
         <description>Most recent updates to GitStreak</description>
         <language>en</language>
         <item>
+            <title>Version 1.4.3</title>
+            <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.3</link>
+            <sparkle:informationalUpdate>
+                <sparkle:belowVersion>13</sparkle:belowVersion>
+            </sparkle:informationalUpdate>
+            <sparkle:releaseNotesLink>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.3</sparkle:releaseNotesLink>
+            <description><![CDATA[
+                <h2>GitStreak 1.4.3</h2>
+                <p><b>Updating from 1.1.10 or older?</b> Please download this version once from GitHub and drag it into Applications. Automatic updates work from 1.2.0 on.</p>
+                <ul>
+                    <li><b>New Streak widget</b>: a small widget with your current streak and this week (Sunday to Saturday) as dots. The flame lights up in your theme colour once you have contributed today.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Thu, 12 Nov 2026 04:27:07 +0000</pubDate>
+            <enclosure url="https://github.com/wenujacodes/GitStreak/releases/download/v1.4.3/GitStreak-v1.4.3.zip"
+                       sparkle:version="18"
+                       sparkle:shortVersionString="1.4.3"
+                       sparkle:edSignature="av2YWD7bN1CwBrDQ1D/VzROrNKZFWmiavCeB65U/Uly6WstTDRvKVvbHcVrKcyD0F0P+hypTlrDPthIQha9OAQ=="
+                       length="9240815"
+                       type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.4.2</title>
             <link>https://github.com/wenujacodes/GitStreak/releases/tag/v1.4.2</link>
             <sparkle:informationalUpdate>
