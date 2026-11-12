@@ -2,8 +2,7 @@ import SwiftUI
 import WidgetKit
 import GitStreakKit
 
-/// Small widget: the current streak, the last 7 days and one status line
-/// (today's count, a new record, or no streak yet).
+/// Small widget: the current streak and this week's days, Sunday first.
 struct StreakSmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
@@ -51,14 +50,13 @@ struct StreakSmallWidgetView: View {
 
     private func content(_ data: ContributionData) -> some View {
         let streak = data.currentStreak
-        let today = data.todayContributions
-        let status = StreakStatus(streak: streak, longest: data.longestStreak, today: today)
+        let flameIsGrey = streak == 0 || data.todayContributions == 0
 
         return VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 4) {
                 Image(systemName: "flame.fill")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(status.isAtRisk || streak == 0 ? Color.secondary : accent)
+                    .foregroundStyle(flameIsGrey ? Color.secondary : accent)
                 Text("STREAK")
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.8)
@@ -81,19 +79,19 @@ struct StreakSmallWidgetView: View {
 
             WeekDotsView(data: data, now: entry.date, levels: levels, accent: accent)
 
-            Spacer(minLength: 8)
-
-            statusLine(status)
+            if streak == 0 {
+                Spacer(minLength: 8)
+                startStreakLine
+            }
         }
     }
 
-    @ViewBuilder
-    private func statusLine(_ status: StreakStatus) -> some View {
+    private var startStreakLine: some View {
         HStack(spacing: 4) {
-            Image(systemName: status.systemImage)
+            Image(systemName: "sparkles")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(accent)
-            Text(status.text)
+            Text("Start a streak today")
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -144,7 +142,7 @@ private struct WeekDotsView: View {
         let today = StreakCalculator.todayDateString()
         let counts = Dictionary(data.allDays.map { ($0.date, $0.contributionCount) }, uniquingKeysWith: max)
         HStack(spacing: 0) {
-            ForEach(StreakStatus.weekDates(containing: now), id: \.self) { date in
+            ForEach(StreakWeek.dates(containing: now), id: \.self) { date in
                 VStack(spacing: 3) {
                     dot(count: counts[date] ?? 0, isToday: date == today, isFuture: date > today)
                     Text(letter(for: date))
