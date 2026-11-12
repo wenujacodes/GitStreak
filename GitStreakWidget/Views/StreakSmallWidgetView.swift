@@ -3,7 +3,7 @@ import WidgetKit
 import GitStreakKit
 
 /// Small widget: the current streak, the last 7 days and one status line
-/// (at risk today, done today, or a new record).
+/// (today's count, a new record, or no streak yet).
 struct StreakSmallWidgetView: View {
     @Environment(\.colorScheme) private var colorScheme
     var entry: GitStreakEntry
@@ -52,7 +52,7 @@ struct StreakSmallWidgetView: View {
     private func content(_ data: ContributionData) -> some View {
         let streak = data.currentStreak
         let today = data.todayContributions
-        let status = StreakStatus(streak: streak, longest: data.longestStreak, today: today, now: entry.date)
+        let status = StreakStatus(streak: streak, longest: data.longestStreak, today: today)
 
         return VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 4) {
@@ -79,7 +79,7 @@ struct StreakSmallWidgetView: View {
 
             Spacer(minLength: 8)
 
-            WeekDotsView(days: data.recentDays(count: 7), levels: levels, accent: accent)
+            WeekDotsView(data: data, now: entry.date, levels: levels, accent: accent)
 
             Spacer(minLength: 8)
 
@@ -92,10 +92,10 @@ struct StreakSmallWidgetView: View {
         HStack(spacing: 4) {
             Image(systemName: status.systemImage)
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(status.isAtRisk ? Color.orange : accent)
+                .foregroundStyle(accent)
             Text(status.text)
                 .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(status.isAtRisk ? Color.primary : Color.secondary)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
@@ -116,11 +116,13 @@ struct StreakSmallWidgetView: View {
     }
 }
 
-// MARK: - Last 7 days
-// A streak only cares whether a day had a contribution, so every such day uses the full accent.
+// MARK: - This week
+// Sunday to Saturday. A streak only cares whether a day had a contribution,
+// so every such day uses the full accent.
 
 private struct WeekDotsView: View {
-    let days: [ContributionDay]
+    let data: ContributionData
+    let now: Date
     let levels: [Color]
     let accent: Color
 
@@ -139,14 +141,15 @@ private struct WeekDotsView: View {
     }()
 
     var body: some View {
-        let todayString = StreakCalculator.todayDateString()
+        let today = StreakCalculator.todayDateString()
+        let counts = Dictionary(data.allDays.map { ($0.date, $0.contributionCount) }, uniquingKeysWith: max)
         HStack(spacing: 0) {
-            ForEach(days) { day in
+            ForEach(StreakStatus.weekDates(containing: now), id: \.self) { date in
                 VStack(spacing: 3) {
-                    dot(for: day, isToday: day.date == todayString)
-                    Text(letter(for: day.date))
-                        .font(.system(size: 8, weight: .medium))
-                        .foregroundStyle(.secondary)
+                    dot(count: counts[date] ?? 0, isToday: date == today, isFuture: date > today)
+                    Text(letter(for: date))
+                        .font(.system(size: 8, weight: date == today ? .bold : .medium))
+                        .foregroundStyle(date == today ? Color.primary : Color.secondary)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -154,9 +157,9 @@ private struct WeekDotsView: View {
     }
 
     @ViewBuilder
-    private func dot(for day: ContributionDay, isToday: Bool) -> some View {
+    private func dot(count: Int, isToday: Bool, isFuture: Bool) -> some View {
         let size: CGFloat = 11
-        if day.contributionCount > 0 {
+        if count > 0 {
             Circle()
                 .fill(accent)
                 .frame(width: size, height: size)
@@ -164,6 +167,11 @@ private struct WeekDotsView: View {
             // Today isn't over yet: an open ring, not a missed day.
             Circle()
                 .strokeBorder(accent, lineWidth: 1.5)
+                .frame(width: size, height: size)
+        } else if isFuture {
+            // Still to come this week.
+            Circle()
+                .strokeBorder(Color.secondary.opacity(0.3), lineWidth: 1)
                 .frame(width: size, height: size)
         } else {
             Circle()
